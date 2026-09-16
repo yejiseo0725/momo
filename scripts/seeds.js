@@ -716,6 +716,20 @@ function buildCollectionJsonSchema(collectionName) {
   };
 }
 
+function hasSameIndexKeys(existingKeys, expectedKeys) {
+  const existingEntries = Object.entries(existingKeys);
+  const expectedEntries = Object.entries(expectedKeys);
+
+  if (existingEntries.length !== expectedEntries.length) {
+    return false;
+  }
+
+  return expectedEntries.every(([expectedField, expectedDirection], index) => {
+    const [existingField, existingDirection] = existingEntries[index];
+    return existingField === expectedField && existingDirection === expectedDirection;
+  });
+}
+
 async function createOrUpdateCollection(database, collectionName) {
   const jsonSchema = buildCollectionJsonSchema(collectionName);
   const exists = await database
@@ -739,8 +753,33 @@ async function createOrUpdateCollection(database, collectionName) {
   }
 
   const collection = database.collection(collectionName);
+  const existingIndexes = await collection.listIndexes().toArray();
+
   for (const index of collectionIndexes[collectionName] || []) {
-    await collection.createIndex(index.keys, index.options);
+    const existingIndex = existingIndexes.find((candidate) => (
+      hasSameIndexKeys(candidate.key, index.keys)
+    ));
+
+    if (existingIndex) {
+      const existingIsUnique = existingIndex.unique === true;
+      const expectedIsUnique = index.options.unique === true;
+
+      if (existingIsUnique !== expectedIsUnique) {
+        throw new Error(
+          `${collectionName}.${existingIndex.name} 인덱스의 unique 옵션이 현재 설정과 다릅니다.`,
+        );
+      }
+
+      console.log(`[건너뜀] ${collectionName}.${existingIndex.name} 인덱스가 이미 존재함`);
+      continue;
+    }
+
+    const createdIndexName = await collection.createIndex(index.keys, index.options);
+    existingIndexes.push({
+      key: index.keys,
+      name: createdIndexName,
+      unique: index.options.unique === true,
+    });
   }
   console.log(`[확인] ${collectionName} 인덱스`);
 }
@@ -1105,6 +1144,7 @@ module.exports = {
   buildCollectionJsonSchema,
   collectionIndexes,
   createOrUpdateCollection,
+  hasSameIndexKeys,
   initializeDatabaseStructure,
   sampleIds,
   sampleUsers,
