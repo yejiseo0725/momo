@@ -601,7 +601,7 @@ async function createSeedUser(user, password) {
         },
       },
     );
-    return existingUser.id;
+    return existingUser._id.toString();
   }
 
   const result = await auth.api.signUpEmail({

@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev",
+    "dev": "node --env-file-if-exists=.env.local server.js",
     "build": "next build",
-    "start": "next start",
+    "start": "NODE_ENV=production node --env-file-if-exists=.env.local server.js",
     "lint": "eslint",
     "test": "node --test",
     "seed": "node --env-file-if-exists=.env.local scripts/seeds.js"
