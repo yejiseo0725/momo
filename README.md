@@ -1,40 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# momo
 
-## Getting Started
+관심사가 같은 사람들이 모임을 만들고 챌린지, 일정, 가계부, 채팅을 함께 관리하는 Next.js 애플리케이션입니다.
 
-First, run the development server:
+## 실행 준비
+
+Node.js와 MongoDB가 필요합니다.
+
+```bash
+npm install
+```
+
+`.env.example`을 참고해 `.env.local`을 만듭니다.
+
+```text
+MONGODB_URI=mongodb://127.0.0.1:27017
+MONGODB_DB_NAME=momo
+BETTER_AUTH_URL=http://localhost:3000
+BETTER_AUTH_SECRET=32자 이상의 임의 문자열
+PORT=3000
+```
+
+운영 환경에서는 반드시 별도의 `BETTER_AUTH_SECRET`을 설정해야 합니다.
+
+## 데이터베이스 초기 구성
+
+다음 명령은 `scripts/seeds.js`의 최신 데이터 구조를 MongoDB 검증 규칙과 인덱스로 반영합니다. 기존 문서나 컬렉션을 삭제하지 않으며 예시 데이터도 넣지 않습니다.
+
+```bash
+npm run db:seed
+```
+
+Better Auth가 관리하는 `users`, `sessions`, `accounts`, `verifications` 컬렉션은 인증 요청 시 Better Auth가 생성하고 관리합니다.
+
+## 개발 서버
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+브라우저에서 [http://localhost:3000](http://localhost:3000)을 엽니다. 개발 서버는 Next.js와 Socket.IO를 함께 실행합니다.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+## 검증 명령
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+```bash
+npm test
+npm run lint
+npm run build
+```
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+## 구현 범위
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Better Auth 이메일·비밀번호 회원가입, 로그인, 세션과 접근 제어
+- 프로필 조회와 수정
+- 공개 모임 검색·필터, 모임 생성·수정·가입·탈퇴, 멤버 권한 구분
+- 챌린지 생성·수정·삭제와 실천 인증
+- 월별 일정 달력, 일정 생성·수정·삭제와 참여 관리
+- 월별 가계부 수입·지출과 합계
+- 일정·챌린지 생성 알림과 읽음 처리
+- MongoDB에 저장되는 모임 채팅과 Socket.IO 실시간 갱신
+- Simple.css와 최소 레이아웃 CSS를 사용한 반응형 UI
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+데이터 변경은 Server Action에서 세션, 모임 멤버 여부, 작성자 권한과 입력값을 다시 검증합니다.

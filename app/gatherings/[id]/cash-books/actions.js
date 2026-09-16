@@ -1,0 +1,98 @@
+"use server";
+
+import { redirect } from "next/navigation";
+
+import {
+  CashBookError,
+  createCashBookEntry,
+  deleteCashBookEntry,
+  updateCashBookEntry,
+} from "@/lib/cash-books";
+import { requireSession } from "@/lib/session";
+import {
+  CASH_BOOK_TYPES,
+  ValidationError,
+  readDateOnly,
+  readEnum,
+  readInteger,
+  readOptionalText,
+  readRequiredText,
+} from "@/lib/utils/validation";
+
+function readIds(formData) {
+  return {
+    gatheringId: readRequiredText(formData, "gatheringId", "모임", 100),
+    entryId: formData.has("entryId")
+      ? readRequiredText(formData, "entryId", "가계부 내역", 100)
+      : "",
+  };
+}
+
+function readInput(formData) {
+  return {
+    type: readEnum(formData, "type", "타입", CASH_BOOK_TYPES),
+    title: readRequiredText(formData, "title", "내역", 120),
+    amount: readInteger(formData, "amount", "금액", 1, 1000000000000),
+    date: readDateOnly(formData, "date", "날짜"),
+    memo: readOptionalText(formData, "memo", 500),
+  };
+}
+
+function fail(gatheringId, message) {
+  redirect(`/gatherings/${gatheringId}/cash-books?error=${encodeURIComponent(message)}`);
+}
+
+export async function createCashBookEntryAction(formData) {
+  const session = await requireSession();
+  let gatheringId = "";
+  let input;
+  try {
+    ({ gatheringId } = readIds(formData));
+    input = readInput(formData);
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      fail(gatheringId, error.message);
+    }
+    throw error;
+  }
+
+  try {
+    await createCashBookEntry(gatheringId, session.user.id, input);
+  } catch (error) {
+    fail(gatheringId, error instanceof CashBookError ? error.message : "가계부 내역을 만들지 못했습니다.");
+  }
+  redirect(`/gatherings/${gatheringId}/cash-books?message=${encodeURIComponent("가계부 내역을 만들었습니다.")}`);
+}
+
+export async function updateCashBookEntryAction(formData) {
+  const session = await requireSession();
+  let ids = { gatheringId: "", entryId: "" };
+  let input;
+  try {
+    ids = readIds(formData);
+    input = readInput(formData);
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      fail(ids.gatheringId, error.message);
+    }
+    throw error;
+  }
+
+  try {
+    await updateCashBookEntry(ids.entryId, ids.gatheringId, session.user.id, input);
+  } catch (error) {
+    fail(ids.gatheringId, error instanceof CashBookError ? error.message : "가계부 내역을 수정하지 못했습니다.");
+  }
+  redirect(`/gatherings/${ids.gatheringId}/cash-books?message=${encodeURIComponent("가계부 내역을 수정했습니다.")}`);
+}
+
+export async function deleteCashBookEntryAction(formData) {
+  const session = await requireSession();
+  const ids = readIds(formData);
+  try {
+    await deleteCashBookEntry(ids.entryId, ids.gatheringId, session.user.id);
+  } catch (error) {
+    fail(ids.gatheringId, error instanceof CashBookError ? error.message : "가계부 내역을 삭제하지 못했습니다.");
+  }
+  redirect(`/gatherings/${ids.gatheringId}/cash-books?message=${encodeURIComponent("가계부 내역을 삭제했습니다.")}`);
+}

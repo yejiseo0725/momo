@@ -1,5 +1,7 @@
 "use strict";
 
+const { MongoClient } = require("mongodb");
+
 // 실제 시드 데이터가 아니라 컬렉션별 데이터 구조만 정의한다.
 // 이 객체의 모든 값은 JSON으로 직렬화할 수 있다.
 const seedDataStructure = {
@@ -546,6 +548,208 @@ const seedDataStructure = {
   }
 };
 
+const collectionIndexes = {
+  gatherings: [
+    { keys: { isPublic: 1, createdAt: -1 }, options: { name: "gatherings_public_createdAt" } },
+    { keys: { category: 1, isPublic: 1, createdAt: -1 }, options: { name: "gatherings_category_public_createdAt" } },
+    { keys: { userId: 1, createdAt: -1 }, options: { name: "gatherings_user_createdAt" } },
+  ],
+  gatheringMembers: [
+    { keys: { gatheringId: 1, userId: 1 }, options: { name: "gatheringMembers_gathering_user_unique", unique: true } },
+    { keys: { userId: 1, joinDate: -1 }, options: { name: "gatheringMembers_user_joinDate" } },
+    { keys: { gatheringId: 1, role: 1 }, options: { name: "gatheringMembers_gathering_role" } },
+  ],
+  challenges: [
+    { keys: { gatheringId: 1, startDate: 1, endDate: 1 }, options: { name: "challenges_gathering_period" } },
+    { keys: { userId: 1, createdAt: -1 }, options: { name: "challenges_user_createdAt" } },
+  ],
+  challengeFeeds: [
+    { keys: { challengeId: 1, doneDate: -1 }, options: { name: "challengeFeeds_challenge_doneDate" } },
+    { keys: { userId: 1, createdAt: -1 }, options: { name: "challengeFeeds_user_createdAt" } },
+  ],
+  schedules: [
+    { keys: { gatheringId: 1, startDate: 1, endDate: 1 }, options: { name: "schedules_gathering_period" } },
+    { keys: { userId: 1, createdAt: -1 }, options: { name: "schedules_user_createdAt" } },
+  ],
+  scheduleMembers: [
+    { keys: { scheduleId: 1, userId: 1 }, options: { name: "scheduleMembers_schedule_user_unique", unique: true } },
+    { keys: { userId: 1 }, options: { name: "scheduleMembers_user" } },
+  ],
+  cashBooks: [
+    { keys: { gatheringId: 1, date: -1 }, options: { name: "cashBooks_gathering_date" } },
+    { keys: { userId: 1, createdAt: -1 }, options: { name: "cashBooks_user_createdAt" } },
+  ],
+  chatRooms: [
+    { keys: { gatheringId: 1 }, options: { name: "chatRooms_gathering_unique", unique: true } },
+  ],
+  chatMessages: [
+    { keys: { chatRoomId: 1, createdAt: -1 }, options: { name: "chatMessages_room_createdAt" } },
+  ],
+  notifications: [
+    { keys: { userId: 1, isRead: 1, createdAt: -1 }, options: { name: "notifications_user_read_createdAt" } },
+    { keys: { gatheringId: 1, createdAt: -1 }, options: { name: "notifications_gathering_createdAt" } },
+  ],
+};
+
+function getBsonType(field) {
+  const typeMap = {
+    ObjectId: "objectId",
+    string: "string",
+    "string[]": "array",
+    integer: ["int", "long", "double", "decimal"],
+    number: ["int", "long", "double", "decimal"],
+    boolean: "bool",
+    Date: "date",
+  };
+  const bsonType = typeMap[field.type];
+
+  if (!bsonType) {
+    throw new Error(`지원하지 않는 seed 필드 타입입니다: ${field.type}`);
+  }
+
+  if (!field.nullable) {
+    return bsonType;
+  }
+
+  return Array.isArray(bsonType) ? [...bsonType, "null"] : [bsonType, "null"];
+}
+
+function buildFieldSchema(field) {
+  const schema = {
+    bsonType: getBsonType(field),
+  };
+
+  if (field.type === "string" && !field.nullable) {
+    schema.minLength = 1;
+  }
+
+  if (field.type === "string[]") {
+    schema.items = { bsonType: "string" };
+    if (field.minimumItems) {
+      schema.minItems = field.minimumItems;
+    }
+    if (field.uniqueItems) {
+      schema.uniqueItems = true;
+    }
+    if (field.enumRef) {
+      schema.items.enum = seedDataStructure.enums[field.enumRef];
+    }
+  }
+
+  if (field.enumRef && field.type !== "string[]") {
+    schema.enum = seedDataStructure.enums[field.enumRef];
+  }
+
+  if (field.format === "YYYY-MM-DD") {
+    schema.pattern = "^\\d{4}-\\d{2}-\\d{2}$";
+  }
+
+  if (typeof field.minimum === "number") {
+    schema.minimum = field.minimum;
+  }
+
+  if (typeof field.maximum === "number") {
+    schema.maximum = field.maximum;
+  }
+
+  if (field.type === "integer") {
+    schema.multipleOf = 1;
+  }
+
+  return schema;
+}
+
+function buildCollectionJsonSchema(collectionName) {
+  const collection = seedDataStructure.collections[collectionName];
+
+  if (!collection || collection.managedBy) {
+    throw new Error(`${collectionName}은(는) 애플리케이션이 초기화할 컬렉션이 아닙니다.`);
+  }
+
+  const required = [];
+  const properties = {};
+
+  for (const [fieldName, field] of Object.entries(collection.fields)) {
+    properties[fieldName] = buildFieldSchema(field);
+    if (field.required) {
+      required.push(fieldName);
+    }
+  }
+
+  return {
+    bsonType: "object",
+    additionalProperties: false,
+    required,
+    properties,
+  };
+}
+
+async function createOrUpdateCollection(database, collectionName) {
+  const jsonSchema = buildCollectionJsonSchema(collectionName);
+  const exists = await database
+    .listCollections({ name: collectionName }, { nameOnly: true })
+    .hasNext();
+  const validationOptions = {
+    validator: { $jsonSchema: jsonSchema },
+    validationLevel: "strict",
+    validationAction: "error",
+  };
+
+  if (exists) {
+    await database.command({
+      collMod: collectionName,
+      ...validationOptions,
+    });
+    console.log(`[갱신] ${collectionName} 검증 규칙`);
+  } else {
+    await database.createCollection(collectionName, validationOptions);
+    console.log(`[생성] ${collectionName}`);
+  }
+
+  const collection = database.collection(collectionName);
+  for (const index of collectionIndexes[collectionName] || []) {
+    await collection.createIndex(index.keys, index.options);
+  }
+  console.log(`[확인] ${collectionName} 인덱스`);
+}
+
+async function initializeDatabaseStructure() {
+  const mongoUri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017";
+  const databaseName = process.env.MONGODB_DB_NAME || "momo";
+  const client = new MongoClient(mongoUri, {
+    appName: "momo-seed",
+    serverSelectionTimeoutMS: 5000,
+  });
+
+  try {
+    await client.connect();
+    const database = client.db(databaseName);
+    const applicationCollections = Object.entries(seedDataStructure.collections)
+      .filter(([, definition]) => !definition.managedBy)
+      .map(([collectionName]) => collectionName);
+
+    for (const collectionName of applicationCollections) {
+      await createOrUpdateCollection(database, collectionName);
+    }
+
+    console.log("예시 데이터 삽입 없이 momo 초기 컬렉션 구성을 완료했습니다.");
+    console.log("Better Auth 컬렉션은 첫 인증 요청에서 Better Auth가 관리합니다.");
+  } finally {
+    await client.close();
+  }
+}
+
+if (require.main === module) {
+  initializeDatabaseStructure().catch((error) => {
+    console.error("MongoDB 초기 구성에 실패했습니다.", error.message);
+    process.exitCode = 1;
+  });
+}
+
 module.exports = {
+  buildCollectionJsonSchema,
+  collectionIndexes,
+  createOrUpdateCollection,
+  initializeDatabaseStructure,
   seedDataStructure,
 };

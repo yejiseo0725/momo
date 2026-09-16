@@ -1,0 +1,147 @@
+:root {
+  --momo-gap: 1rem;
+}
+
+body > header,
+body > footer {
+  padding-block: 1rem;
+}
+
+.site-nav,
+.gathering-nav,
+.section-heading,
+.actions,
+.meta-list,
+.pagination,
+.chat-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.gathering-nav {
+  padding-block: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.site-nav > ul:last-child {
+  margin-left: auto;
+}
+
+.section-heading {
+  justify-content: space-between;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: var(--momo-gap);
+}
+
+.card-grid > article,
+.stack > article {
+  margin: 0;
+}
+
+.stack {
+  display: grid;
+  gap: var(--momo-gap);
+}
+
+.two-column {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(16rem, 1fr);
+  gap: 2rem;
+  align-items: start;
+}
+
+.compact-form label,
+.compact-form input,
+.compact-form select,
+.compact-form textarea {
+  margin-bottom: 0.5rem;
+}
+
+.inline-form {
+  display: inline;
+  margin: 0;
+}
+
+.inline-form button,
+.actions a,
+.actions button {
+  margin: 0;
+}
+
+.notice {
+  border-left: 0.35rem solid var(--accent);
+  padding: 0.75rem 1rem;
+}
+
+.error-notice {
+  border-left-color: var(--code);
+}
+
+.leader-mark,
+.unread-mark {
+  font-weight: bold;
+  color: var(--accent);
+}
+
+.calendar {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.calendar td {
+  height: 7rem;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+
+.calendar ol {
+  padding-left: 1rem;
+  margin-block: 0.25rem;
+}
+
+.chat-list {
+  max-height: 34rem;
+  overflow-y: auto;
+}
+
+.chat-list article[data-mine="true"] {
+  border-left: 0.35rem solid var(--accent);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 720px) {
+  .site-nav,
+  .two-column {
+    display: block;
+  }
+
+  .site-nav ul {
+    justify-content: center;
+  }
+
+  .calendar {
+    font-size: 0.8rem;
+  }
+
+  .calendar td {
+    height: 5rem;
+    padding: 0.25rem;
+  }
+}

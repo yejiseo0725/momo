@@ -1,0 +1,131 @@
+"use server";
+
+import { redirect } from "next/navigation";
+
+import {
+  ChallengeError,
+  createChallenge,
+  createChallengeFeed,
+  deleteChallenge,
+  updateChallenge,
+} from "@/lib/challenges";
+import { requireSession } from "@/lib/session";
+import {
+  ValidationError,
+  readDateOnly,
+  readOptionalUrl,
+  readRequiredText,
+  validateDateRange,
+} from "@/lib/utils/validation";
+
+function getIds(formData) {
+  return {
+    gatheringId: readRequiredText(formData, "gatheringId", "모임", 100),
+    challengeId: formData.has("challengeId")
+      ? readRequiredText(formData, "challengeId", "챌린지", 100)
+      : "",
+  };
+}
+
+function readChallengeInput(formData) {
+  const startDate = readDateOnly(formData, "startDate", "시작일");
+  const endDate = readDateOnly(formData, "endDate", "종료일");
+  validateDateRange(startDate, endDate);
+
+  return {
+    title: readRequiredText(formData, "title", "제목", 100),
+    description: readRequiredText(formData, "description", "설명", 1000),
+    useImage: formData.get("useImage") === "on",
+    startDate,
+    endDate,
+  };
+}
+
+function fail(gatheringId, message) {
+  redirect(`/gatherings/${gatheringId}/challenges?error=${encodeURIComponent(message)}`);
+}
+
+export async function createChallengeAction(formData) {
+  const session = await requireSession();
+  let gatheringId = "";
+  let input;
+
+  try {
+    ({ gatheringId } = getIds(formData));
+    input = readChallengeInput(formData);
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      fail(gatheringId, error.message);
+    }
+    throw error;
+  }
+
+  try {
+    await createChallenge(gatheringId, session.user.id, input);
+  } catch (error) {
+    fail(gatheringId, error instanceof ChallengeError ? error.message : "챌린지를 만들지 못했습니다.");
+  }
+  redirect(`/gatherings/${gatheringId}/challenges?message=${encodeURIComponent("챌린지를 만들었습니다.")}`);
+}
+
+export async function updateChallengeAction(formData) {
+  const session = await requireSession();
+  let ids = { gatheringId: "", challengeId: "" };
+  let input;
+
+  try {
+    ids = getIds(formData);
+    input = readChallengeInput(formData);
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      fail(ids.gatheringId, error.message);
+    }
+    throw error;
+  }
+
+  try {
+    await updateChallenge(ids.challengeId, ids.gatheringId, session.user.id, input);
+  } catch (error) {
+    fail(ids.gatheringId, error instanceof ChallengeError ? error.message : "챌린지를 수정하지 못했습니다.");
+  }
+  redirect(`/gatherings/${ids.gatheringId}/challenges?message=${encodeURIComponent("챌린지를 수정했습니다.")}`);
+}
+
+export async function deleteChallengeAction(formData) {
+  const session = await requireSession();
+  const ids = getIds(formData);
+
+  try {
+    await deleteChallenge(ids.challengeId, ids.gatheringId, session.user.id);
+  } catch (error) {
+    fail(ids.gatheringId, error instanceof ChallengeError ? error.message : "챌린지를 삭제하지 못했습니다.");
+  }
+  redirect(`/gatherings/${ids.gatheringId}/challenges?message=${encodeURIComponent("챌린지를 삭제했습니다.")}`);
+}
+
+export async function createChallengeFeedAction(formData) {
+  const session = await requireSession();
+  let ids = { gatheringId: "", challengeId: "" };
+  let input;
+
+  try {
+    ids = getIds(formData);
+    input = {
+      doneDate: readDateOnly(formData, "doneDate", "인증일"),
+      imageUrl: readOptionalUrl(formData, "imageUrl", "이미지 링크"),
+      description: readRequiredText(formData, "description", "인증 내용", 500),
+    };
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      fail(ids.gatheringId, error.message);
+    }
+    throw error;
+  }
+
+  try {
+    await createChallengeFeed(ids.challengeId, ids.gatheringId, session.user.id, input);
+  } catch (error) {
+    fail(ids.gatheringId, error instanceof ChallengeError ? error.message : "챌린지를 인증하지 못했습니다.");
+  }
+  redirect(`/gatherings/${ids.gatheringId}/challenges?message=${encodeURIComponent("챌린지를 인증했습니다.")}`);
+}

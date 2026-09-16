@@ -1,0 +1,39 @@
+"use strict";
+
+const test = require("node:test");
+const assert = require("node:assert/strict");
+
+const {
+  buildCollectionJsonSchema,
+  collectionIndexes,
+  seedDataStructure,
+} = require("../scripts/seeds.js");
+
+test("모든 애플리케이션 컬렉션은 JSON Schema로 변환된다", () => {
+  const applicationCollections = Object.entries(seedDataStructure.collections)
+    .filter(([, definition]) => !definition.managedBy)
+    .map(([name]) => name);
+
+  for (const collectionName of applicationCollections) {
+    const schema = buildCollectionJsonSchema(collectionName);
+    assert.equal(schema.bsonType, "object");
+    assert.equal(schema.additionalProperties, false);
+    assert.ok(schema.required.includes("_id"));
+    assert.ok(collectionIndexes[collectionName].length > 0);
+  }
+});
+
+test("gatheringMembers는 모임과 사용자 조합을 유일하게 제한한다", () => {
+  const uniqueIndex = collectionIndexes.gatheringMembers.find(
+    (index) => index.options.name === "gatheringMembers_gathering_user_unique",
+  );
+
+  assert.deepEqual(uniqueIndex.keys, { gatheringId: 1, userId: 1 });
+  assert.equal(uniqueIndex.options.unique, true);
+});
+
+test("날짜 전용 필드는 YYYY-MM-DD 패턴을 사용한다", () => {
+  const scheduleSchema = buildCollectionJsonSchema("schedules");
+  assert.equal(scheduleSchema.properties.startDate.pattern, "^\\d{4}-\\d{2}-\\d{2}$");
+  assert.equal(scheduleSchema.properties.endDate.pattern, "^\\d{4}-\\d{2}-\\d{2}$");
+});
