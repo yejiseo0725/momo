@@ -1,5 +1,10 @@
 "use strict";
 
+import { fileURLToPath } from "node:url";
+import { ObjectId } from "mongodb";
+import { auth } from "../lib/auth.js";
+import { db, mongoClient } from "../lib/mongodb.js";
+
 // 실제 시드 데이터가 아니라 컬렉션별 데이터 구조만 정의한다.
 // 이 객체의 모든 값은 JSON으로 직렬화할 수 있다.
 const seedDataStructure = {
@@ -546,6 +551,265 @@ const seedDataStructure = {
   }
 };
 
-module.exports = {
-  seedDataStructure,
+const ids = {
+  studyGathering: new ObjectId("660000000000000000000001"),
+  runningGathering: new ObjectId("660000000000000000000002"),
+  studyChallenge: new ObjectId("660000000000000000000011"),
+  studyFeed: new ObjectId("660000000000000000000021"),
+  studySchedule: new ObjectId("660000000000000000000031"),
+  studyCashBook: new ObjectId("660000000000000000000041"),
+  studyChatRoom: new ObjectId("660000000000000000000051"),
+  runningChatRoom: new ObjectId("660000000000000000000052"),
+  studyMessage: new ObjectId("660000000000000000000061"),
 };
+
+const seedUsers = [
+  {
+    name: "모모 리더",
+    email: "leader@momo.local",
+    gender: "여성",
+    nickname: "모임지기",
+    region: "서울 마포구",
+    category: ["공부", "친목"],
+  },
+  {
+    name: "모모 멤버",
+    email: "member@momo.local",
+    gender: "남성",
+    nickname: "함께해요",
+    region: "서울 서대문구",
+    category: ["운동", "공부"],
+  },
+];
+
+async function createSeedUser(user, password) {
+  const existingUser = await db.collection("users").findOne({
+    email: user.email,
+  });
+
+  if (existingUser) {
+    await db.collection("users").updateOne(
+      { _id: existingUser._id },
+      {
+        $set: {
+          name: user.name,
+          gender: user.gender,
+          nickname: user.nickname,
+          region: user.region,
+          category: user.category,
+          updatedAt: new Date(),
+        },
+      },
+    );
+    return existingUser.id;
+  }
+
+  const result = await auth.api.signUpEmail({
+    body: {
+      ...user,
+      password,
+    },
+  });
+
+  return result.user.id;
+}
+
+async function replaceSeedDocuments(collectionName, documents) {
+  for (const document of documents) {
+    await db.collection(collectionName).replaceOne(
+      { _id: document._id },
+      document,
+      { upsert: true },
+    );
+  }
+}
+
+async function createIndexes() {
+  await Promise.all([
+    db.collection("users").createIndex({ email: 1 }, { unique: true }),
+    db.collection("gatherings").createIndex({ isPublic: 1, createdAt: -1 }),
+    db
+      .collection("gatheringMembers")
+      .createIndex({ gatheringId: 1, userId: 1 }, { unique: true }),
+    db
+      .collection("scheduleMembers")
+      .createIndex({ scheduleId: 1, userId: 1 }, { unique: true }),
+    db.collection("chatRooms").createIndex({ gatheringId: 1 }, { unique: true }),
+    db.collection("chatMessages").createIndex({ chatRoomId: 1, createdAt: 1 }),
+    db.collection("notifications").createIndex({ userId: 1, createdAt: -1 }),
+  ]);
+}
+
+export async function seedDatabase() {
+  const password = process.env.SEED_USER_PASSWORD || "momo1234!";
+  const [leaderId, memberId] = await Promise.all(
+    seedUsers.map((user) => createSeedUser(user, password)),
+  );
+  const now = new Date("2026-09-16T00:00:00.000Z");
+
+  await replaceSeedDocuments("gatherings", [
+    {
+      _id: ids.studyGathering,
+      userId: leaderId,
+      name: "주말 함께 읽기",
+      region: "서울 마포구",
+      description: "주말마다 한 권의 책을 정하고 편하게 이야기를 나눕니다.",
+      imageUrl: null,
+      category: "공부",
+      maxMemCount: 12,
+      isPublic: true,
+      createdAt: new Date("2026-09-01T09:00:00.000Z"),
+      updatedAt: now,
+    },
+    {
+      _id: ids.runningGathering,
+      userId: memberId,
+      name: "퇴근 후 가볍게 달리기",
+      region: "서울 서대문구",
+      description: "기록보다 꾸준함을 목표로 천천히 달리는 모임입니다.",
+      imageUrl: null,
+      category: "운동",
+      maxMemCount: 20,
+      isPublic: true,
+      createdAt: new Date("2026-09-05T09:00:00.000Z"),
+      updatedAt: now,
+    },
+  ]);
+
+  await db.collection("gatheringMembers").deleteMany({
+    gatheringId: { $in: [ids.studyGathering.toString(), ids.runningGathering.toString()] },
+  });
+  await db.collection("gatheringMembers").insertMany([
+    {
+      gatheringId: ids.studyGathering.toString(),
+      userId: leaderId,
+      joinDate: new Date("2026-09-01T09:00:00.000Z"),
+      role: "LEADER",
+    },
+    {
+      gatheringId: ids.studyGathering.toString(),
+      userId: memberId,
+      joinDate: new Date("2026-09-02T09:00:00.000Z"),
+      role: "MEMBER",
+    },
+    {
+      gatheringId: ids.runningGathering.toString(),
+      userId: memberId,
+      joinDate: new Date("2026-09-05T09:00:00.000Z"),
+      role: "LEADER",
+    },
+  ]);
+
+  await replaceSeedDocuments("challenges", [
+    {
+      _id: ids.studyChallenge,
+      gatheringId: ids.studyGathering.toString(),
+      userId: memberId,
+      title: "매일 20쪽 읽기",
+      description: "분량보다 매일 책을 펼치는 습관을 만듭니다.",
+      useImage: false,
+      startDate: "2026-09-16",
+      endDate: "2026-09-30",
+      createdAt: now,
+      updatedAt: now,
+    },
+  ]);
+  await replaceSeedDocuments("challengeFeeds", [
+    {
+      _id: ids.studyFeed,
+      challengeId: ids.studyChallenge.toString(),
+      userId: memberId,
+      doneDate: "2026-09-16",
+      imageUrl: null,
+      description: "첫날 읽기를 마쳤어요.",
+      createdAt: now,
+      updatedAt: now,
+    },
+  ]);
+  await replaceSeedDocuments("schedules", [
+    {
+      _id: ids.studySchedule,
+      gatheringId: ids.studyGathering.toString(),
+      userId: leaderId,
+      title: "9월 독서 모임",
+      description: "읽은 부분을 바탕으로 자유롭게 대화합니다.",
+      startDate: "2026-09-26",
+      endDate: "2026-09-26",
+      region: "망원동 작은도서관",
+      createdAt: now,
+      updatedAt: now,
+    },
+  ]);
+  await db.collection("scheduleMembers").deleteMany({
+    scheduleId: ids.studySchedule.toString(),
+  });
+  await db.collection("scheduleMembers").insertMany([
+    { scheduleId: ids.studySchedule.toString(), userId: leaderId },
+    { scheduleId: ids.studySchedule.toString(), userId: memberId },
+  ]);
+  await replaceSeedDocuments("cashBooks", [
+    {
+      _id: ids.studyCashBook,
+      gatheringId: ids.studyGathering.toString(),
+      userId: leaderId,
+      amount: 24000,
+      type: "SPENDING",
+      title: "모임 공간 대여",
+      date: "2026-09-26",
+      memo: "두 시간 이용",
+      createdAt: now,
+      updatedAt: now,
+    },
+  ]);
+  await replaceSeedDocuments("chatRooms", [
+    { _id: ids.studyChatRoom, gatheringId: ids.studyGathering.toString(), createdAt: now },
+    { _id: ids.runningChatRoom, gatheringId: ids.runningGathering.toString(), createdAt: now },
+  ]);
+  await replaceSeedDocuments("chatMessages", [
+    {
+      _id: ids.studyMessage,
+      chatRoomId: ids.studyChatRoom.toString(),
+      userId: leaderId,
+      content: "이번 주도 편하게 읽고 만나요!",
+      createdAt: now,
+    },
+  ]);
+
+  await db.collection("notifications").deleteMany({
+    gatheringId: ids.studyGathering.toString(),
+  });
+  await db.collection("notifications").insertOne({
+    userId: memberId,
+    actorUserId: leaderId,
+    gatheringId: ids.studyGathering.toString(),
+    type: "SCHEDULE_CREATED",
+    targetId: ids.studySchedule.toString(),
+    message: "새 일정 '9월 독서 모임'이 등록되었습니다.",
+    isRead: false,
+    createdAt: now,
+  });
+
+  await createIndexes();
+
+  return { leaderId, memberId };
+}
+
+export { seedDataStructure };
+
+const isDirectExecution = process.argv[1] === fileURLToPath(import.meta.url);
+
+if (isDirectExecution) {
+  seedDatabase()
+    .then(({ leaderId, memberId }) => {
+      console.log("초기 데이터 구성이 완료되었습니다.");
+      console.log(`리더 사용자 ID: ${leaderId}`);
+      console.log(`멤버 사용자 ID: ${memberId}`);
+    })
+    .catch((error) => {
+      console.error("초기 데이터 구성에 실패했습니다.", error);
+      process.exitCode = 1;
+    })
+    .finally(async () => {
+      await mongoClient.close();
+    });
+}
