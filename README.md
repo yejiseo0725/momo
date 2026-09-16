@@ -17,6 +17,7 @@ MONGODB_URI=mongodb://127.0.0.1:27017
 MONGODB_DB_NAME=momo
 BETTER_AUTH_URL=http://localhost:3000
 BETTER_AUTH_SECRET=32자 이상의 임의 문자열
+SEED_USER_PASSWORD=momo1234!
 PORT=3000
 ```
 
@@ -24,13 +25,20 @@ PORT=3000
 
 ## 데이터베이스 초기 구성
 
-다음 명령은 `scripts/seeds.js`의 최신 데이터 구조를 MongoDB 검증 규칙과 인덱스로 반영합니다. 기존 문서나 컬렉션을 삭제하지 않으며 예시 데이터도 넣지 않습니다.
+다음 명령은 `scripts/seeds.js`의 최신 데이터 구조를 MongoDB 검증 규칙과 인덱스로 반영하고, 예시 계정과 모임 데이터를 추가합니다. 여러 번 실행해도 같은 예시 데이터가 중복 생성되지 않으며, 사용자가 직접 만든 데이터는 삭제하지 않습니다.
 
 ```bash
-npm run db:seed
+npm run seed
 ```
 
-Better Auth가 관리하는 `users`, `sessions`, `accounts`, `verifications` 컬렉션은 인증 요청 시 Better Auth가 생성하고 관리합니다.
+`npm run db:seed`도 같은 작업을 수행합니다. Better Auth가 예시 계정을 생성하고 `users`, `accounts` 컬렉션을 관리합니다.
+
+| 구분 | 이메일 | 기본 비밀번호 |
+| --- | --- | --- |
+| 리더 | `leader@momo.local` | `momo1234!` |
+| 멤버 | `member@momo.local` | `momo1234!` |
+
+기본 비밀번호는 `.env.local`의 `SEED_USER_PASSWORD`로 변경할 수 있습니다. 이미 생성된 예시 계정의 비밀번호는 시드를 다시 실행해도 덮어쓰지 않습니다.
 
 ## 개발 서버
 

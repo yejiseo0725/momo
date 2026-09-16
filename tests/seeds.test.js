@@ -6,6 +6,8 @@ const assert = require("node:assert/strict");
 const {
   buildCollectionJsonSchema,
   collectionIndexes,
+  sampleIds,
+  sampleUsers,
   seedDataStructure,
 } = require("../scripts/seeds.js");
 
@@ -36,4 +38,13 @@ test("날짜 전용 필드는 YYYY-MM-DD 패턴을 사용한다", () => {
   const scheduleSchema = buildCollectionJsonSchema("schedules");
   assert.equal(scheduleSchema.properties.startDate.pattern, "^\\d{4}-\\d{2}-\\d{2}$");
   assert.equal(scheduleSchema.properties.endDate.pattern, "^\\d{4}-\\d{2}-\\d{2}$");
+});
+
+test("예시 계정과 모임 ID는 반복 실행 가능한 고정값을 사용한다", () => {
+  assert.deepEqual(
+    sampleUsers.map((user) => user.email),
+    ["leader@momo.local", "member@momo.local"],
+  );
+  assert.equal(sampleIds.studyGathering.toString(), "660000000000000000000001");
+  assert.equal(sampleIds.runningGathering.toString(), "660000000000000000000002");
 });

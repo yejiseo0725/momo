@@ -1,8 +1,8 @@
 "use strict";
 
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 
-// 실제 시드 데이터가 아니라 컬렉션별 데이터 구조만 정의한다.
+// 컬렉션 검증 규칙을 만들 때 사용하는 데이터 구조다.
 // 이 객체의 모든 값은 JSON으로 직렬화할 수 있다.
 const seedDataStructure = {
   "conventions": {
@@ -548,6 +548,38 @@ const seedDataStructure = {
   }
 };
 
+const sampleIds = {
+  studyGathering: new ObjectId("660000000000000000000001"),
+  runningGathering: new ObjectId("660000000000000000000002"),
+  studyChallenge: new ObjectId("660000000000000000000011"),
+  studyFeed: new ObjectId("660000000000000000000021"),
+  studySchedule: new ObjectId("660000000000000000000031"),
+  studyCashBook: new ObjectId("660000000000000000000041"),
+  studyChatRoom: new ObjectId("660000000000000000000051"),
+  runningChatRoom: new ObjectId("660000000000000000000052"),
+  studyMessage: new ObjectId("660000000000000000000061"),
+  studyNotification: new ObjectId("660000000000000000000091"),
+};
+
+const sampleUsers = [
+  {
+    name: "모모 리더",
+    email: "leader@momo.local",
+    gender: "여성",
+    nickname: "모임지기",
+    region: "서울 마포구",
+    category: ["공부", "친목"],
+  },
+  {
+    name: "모모 멤버",
+    email: "member@momo.local",
+    gender: "남성",
+    nickname: "함께해요",
+    region: "서울 서대문구",
+    category: ["운동", "공부"],
+  },
+];
+
 const collectionIndexes = {
   gatherings: [
     { keys: { isPublic: 1, createdAt: -1 }, options: { name: "gatherings_public_createdAt" } },
@@ -713,6 +745,327 @@ async function createOrUpdateCollection(database, collectionName) {
   console.log(`[확인] ${collectionName} 인덱스`);
 }
 
+function createSeedAuth(database, client) {
+  const { mongodbAdapter } = require("@better-auth/mongo-adapter");
+  const { betterAuth } = require("better-auth");
+
+  return betterAuth({
+    appName: "momo",
+    baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+    secret:
+      process.env.BETTER_AUTH_SECRET ||
+      "momo-local-development-secret-change-before-deploy",
+    database: mongodbAdapter(database, {
+      client,
+      transaction: false,
+    }),
+    emailAndPassword: {
+      enabled: true,
+      minPasswordLength: 8,
+      maxPasswordLength: 128,
+    },
+    user: {
+      modelName: "users",
+      additionalFields: {
+        gender: {
+          type: ["남성", "여성"],
+          required: true,
+          input: true,
+        },
+        nickname: {
+          type: "string",
+          required: true,
+          input: true,
+        },
+        region: {
+          type: "string",
+          required: true,
+          input: true,
+        },
+        category: {
+          type: "string[]",
+          required: true,
+          input: true,
+        },
+      },
+    },
+    session: {
+      modelName: "sessions",
+    },
+    account: {
+      modelName: "accounts",
+    },
+    verification: {
+      modelName: "verifications",
+    },
+    advanced: {
+      database: {
+        joins: true,
+      },
+    },
+  });
+}
+
+async function createOrUpdateSeedUser(database, auth, user, password) {
+  const existingUser = await database.collection("users").findOne({
+    email: user.email,
+  });
+
+  if (existingUser) {
+    await database.collection("users").updateOne(
+      { _id: existingUser._id },
+      {
+        $set: {
+          name: user.name,
+          gender: user.gender,
+          nickname: user.nickname,
+          region: user.region,
+          category: user.category,
+          updatedAt: new Date(),
+        },
+      },
+    );
+    return existingUser._id.toString();
+  }
+
+  const result = await auth.api.signUpEmail({
+    body: {
+      ...user,
+      password,
+    },
+  });
+
+  return result.user.id;
+}
+
+async function replaceSeedDocuments(database, collectionName, documents) {
+  for (const document of documents) {
+    await database.collection(collectionName).replaceOne(
+      { _id: document._id },
+      document,
+      { upsert: true },
+    );
+  }
+}
+
+async function upsertGatheringMember(database, membership) {
+  await database.collection("gatheringMembers").updateOne(
+    {
+      gatheringId: membership.gatheringId,
+      userId: membership.userId,
+    },
+    {
+      $set: {
+        joinDate: membership.joinDate,
+        role: membership.role,
+      },
+    },
+    { upsert: true },
+  );
+}
+
+async function upsertScheduleMember(database, membership) {
+  await database.collection("scheduleMembers").updateOne(
+    {
+      scheduleId: membership.scheduleId,
+      userId: membership.userId,
+    },
+    { $setOnInsert: membership },
+    { upsert: true },
+  );
+}
+
+async function getOrCreateSeedChatRoom(database, roomId, gatheringId, createdAt) {
+  await database.collection("chatRooms").updateOne(
+    { gatheringId },
+    {
+      $set: { createdAt },
+      $setOnInsert: {
+        _id: roomId,
+        gatheringId,
+      },
+    },
+    { upsert: true },
+  );
+
+  return database.collection("chatRooms").findOne({ gatheringId });
+}
+
+async function seedExampleData(database, client) {
+  const auth = createSeedAuth(database, client);
+  const password = process.env.SEED_USER_PASSWORD || "momo1234!";
+  const [leaderId, memberId] = await Promise.all(
+    sampleUsers.map((user) => createOrUpdateSeedUser(database, auth, user, password)),
+  );
+  const now = new Date("2026-09-16T00:00:00.000Z");
+  const studyGatheringId = sampleIds.studyGathering.toString();
+  const runningGatheringId = sampleIds.runningGathering.toString();
+
+  await replaceSeedDocuments(database, "gatherings", [
+    {
+      _id: sampleIds.studyGathering,
+      userId: leaderId,
+      name: "주말 함께 읽기",
+      region: "서울 마포구",
+      description: "주말마다 한 권의 책을 정하고 편하게 이야기를 나눕니다.",
+      imageUrl: null,
+      category: "공부",
+      maxMemCount: 12,
+      isPublic: true,
+      createdAt: new Date("2026-09-01T09:00:00.000Z"),
+      updatedAt: now,
+    },
+    {
+      _id: sampleIds.runningGathering,
+      userId: memberId,
+      name: "퇴근 후 가볍게 달리기",
+      region: "서울 서대문구",
+      description: "기록보다 꾸준함을 목표로 천천히 달리는 모임입니다.",
+      imageUrl: null,
+      category: "운동",
+      maxMemCount: 20,
+      isPublic: true,
+      createdAt: new Date("2026-09-05T09:00:00.000Z"),
+      updatedAt: now,
+    },
+  ]);
+
+  const gatheringMembers = [
+    {
+      gatheringId: studyGatheringId,
+      userId: leaderId,
+      joinDate: new Date("2026-09-01T09:00:00.000Z"),
+      role: "LEADER",
+    },
+    {
+      gatheringId: studyGatheringId,
+      userId: memberId,
+      joinDate: new Date("2026-09-02T09:00:00.000Z"),
+      role: "MEMBER",
+    },
+    {
+      gatheringId: runningGatheringId,
+      userId: memberId,
+      joinDate: new Date("2026-09-05T09:00:00.000Z"),
+      role: "LEADER",
+    },
+  ];
+
+  for (const membership of gatheringMembers) {
+    await upsertGatheringMember(database, membership);
+  }
+
+  await replaceSeedDocuments(database, "challenges", [
+    {
+      _id: sampleIds.studyChallenge,
+      gatheringId: studyGatheringId,
+      userId: memberId,
+      title: "매일 20쪽 읽기",
+      description: "분량보다 매일 책을 펼치는 습관을 만듭니다.",
+      useImage: false,
+      startDate: "2026-09-16",
+      endDate: "2026-09-30",
+      createdAt: now,
+      updatedAt: now,
+    },
+  ]);
+
+  await replaceSeedDocuments(database, "challengeFeeds", [
+    {
+      _id: sampleIds.studyFeed,
+      challengeId: sampleIds.studyChallenge.toString(),
+      userId: memberId,
+      doneDate: "2026-09-16",
+      imageUrl: null,
+      description: "첫날 읽기를 마쳤어요.",
+      createdAt: now,
+      updatedAt: now,
+    },
+  ]);
+
+  await replaceSeedDocuments(database, "schedules", [
+    {
+      _id: sampleIds.studySchedule,
+      gatheringId: studyGatheringId,
+      userId: leaderId,
+      title: "9월 독서 모임",
+      description: "읽은 부분을 바탕으로 자유롭게 대화합니다.",
+      startDate: "2026-09-26",
+      endDate: "2026-09-26",
+      region: "망원동 작은도서관",
+      createdAt: now,
+      updatedAt: now,
+    },
+  ]);
+
+  for (const userId of [leaderId, memberId]) {
+    await upsertScheduleMember(database, {
+      scheduleId: sampleIds.studySchedule.toString(),
+      userId,
+    });
+  }
+
+  await replaceSeedDocuments(database, "cashBooks", [
+    {
+      _id: sampleIds.studyCashBook,
+      gatheringId: studyGatheringId,
+      userId: leaderId,
+      amount: 24000,
+      type: "SPENDING",
+      title: "모임 공간 대여",
+      date: "2026-09-26",
+      memo: "두 시간 이용",
+      createdAt: now,
+      updatedAt: now,
+    },
+  ]);
+
+  const studyChatRoom = await getOrCreateSeedChatRoom(
+    database,
+    sampleIds.studyChatRoom,
+    studyGatheringId,
+    now,
+  );
+  await getOrCreateSeedChatRoom(
+    database,
+    sampleIds.runningChatRoom,
+    runningGatheringId,
+    now,
+  );
+
+  await replaceSeedDocuments(database, "chatMessages", [
+    {
+      _id: sampleIds.studyMessage,
+      chatRoomId: studyChatRoom._id.toString(),
+      userId: leaderId,
+      content: "이번 주도 편하게 읽고 만나요!",
+      createdAt: now,
+    },
+  ]);
+
+  await database.collection("notifications").deleteMany({
+    userId: memberId,
+    gatheringId: studyGatheringId,
+    type: "SCHEDULE_CREATED",
+    targetId: sampleIds.studySchedule.toString(),
+  });
+  await replaceSeedDocuments(database, "notifications", [
+    {
+      _id: sampleIds.studyNotification,
+      userId: memberId,
+      actorUserId: leaderId,
+      gatheringId: studyGatheringId,
+      type: "SCHEDULE_CREATED",
+      targetId: sampleIds.studySchedule.toString(),
+      message: "새 일정 ‘9월 독서 모임’이 등록되었습니다.",
+      isRead: false,
+      createdAt: now,
+    },
+  ]);
+
+  return { leaderId, memberId, password };
+}
+
 async function initializeDatabaseStructure() {
   const mongoUri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017";
   const databaseName = process.env.MONGODB_DB_NAME || "momo";
@@ -732,8 +1085,10 @@ async function initializeDatabaseStructure() {
       await createOrUpdateCollection(database, collectionName);
     }
 
-    console.log("예시 데이터 삽입 없이 momo 초기 컬렉션 구성을 완료했습니다.");
-    console.log("Better Auth 컬렉션은 첫 인증 요청에서 Better Auth가 관리합니다.");
+    const result = await seedExampleData(database, client);
+    console.log("momo 초기 컬렉션과 예시 데이터 구성을 완료했습니다.");
+    console.log(`리더 계정: leader@momo.local / ${result.password}`);
+    console.log(`멤버 계정: member@momo.local / ${result.password}`);
   } finally {
     await client.close();
   }
@@ -751,5 +1106,8 @@ module.exports = {
   collectionIndexes,
   createOrUpdateCollection,
   initializeDatabaseStructure,
+  sampleIds,
+  sampleUsers,
+  seedExampleData,
   seedDataStructure,
 };
