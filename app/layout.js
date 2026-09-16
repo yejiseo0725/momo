@@ -1,6 +1,7 @@
 import Link from "next/link";
 import "simpledotcss/simple.css";
 import { logoutAction } from "@/app/actions/auth";
+import { db } from "@/lib/mongodb";
 import { getSession } from "@/lib/session";
 
 export const metadata = {
@@ -10,6 +11,9 @@ export const metadata = {
 
 export default async function RootLayout({ children }) {
   const session = await getSession();
+  const unreadCount = session
+    ? await db.collection("notifications").countDocuments({ userId: session.user.id, isRead: false })
+    : 0;
 
   return (
     <html lang="ko">
@@ -21,7 +25,7 @@ export default async function RootLayout({ children }) {
               <>
                 <Link href="/gatherings">모임 찾기</Link>
                 <Link href="/mypage">마이페이지</Link>
-                <Link href="/notifications">알림</Link>
+                <Link href="/notifications">알림{unreadCount > 0 ? " ●" : ""}</Link>
                 <form action={logoutAction}>
                   <button type="submit">로그아웃</button>
                 </form>

@@ -1,5 +1,8 @@
 import Link from "next/link";
+import { ObjectId } from "mongodb";
 import { connection } from "next/server";
+import GatheringCard from "@/components/gathering-card";
+import { db } from "@/lib/mongodb";
 import { getSession } from "@/lib/session";
 
 export default async function HomePage() {
@@ -7,13 +10,53 @@ export default async function HomePage() {
   const session = await getSession();
 
   if (session) {
+    const memberships = await db
+      .collection("gatheringMembers")
+      .find({ userId: session.user.id })
+      .limit(9)
+      .toArray();
+    const gatheringIds = memberships.map((membership) => membership.gatheringId);
+    const gatheringObjectIds = gatheringIds
+      .filter((id) => ObjectId.isValid(id))
+      .map((id) => new ObjectId(id));
+    const joinedGatherings = await db
+      .collection("gatherings")
+      .find({ _id: { $in: gatheringObjectIds } })
+      .sort({ createdAt: -1 })
+      .toArray();
+    const recommendedGatherings = await db
+      .collection("gatherings")
+      .find({ isPublic: true, _id: { $nin: gatheringObjectIds } })
+      .sort({ createdAt: -1 })
+      .limit(9)
+      .toArray();
+
     return (
       <>
         <h1>{session.user.nickname}님, 반가워요.</h1>
-        <p>가입한 모임과 새 모임을 한곳에서 확인할 수 있습니다.</p>
-        <p>
-          <Link href="/gatherings">모임 둘러보기</Link>
-        </p>
+        <section>
+          <h2>내가 가입한 모임</h2>
+          {joinedGatherings.length === 0 ? (
+            <p>가입한 모임이 없습니다.</p>
+          ) : (
+            joinedGatherings.map((gathering) => (
+              <GatheringCard
+                key={gathering._id.toString()}
+                gathering={gathering}
+                leader={memberships.some(
+                  (membership) => membership.gatheringId === gathering._id.toString() && membership.role === "LEADER",
+                )}
+              />
+            ))
+          )}
+        </section>
+        <section>
+          <h2>추천 모임</h2>
+          <p><Link href="/gatherings">더보기</Link></p>
+          {recommendedGatherings.length === 0 ? <p>추천할 새 모임이 없습니다.</p> : recommendedGatherings.map((gathering) => (
+            <GatheringCard key={gathering._id.toString()} gathering={gathering} />
+          ))}
+        </section>
       </>
     );
   }
