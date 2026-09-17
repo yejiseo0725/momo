@@ -29,7 +29,7 @@ nextApplication.prepare().then(() => {
   });
 
   // 소켓에는 메시지 내용을 싣지 않는다. 새 메시지가 생겼다는 신호만 보내고,
-  // 브라우저가 Server Component를 다시 요청하도록 한다.
+  // 수신한 브라우저가 인증된 API를 통해 최신 메시지를 다시 조회하도록 한다.
   socketServer.on("connection", (socket) => {
     socket.on("join-gathering", (gatheringId) => {
       if (typeof gatheringId !== "string" || gatheringId.length > 100) {
@@ -38,9 +38,15 @@ nextApplication.prepare().then(() => {
 
       socket.join(`gathering:${gatheringId}`);
     });
-  });
 
-  globalThis.momoSocketServer = socketServer;
+    socket.on("notify-message-created", (gatheringId) => {
+      if (typeof gatheringId !== "string" || gatheringId.length > 100) {
+        return;
+      }
+
+      socket.to(`gathering:${gatheringId}`).emit("message-created", { gatheringId });
+    });
+  });
 
   httpServer.listen(port, hostname, () => {
     console.log(`momo server: http://${hostname}:${port}`);
