@@ -13,7 +13,6 @@ import { requireSession } from "@/lib/session";
 import {
   ValidationError,
   readDateOnly,
-  readOptionalUrl,
   readRequiredText,
   validateDateRange,
 } from "@/lib/utils/validation";
@@ -114,7 +113,7 @@ export async function createChallengeFeedAction(formData) {
     ids = getIds(formData);
     input = {
       doneDate: readDateOnly(formData, "doneDate", "인증일"),
-      imageUrl: readOptionalUrl(formData, "imageUrl", "이미지 링크"),
+      imageFile: formData.get("image"),
       description: readRequiredText(formData, "description", "인증 내용", 500),
     };
   } catch (error) {

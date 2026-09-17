@@ -273,12 +273,19 @@ const seedDataStructure = {
           "format": "YYYY-MM-DD",
           "required": true
         },
+        "imageId": {
+          "type": "string",
+          "required": false,
+          "nullable": true,
+          "references": "challengeFeedImages.files._id",
+          "requiredWhen": "연결된 challenge의 useImage가 true인 경우"
+        },
         "imageUrl": {
           "type": "string",
           "format": "url",
           "required": false,
           "nullable": true,
-          "requiredWhen": "연결된 challenge의 useImage가 true인 경우"
+          "description": "파일 업로드 적용 전에 저장된 기존 이미지 URL"
         },
         "description": {
           "type": "string",
@@ -294,7 +301,8 @@ const seedDataStructure = {
         }
       },
       "rules": [
-        "작성자는 챌린지가 속한 모임의 멤버여야 한다."
+        "작성자는 챌린지가 속한 모임의 멤버여야 한다.",
+        "이미지는 JPG, PNG, WebP 형식이며 5MB 이하여야 한다."
       ]
     },
 
@@ -545,6 +553,7 @@ const seedDataStructure = {
       },
       "rules": [
         "새 일정과 새 챌린지 알림은 작성자를 제외한 모든 모임 멤버에게 생성한다.",
+        "알림 조회 시 작성자가 현재 모임 멤버이면 닉네임 또는 이름을 표시하고, 탈퇴했다면 '탈퇴한유저'로 표시한다.",
         "알림 목록을 조회하면 해당 사용자의 읽지 않은 알림을 읽음 처리한다."
       ]
     }

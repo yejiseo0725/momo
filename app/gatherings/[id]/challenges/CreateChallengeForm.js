@@ -47,7 +47,7 @@ export default function CreateChallengeForm({ gatheringId }) {
           name="useImage"
           checked={useImage}
           onChange={(event) => setUseImage(event.target.checked)}
-        /> 인증할 때 이미지 링크 필수
+        /> 인증할 때 이미지 파일 필수
       </label>
 
       <label htmlFor="challenge-start">시작일</label>

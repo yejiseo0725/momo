@@ -2,6 +2,7 @@ import { connection } from "next/server";
 
 import { updateProfileAction } from "@/app/auth-actions";
 import Message from "@/components/Message";
+import UserAvatar from "@/components/UserAvatar";
 import { requireSession } from "@/lib/session";
 import { CATEGORIES, GENDERS, getSingleSearchParam } from "@/lib/utils/validation";
 
@@ -10,11 +11,17 @@ export default async function ProfilePage({ searchParams }) {
   const session = await requireSession();
   const query = await searchParams;
   const selectedCategories = Array.isArray(session.user.category) ? session.user.category : [];
+  const displayName = session.user.nickname || session.user.name;
 
   return (
     <section>
-      <h1>프로필</h1>
-      <p>이메일과 비밀번호를 제외한 기본 정보를 수정할 수 있습니다.</p>
+      <header className="profile-heading">
+        <UserAvatar image={session.user.image} name={displayName} size="large" />
+        <div>
+          <h1>프로필</h1>
+          <p>이메일과 비밀번호를 제외한 기본 정보를 수정할 수 있습니다.</p>
+        </div>
+      </header>
       <Message
         error={getSingleSearchParam(query.error)}
         message={getSingleSearchParam(query.message)}
