@@ -13,6 +13,7 @@ import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 
 import { sendChatMessageAction } from "@/app/gatherings/[id]/chat/actions";
+import { mergeChatMessages } from "@/app/gatherings/[id]/chat/chat-messages.mjs";
 import EmptyState from "@/components/EmptyState";
 import ToastMessage from "@/components/ToastMessage";
 
@@ -25,6 +26,14 @@ const dateTimeFormatter = new Intl.DateTimeFormat("ko-KR", {
 });
 
 const SCROLL_THRESHOLD = 60;
+
+function isNearBottom(element) {
+  if (!element) {
+    return true;
+  }
+
+  return element.scrollHeight - element.scrollTop - element.clientHeight <= SCROLL_THRESHOLD;
+}
 
 export default function ChatRoom({ gatheringId, currentUserId, initialMessages }) {
   const [messages, setMessages] = useState(initialMessages);
@@ -39,13 +48,6 @@ export default function ChatRoom({ gatheringId, currentUserId, initialMessages }
   const messagesRef = useRef(messages);
   const isSynchronizingRef = useRef(false);
   const needsSynchronizationRef = useRef(false);
-
-  function isNearBottom(element) {
-    if (!element) {
-      return true;
-    }
-    return element.scrollHeight - element.scrollTop - element.clientHeight <= SCROLL_THRESHOLD;
-  }
 
   function handleScroll() {
     const element = chatListRef.current;
@@ -91,6 +93,8 @@ export default function ChatRoom({ gatheringId, currentUserId, initialMessages }
 
   useEffect(() => {
     const socket = io({ path: "/socket.io" });
+    const abortController = new AbortController();
+    let isActive = true;
     socketRef.current = socket;
 
     async function synchronizeMessages() {
@@ -104,17 +108,19 @@ export default function ChatRoom({ gatheringId, currentUserId, initialMessages }
       try {
         do {
           needsSynchronizationRef.current = false;
-          const currentList = messagesRef.current;
-          const lastMessage = currentList.at(-1);
+          const lastMessage = messagesRef.current.at(-1);
           const afterQuery = lastMessage
             ? `?after=${encodeURIComponent(lastMessage.id)}`
             : "";
           const response = await fetch(
             `/api/gatherings/${encodeURIComponent(gatheringId)}/chat${afterQuery}`,
-            { cache: "no-store" },
+            {
+              cache: "no-store",
+              signal: abortController.signal,
+            },
           );
 
-          if (!response.ok) {
+          if (!response.ok || !isActive) {
             return;
           }
 
@@ -123,16 +129,19 @@ export default function ChatRoom({ gatheringId, currentUserId, initialMessages }
             continue;
           }
 
-          const currentIds = new Set(currentList.map((message) => message.id));
-          const newIncomingMessages = data.messages.filter((message) => !currentIds.has(message.id));
+          const currentList = messagesRef.current;
+          const {
+            addedMessages,
+            messages: nextMessages,
+          } = mergeChatMessages(currentList, data.messages);
 
-          if (newIncomingMessages.length === 0) {
+          if (addedMessages.length === 0) {
             continue;
           }
 
           const element = chatListRef.current;
           const atBottom = isNearBottom(element);
-          const othersNewMessages = newIncomingMessages.filter(
+          const othersNewMessages = addedMessages.filter(
             (message) => message.userId !== currentUserId,
           );
 
@@ -143,7 +152,6 @@ export default function ChatRoom({ gatheringId, currentUserId, initialMessages }
             setUnreadCount((prev) => prev + othersNewMessages.length);
           }
 
-          const nextMessages = [...currentList, ...newIncomingMessages].slice(-100);
           messagesRef.current = nextMessages;
           setMessages(nextMessages);
         } while (needsSynchronizationRef.current);
@@ -154,7 +162,7 @@ export default function ChatRoom({ gatheringId, currentUserId, initialMessages }
         needsSynchronizationRef.current = false;
         isSynchronizingRef.current = false;
 
-        if (shouldSynchronizeAgain) {
+        if (shouldSynchronizeAgain && isActive) {
           void synchronizeMessages();
         }
       }
@@ -173,8 +181,12 @@ export default function ChatRoom({ gatheringId, currentUserId, initialMessages }
         return;
       }
 
-      const currentList = messagesRef.current;
-      if (currentList.some((message) => message.id === event.message.id)) {
+      const {
+        addedMessages,
+        messages: nextMessages,
+      } = mergeChatMessages(messagesRef.current, [event.message]);
+
+      if (addedMessages.length === 0) {
         return;
       }
 
@@ -188,11 +200,6 @@ export default function ChatRoom({ gatheringId, currentUserId, initialMessages }
         setUnreadCount((prev) => prev + 1);
       }
 
-      const nextMessages = [...currentList, event.message]
-        .sort((left, right) => (
-          left.createdAt.localeCompare(right.createdAt) || left.id.localeCompare(right.id)
-        ))
-        .slice(-100);
       messagesRef.current = nextMessages;
       setMessages(nextMessages);
     }
@@ -201,6 +208,8 @@ export default function ChatRoom({ gatheringId, currentUserId, initialMessages }
     socket.on("message-created", loadNewMessages);
 
     return () => {
+      isActive = false;
+      abortController.abort();
       socket.off("connect", joinGatheringRoom);
       socket.off("message-created", loadNewMessages);
       socket.disconnect();
@@ -224,11 +233,15 @@ export default function ChatRoom({ gatheringId, currentUserId, initialMessages }
       setUnreadCount(0);
 
       setMessages((currentMessages) => {
-        if (currentMessages.some((message) => message.id === result.message.id)) {
+        const {
+          addedMessages,
+          messages: nextMessages,
+        } = mergeChatMessages(currentMessages, [result.message]);
+
+        if (addedMessages.length === 0) {
           return currentMessages;
         }
 
-        const nextMessages = [...currentMessages, result.message].slice(-100);
         messagesRef.current = nextMessages;
         return nextMessages;
       });
