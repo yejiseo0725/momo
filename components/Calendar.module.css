@@ -120,6 +120,20 @@
   white-space: nowrap;
 }
 
+.eventContinuesFromPreviousDay {
+  margin-left: calc(-0.4rem - var(--border-width));
+  padding-left: calc(0.7rem + var(--border-width));
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.eventContinuesToNextDay {
+  margin-right: calc(-0.4rem - var(--border-width));
+  padding-right: calc(0.7rem + var(--border-width));
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
 .event a,
 .event span {
   display: block;

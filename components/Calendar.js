@@ -76,14 +76,28 @@ function getDateHref(path, date) {
   return `${path}?month=${encodeURIComponent(month)}&date=${encodeURIComponent(date)}`;
 }
 
-function CalendarEvent({ event, showEventLink }) {
+function CalendarEvent({
+  event,
+  dateValue,
+  isFirstDayOfWeek,
+  isLastDayOfWeek,
+  showEventLink,
+}) {
+  const endDate = event.end || event.start;
+  const continuesFromPreviousDay = event.start < dateValue && !isFirstDayOfWeek;
+  const continuesToNextDay = endDate > dateValue && !isLastDayOfWeek;
+  const eventClassName = [
+    styles.event,
+    continuesFromPreviousDay ? styles.eventContinuesFromPreviousDay : "",
+    continuesToNextDay ? styles.eventContinuesToNextDay : "",
+  ].filter(Boolean).join(" ");
   const content = showEventLink && event.url ? (
     <Link href={event.url} title={event.title}>{event.title}</Link>
   ) : (
     <span title={event.title}>{event.title}</span>
   );
 
-  return <li className={styles.event}>{content}</li>;
+  return <li className={eventClassName}>{content}</li>;
 }
 
 export default function Calendar({
@@ -142,7 +156,7 @@ export default function Calendar({
           <tbody>
             {weeks.map((week) => (
               <tr key={week[0].dateValue}>
-                {week.map((day) => {
+                {week.map((day, weekdayIndex) => {
                   const dateEvents = getEventsForDate(events, day.dateValue);
                   const visibleEvents = dateEvents.slice(0, maximumVisibleEvents);
                   const hiddenEvents = dateEvents.slice(maximumVisibleEvents);
@@ -174,6 +188,9 @@ export default function Calendar({
                           {visibleEvents.map((event) => (
                             <CalendarEvent
                               event={event}
+                              dateValue={day.dateValue}
+                              isFirstDayOfWeek={weekdayIndex === 0}
+                              isLastDayOfWeek={weekdayIndex === 6}
                               key={event.id}
                               showEventLink={!dateNavigationPath}
                             />
