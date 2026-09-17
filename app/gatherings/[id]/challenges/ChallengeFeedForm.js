@@ -2,12 +2,12 @@
 
 import {
   Button,
-  Description,
   Form,
   Input,
   Label,
   TextArea,
   TextField,
+  Typography,
 } from "@heroui/react";
 import { useActionState, useEffect, useRef, useState } from "react";
 
@@ -54,14 +54,24 @@ function ChallengeFeedFields({
       </TextField>
 
       {imageRequired ? (
-        <TextField fullWidth isRequired name="image" type="file">
-          <Label>인증 이미지</Label>
-          <Input
+        <div className="flex flex-col gap-2">
+          <Label htmlFor={`image-${challengeId}`} isRequired>인증 이미지</Label>
+          <input
             id={`image-${challengeId}`}
+            name="image"
+            type="file"
             accept="image/jpeg,image/png,image/webp"
+            required
+            aria-describedby={`image-${challengeId}-description`}
           />
-          <Description>JPG, PNG, WebP 형식의 5MB 이하 이미지를 선택해 주세요.</Description>
-        </TextField>
+          <Typography
+            id={`image-${challengeId}-description`}
+            color="muted"
+            type="body-sm"
+          >
+            JPG, PNG, WebP 형식의 5MB 이하 이미지를 선택해 주세요.
+          </Typography>
+        </div>
       ) : null}
     </>
   );
