@@ -31,12 +31,16 @@ nextApplication.prepare().then(() => {
   // 소켓에는 메시지 내용을 싣지 않는다. 새 메시지가 생겼다는 신호만 보내고,
   // 수신한 브라우저가 인증된 API를 통해 최신 메시지를 다시 조회하도록 한다.
   socketServer.on("connection", (socket) => {
-    socket.on("join-gathering", (gatheringId) => {
+    socket.on("join-gathering", (gatheringId, acknowledge) => {
       if (typeof gatheringId !== "string" || gatheringId.length > 100) {
         return;
       }
 
       socket.join(`gathering:${gatheringId}`);
+
+      if (typeof acknowledge === "function") {
+        acknowledge();
+      }
     });
 
     socket.on("notify-message-created", (gatheringId) => {

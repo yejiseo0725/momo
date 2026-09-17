@@ -11,6 +11,7 @@ const legalDongCodeByName = new Map(
     region.code,
   ]),
 );
+const legalDongCodes = new Set(legalDongData.regions.map((region) => region.code));
 
 // 컬렉션 검증 규칙을 만들 때 사용하는 데이터 구조다.
 // 이 객체의 모든 값은 JSON으로 직렬화할 수 있다.
@@ -87,6 +88,7 @@ const seedDataStructure = {
         "region": {
           "type": "string",
           "required": true,
+          "format": "regionCode",
           "description": "법정동 코드 10자리 또는 온라인을 뜻하는 'ONLINE'",
           "betterAuthAdditionalField": true
         },
@@ -136,6 +138,7 @@ const seedDataStructure = {
         "region": {
           "type": "string",
           "required": true,
+          "format": "regionCode",
           "description": "법정동 코드 10자리 또는 온라인 모임은 'ONLINE'"
         },
         "description": {
@@ -361,7 +364,7 @@ const seedDataStructure = {
           "format": "YYYY-MM-DD",
           "required": true
         },
-        "region": {
+        "location": {
           "type": "string",
           "required": true,
           "description": "일정 장소"
@@ -659,6 +662,7 @@ const collectionIndexes = {
   ],
   chatMessages: [
     { keys: { chatRoomId: 1, createdAt: -1 }, options: { name: "chatMessages_room_createdAt" } },
+    { keys: { chatRoomId: 1, _id: 1 }, options: { name: "chatMessages_room_id" } },
   ],
   notifications: [
     { keys: { userId: 1, isRead: 1, createdAt: -1 }, options: { name: "notifications_user_read_createdAt" } },
@@ -717,6 +721,10 @@ function buildFieldSchema(field) {
 
   if (field.format === "YYYY-MM-DD") {
     schema.pattern = "^\\d{4}-\\d{2}-\\d{2}$";
+  }
+
+  if (field.format === "regionCode") {
+    schema.pattern = "^(?:\\d{10}|ONLINE)$";
   }
 
   if (typeof field.minimum === "number") {
@@ -961,6 +969,10 @@ function normalizeStoredRegion(value) {
 
   const normalizedValue = value.trim().replace(/\s+/g, " ");
 
+  if (/^\d{10}$/.test(normalizedValue)) {
+    return legalDongCodes.has(normalizedValue) ? normalizedValue : "";
+  }
+
   if (
     normalizedValue === "온라인"
     || normalizedValue.toUpperCase() === onlineRegionCode
@@ -972,6 +984,8 @@ function normalizeStoredRegion(value) {
 }
 
 async function backfillRegionCodes(database) {
+  const unresolvedValues = new Set();
+
   for (const collectionName of ["users", "gatherings"]) {
     const documents = await database.collection(collectionName).find(
       { region: { $type: "string" } },
@@ -982,7 +996,12 @@ async function backfillRegionCodes(database) {
     for (const document of documents) {
       const regionCode = normalizeStoredRegion(document.region);
 
-      if (!regionCode || regionCode === document.region) {
+      if (!regionCode) {
+        unresolvedValues.add(`${collectionName}: ${document.region}`);
+        continue;
+      }
+
+      if (regionCode === document.region) {
         continue;
       }
 
@@ -996,6 +1015,40 @@ async function backfillRegionCodes(database) {
     if (updatedCount > 0) {
       console.log(`[갱신] ${collectionName} 지역 ${updatedCount}개를 법정동 코드로 변환`);
     }
+  }
+
+  if (unresolvedValues.size > 0) {
+    console.warn("[확인 필요] 다음 region 값은 법정동 코드로 자동 변환하지 못했습니다.");
+    for (const value of unresolvedValues) {
+      console.warn(`- ${value}`);
+    }
+  }
+}
+
+async function migrateScheduleLocations(database) {
+  const schedulesExist = await database
+    .listCollections({ name: "schedules" }, { nameOnly: true })
+    .hasNext();
+
+  if (!schedulesExist) {
+    return;
+  }
+
+  const schedules = database.collection("schedules");
+  const renamed = await schedules.updateMany(
+    { region: { $exists: true }, location: { $exists: false } },
+    { $rename: { region: "location" } },
+    { bypassDocumentValidation: true },
+  );
+  const removed = await schedules.updateMany(
+    { region: { $exists: true }, location: { $exists: true } },
+    { $unset: { region: "" } },
+    { bypassDocumentValidation: true },
+  );
+  const migratedCount = renamed.modifiedCount + removed.modifiedCount;
+
+  if (migratedCount > 0) {
+    console.log(`[갱신] 기존 일정 ${migratedCount}개의 region 장소를 location으로 이동`);
   }
 }
 
@@ -1145,7 +1198,7 @@ async function seedExampleData(database, client) {
       description: "읽은 부분을 바탕으로 자유롭게 대화합니다.",
       startDate: "2026-09-26",
       endDate: "2026-09-26",
-      region: "망원동 작은도서관",
+      location: "망원동 작은도서관",
       createdAt: now,
       updatedAt: now,
     },
@@ -1234,12 +1287,14 @@ async function initializeDatabaseStructure() {
       .filter(([, definition]) => !definition.managedBy)
       .map(([collectionName]) => collectionName);
 
+    await backfillGatheringInviteTokens(database);
+    await backfillRegionCodes(database);
+    await migrateScheduleLocations(database);
+
     for (const collectionName of applicationCollections) {
       await createOrUpdateCollection(database, collectionName);
     }
 
-    await backfillGatheringInviteTokens(database);
-    await backfillRegionCodes(database);
     const result = await seedExampleData(database, client);
     console.log("momo 초기 컬렉션과 예시 데이터 구성을 완료했습니다.");
     console.log(`리더 계정: leader@momo.local / ${result.password}`);

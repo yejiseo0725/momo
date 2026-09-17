@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 
-import FormMessage from "@/components/FormMessage";
+import ToastMessage from "@/components/ToastMessage";
 
 const initialActionState = {
   error: "",
@@ -26,7 +26,7 @@ export default function ActionButtonForm({
       <button type="submit" disabled={disabled || pending}>
         {pending ? pendingLabel : label}
       </button>
-      <FormMessage error={state.error} message={state.message} />
+      <ToastMessage error={state.error} message={state.message} trigger={state} />
     </form>
   );
 }

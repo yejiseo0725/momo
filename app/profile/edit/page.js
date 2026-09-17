@@ -6,12 +6,14 @@ import ToastMessage from "@/components/ToastMessage";
 import UserAvatar from "@/components/UserAvatar";
 import { getRegionName } from "@/lib/regions";
 import { requireSession } from "@/lib/session";
+import { getUserRegion } from "@/lib/users";
 import { CATEGORIES, GENDERS, getSingleSearchParam } from "@/lib/utils/validation";
 
 export default async function EditProfilePage({ searchParams }) {
   await connection();
   const session = await requireSession();
   const query = await searchParams;
+  const userRegionCode = await getUserRegion(session.user.id);
   const selectedCategories = Array.isArray(session.user.category) ? session.user.category : [];
   const displayName = session.user.nickname || session.user.name;
 
@@ -39,8 +41,8 @@ export default async function EditProfilePage({ searchParams }) {
           gender: session.user.gender,
           nickname: session.user.nickname,
           categories: selectedCategories,
-          region: session.user.region,
-          regionName: getRegionName(session.user.region),
+          region: userRegionCode,
+          regionName: userRegionCode ? getRegionName(userRegionCode) : "",
           notificationEnabled: session.user.notificationEnabled !== false,
         }}
       />

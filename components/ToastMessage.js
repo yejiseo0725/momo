@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { toast } from "sonner";
 
-export default function ToastMessage({ error, message }) {
+export default function ToastMessage({ error, message, trigger }) {
   useEffect(() => {
     const toastType = error ? "error" : "success";
     const toastMessage = error || message;
@@ -24,7 +24,7 @@ export default function ToastMessage({ error, message }) {
     currentUrl.searchParams.delete("message");
     const cleanedUrl = `${currentUrl.pathname}${currentUrl.search}${currentUrl.hash}`;
     window.history.replaceState(window.history.state, "", cleanedUrl);
-  }, [error, message]);
+  }, [error, message, trigger]);
 
   return null;
 }

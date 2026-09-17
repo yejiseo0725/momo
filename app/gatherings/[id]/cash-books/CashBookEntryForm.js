@@ -7,7 +7,7 @@ import {
   updateCashBookEntryAction,
 } from "@/app/gatherings/[id]/cash-books/actions";
 import CashBookAmountInput from "@/app/gatherings/[id]/cash-books/CashBookAmountInput";
-import FormMessage from "@/components/FormMessage";
+import ToastMessage from "@/components/ToastMessage";
 
 const initialActionState = {
   error: "",
@@ -82,7 +82,7 @@ export default function CashBookEntryForm({ entryId, gatheringId, initialValues,
           ? (mode === "create" ? "저장하는 중..." : "수정하는 중...")
           : (mode === "create" ? "내역 저장" : "저장")}
       </button>
-      <FormMessage error={state.error} message={state.message} />
+      <ToastMessage error={state.error} message={state.message} trigger={state} />
     </form>
   );
 }

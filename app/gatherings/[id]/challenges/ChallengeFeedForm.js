@@ -3,7 +3,7 @@
 import { useActionState, useState } from "react";
 
 import { createChallengeFeedAction } from "@/app/gatherings/[id]/challenges/actions";
-import FormMessage from "@/components/FormMessage";
+import ToastMessage from "@/components/ToastMessage";
 
 const initialActionState = {
   error: "",
@@ -69,7 +69,7 @@ export default function ChallengeFeedForm({
       <button type="submit" disabled={pending}>
         {pending ? "등록하는 중..." : "인증 남기기"}
       </button>
-      <FormMessage error={state.error} message={state.message} />
+      <ToastMessage error={state.error} message={state.message} trigger={state} />
     </form>
   );
 }

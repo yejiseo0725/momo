@@ -35,6 +35,14 @@ test("gatheringMembers는 모임과 사용자 조합을 유일하게 제한한�
   assert.equal(uniqueIndex.options.unique, true);
 });
 
+test("채팅 메시지는 방과 메시지 ID 기준 증분 조회 인덱스를 사용한다", () => {
+  const cursorIndex = collectionIndexes.chatMessages.find(
+    (index) => index.options.name === "chatMessages_room_id",
+  );
+
+  assert.deepEqual(cursorIndex.keys, { chatRoomId: 1, _id: 1 });
+});
+
 test("사용자 알림 수신 설정은 기본적으로 켜져 있다", () => {
   const notificationEnabled = seedDataStructure.collections.users.fields.notificationEnabled;
 
@@ -85,6 +93,20 @@ test("날짜 전용 필드는 YYYY-MM-DD 패턴을 사용한다", () => {
   const scheduleSchema = buildCollectionJsonSchema("schedules");
   assert.equal(scheduleSchema.properties.startDate.pattern, "^\\d{4}-\\d{2}-\\d{2}$");
   assert.equal(scheduleSchema.properties.endDate.pattern, "^\\d{4}-\\d{2}-\\d{2}$");
+});
+
+test("모임 지역은 법정동 코드 또는 ONLINE만 허용한다", () => {
+  const gatheringSchema = buildCollectionJsonSchema("gatherings");
+
+  assert.equal(gatheringSchema.properties.region.pattern, "^(?:\\d{10}|ONLINE)$");
+});
+
+test("일정의 자유 입력 장소는 region이 아닌 location에 저장한다", () => {
+  const scheduleSchema = buildCollectionJsonSchema("schedules");
+
+  assert.equal(scheduleSchema.required.includes("location"), true);
+  assert.equal(scheduleSchema.properties.location.bsonType, "string");
+  assert.equal(scheduleSchema.properties.region, undefined);
 });
 
 test("예시 계정과 모임 ID는 반복 실행 가능한 고정값을 사용한다", () => {

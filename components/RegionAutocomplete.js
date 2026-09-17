@@ -149,10 +149,10 @@ export default function RegionAutocomplete({
 
   return (
     <>
+      <input type="hidden" name="region" value={regionCode} />
       <label htmlFor={id}>지역</label>
       <input
         id={id}
-        name="region"
         type="text"
         role="combobox"
         aria-autocomplete="list"

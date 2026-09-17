@@ -42,7 +42,7 @@ export default async function SchedulesPage({ params, searchParams }) {
               description: "",
               startDate: "",
               endDate: "",
-              region: "",
+              location: "",
             }}
             mode="create"
           />
@@ -66,7 +66,7 @@ export default async function SchedulesPage({ params, searchParams }) {
             {selectedDateSchedules.map((schedule) => (
               <article key={schedule.id}>
                 <h3><Link href={`/gatherings/${id}/schedules/${schedule.id}`}>{schedule.title}</Link></h3>
-                <p>{schedule.startDate} – {schedule.endDate} · {schedule.region}</p>
+                <p>{schedule.startDate} – {schedule.endDate} · {schedule.location}</p>
                 <p><small>작성자 {schedule.authorName}</small></p>
               </article>
             ))}

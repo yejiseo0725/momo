@@ -50,8 +50,10 @@ test("CSV의 따옴표와 쉼표를 올바르게 읽는다", () => {
 });
 
 test("기존 온라인과 정확한 전체 지역명만 안전하게 코드로 변환한다", () => {
+  assert.equal(normalizeStoredRegion("1144012300"), "1144012300");
   assert.equal(normalizeStoredRegion("온라인"), "ONLINE");
   assert.equal(normalizeStoredRegion("online"), "ONLINE");
   assert.equal(normalizeStoredRegion("서울특별시 마포구 망원동"), "1144012300");
   assert.equal(normalizeStoredRegion("서울 마포구"), "");
+  assert.equal(normalizeStoredRegion("1234567890"), "");
 });

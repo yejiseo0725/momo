@@ -75,6 +75,8 @@ const seedDataStructure = {
         "region": {
           "type": "string",
           "required": true,
+          "format": "regionCode",
+          "description": "법정동 코드 10자리 또는 온라인을 뜻하는 'ONLINE'",
           "betterAuthAdditionalField": true
         },
         "category": {
@@ -123,7 +125,8 @@ const seedDataStructure = {
         "region": {
           "type": "string",
           "required": true,
-          "description": "온라인 모임은 '온라인'으로 저장"
+          "format": "regionCode",
+          "description": "법정동 코드 10자리 또는 온라인 모임은 'ONLINE'"
         },
         "description": {
           "type": "string",
@@ -348,7 +351,7 @@ const seedDataStructure = {
           "format": "YYYY-MM-DD",
           "required": true
         },
-        "region": {
+        "location": {
           "type": "string",
           "required": true,
           "description": "일정 장소"
