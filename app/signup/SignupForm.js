@@ -3,8 +3,8 @@
 import { useActionState, useState } from "react";
 
 import { signupAction } from "@/app/auth-actions";
-import FormMessage from "@/components/FormMessage";
 import RegionAutocomplete from "@/components/RegionAutocomplete";
+import ToastMessage from "@/components/ToastMessage";
 
 const initialActionState = {
   error: "",
@@ -30,7 +30,9 @@ export default function SignupForm({ categories }) {
   }
 
   return (
-    <form action={formAction}>
+    <form action={formAction} onReset={(event) => event.preventDefault()}>
+      <ToastMessage error={state.error} trigger={state} />
+
       <label htmlFor="name">이름</label>
       <input
         id="name"
@@ -119,12 +121,14 @@ export default function SignupForm({ categories }) {
 
       <RegionAutocomplete
         helpText="읍면동 또는 온라인을 입력하고 자동완성 목록에서 선택해 주세요."
+        id="signup-region"
+        initialRegionCode=""
+        initialRegionName=""
       />
 
       <button type="submit" disabled={pending}>
         {pending ? "가입하는 중..." : "가입하기"}
       </button>
-      <FormMessage error={state.error} message={state.message} />
     </form>
   );
 }
