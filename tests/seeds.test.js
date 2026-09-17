@@ -35,6 +35,19 @@ test("gatheringMembers는 모임과 사용자 조합을 유일하게 제한한�
   assert.equal(uniqueIndex.options.unique, true);
 });
 
+test("모임 초대 토큰은 고유하고 기존 모임도 허용한다", () => {
+  const gatheringSchema = buildCollectionJsonSchema("gatherings");
+  const inviteTokenIndex = collectionIndexes.gatherings.find(
+    (index) => index.options.name === "gatherings_inviteToken_unique",
+  );
+
+  assert.equal(gatheringSchema.properties.inviteToken.bsonType, "string");
+  assert.equal(gatheringSchema.required.includes("inviteToken"), false);
+  assert.deepEqual(inviteTokenIndex.keys, { inviteToken: 1 });
+  assert.equal(inviteTokenIndex.options.unique, true);
+  assert.equal(inviteTokenIndex.options.sparse, true);
+});
+
 test("인덱스 이름과 관계없이 필드와 정렬 순서가 같으면 기존 인덱스로 판단한다", () => {
   assert.equal(
     hasSameIndexKeys(

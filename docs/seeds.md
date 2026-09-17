@@ -105,6 +105,11 @@ const seedDataStructure = {
           "references": "users.id",
           "description": "모임을 생성한 사용자"
         },
+        "inviteToken": {
+          "type": "string",
+          "required": false,
+          "description": "모임 ID를 노출하지 않는 초대 URL 토큰"
+        },
         "name": {
           "type": "string",
           "required": true

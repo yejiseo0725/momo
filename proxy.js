@@ -16,6 +16,7 @@ export function proxy(request) {
 export const config = {
   matcher: [
     "/gatherings/:path*",
+    "/invite/:path*",
     "/my-gatherings/:path*",
     "/notifications/:path*",
     "/profile/:path*",

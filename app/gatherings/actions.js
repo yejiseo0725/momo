@@ -7,6 +7,7 @@ import {
   GatheringError,
   createGathering,
   joinGathering,
+  joinGatheringByInvitation,
   leaveGathering,
   updateGathering,
 } from "@/lib/gatherings";
@@ -101,6 +102,33 @@ export async function joinGatheringAction(formData) {
       ? error.message
       : "모임에 가입하지 못했습니다. 잠시 후 다시 시도해 주세요.";
     redirectWithError(`/gatherings/${gatheringId}`, message);
+  }
+
+  revalidatePath(`/gatherings/${gatheringId}`, "layout");
+  redirect(`/gatherings/${gatheringId}?message=${encodeURIComponent("모임에 가입했습니다.")}`);
+}
+
+export async function joinGatheringByInvitationAction(formData) {
+  const session = await requireSession();
+  let inviteToken = "";
+
+  try {
+    inviteToken = readRequiredText(formData, "inviteToken", "초대 URL", 100);
+  } catch (error) {
+    const message = error instanceof ValidationError
+      ? error.message
+      : "초대 URL을 확인하지 못했습니다.";
+    redirectWithError("/", message);
+  }
+
+  let gatheringId;
+  try {
+    gatheringId = await joinGatheringByInvitation(inviteToken, session.user.id);
+  } catch (error) {
+    const message = error instanceof GatheringError
+      ? error.message
+      : "모임에 가입하지 못했습니다. 잠시 후 다시 시도해 주세요.";
+    redirectWithError(`/invite/${inviteToken}`, message);
   }
 
   revalidatePath(`/gatherings/${gatheringId}`, "layout");

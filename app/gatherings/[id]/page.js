@@ -6,6 +6,7 @@ import {
   joinGatheringAction,
   leaveGatheringAction,
 } from "@/app/gatherings/actions";
+import InviteButton from "@/app/gatherings/[id]/InviteButton";
 import Message from "@/components/Message";
 import { getGatheringDetails } from "@/lib/gatherings";
 import { requireSession } from "@/lib/session";
@@ -63,6 +64,10 @@ export default async function GatheringHomePage({ params, searchParams }) {
             </form>
           ) : null}
         </div>
+
+        {!gathering.isPublic && membership && gathering.inviteToken ? (
+          <InviteButton inviteToken={gathering.inviteToken} />
+        ) : null}
       </section>
 
       <section>
