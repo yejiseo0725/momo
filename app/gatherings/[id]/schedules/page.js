@@ -1,3 +1,4 @@
+import { Card, Disclosure, Typography } from "@heroui/react";
 import Link from "next/link";
 import { connection } from "next/server";
 
@@ -25,32 +26,39 @@ export default async function SchedulesPage({ params, searchParams }) {
 
   return (
     <>
-      <section>
-        <h1>일정</h1>
+      <section className="flex flex-col gap-4">
+        <Typography type="h1">일정</Typography>
         <p>모임 일정을 달력에서 확인하고 참여 여부를 남기세요.</p>
         <ToastMessage
           error={getSingleSearchParam(query.error)}
           message={getSingleSearchParam(query.message)}
         />
 
-        <details>
-          <summary>새 일정 만들기</summary>
-          <ScheduleForm
-            gatheringId={id}
-            initialValues={{
-              title: "",
-              description: "",
-              startDate: "",
-              endDate: "",
-              location: "",
-            }}
-            mode="create"
-          />
-        </details>
+        <Disclosure>
+          <Disclosure.Heading>
+            <Disclosure.Trigger>
+              새 일정 만들기
+              <Disclosure.Indicator />
+            </Disclosure.Trigger>
+          </Disclosure.Heading>
+          <Disclosure.Content>
+            <ScheduleForm
+              gatheringId={id}
+              initialValues={{
+                title: "",
+                description: "",
+                startDate: "",
+                endDate: "",
+                location: "",
+              }}
+              mode="create"
+            />
+          </Disclosure.Content>
+        </Disclosure>
       </section>
 
       <section>
-        <h2 className="visually-hidden">일정 달력</h2>
+        <h2 className="sr-only">일정 달력</h2>
         <ScheduleCalendar
           gatheringId={id}
           schedules={schedules}
@@ -60,15 +68,23 @@ export default async function SchedulesPage({ params, searchParams }) {
       </section>
 
       {selectedDateSchedules.length > 0 ? (
-        <section>
-          <h2>{selectedDate} 일정</h2>
-          <div className="stack">
+        <section className="flex flex-col gap-4">
+          <Typography type="h2">{selectedDate} 일정</Typography>
+          <div className="grid gap-4 md:grid-cols-2">
             {selectedDateSchedules.map((schedule) => (
-              <article key={schedule.id}>
-                <h3><Link href={`/gatherings/${id}/schedules/${schedule.id}`}>{schedule.title}</Link></h3>
-                <p>{schedule.startDate} – {schedule.endDate} · {schedule.location}</p>
-                <p><small>작성자 {schedule.authorName}</small></p>
-              </article>
+              <Card key={schedule.id}>
+                <Card.Header>
+                  <Card.Title>
+                    <Link className="link" href={`/gatherings/${id}/schedules/${schedule.id}`}>
+                      {schedule.title}
+                    </Link>
+                  </Card.Title>
+                  <Card.Description>작성자 {schedule.authorName}</Card.Description>
+                </Card.Header>
+                <Card.Content>
+                  <p>{schedule.startDate} – {schedule.endDate} · {schedule.location}</p>
+                </Card.Content>
+              </Card>
             ))}
           </div>
         </section>

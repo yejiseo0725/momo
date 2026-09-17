@@ -1,5 +1,14 @@
 "use client";
 
+import {
+  Button,
+  Card,
+  Description,
+  Form,
+  Label,
+  TextArea,
+  TextField,
+} from "@heroui/react";
 import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 
@@ -257,29 +266,34 @@ export default function ChatRoom({ gatheringId, currentUserId, initialMessages }
       />
 
       {messages.length === 0 ? <EmptyState>첫 메시지를 남겨 보세요.</EmptyState> : (
-        <div className="chat-container">
+        <div className="relative">
           <div
             ref={chatListRef}
-            className="stack chat-list"
+            className="grid max-h-[34rem] gap-3 overflow-y-auto"
             aria-live="polite"
             onScroll={handleScroll}
           >
             {messages.map((message) => (
-              <article key={message.id} data-mine={message.userId === currentUserId}>
-                <p className="chat-meta">
-                  <strong>{message.authorName}</strong>
-                  <small>{dateTimeFormatter.format(new Date(message.createdAt))}</small>
-                </p>
-                <p>{message.content}</p>
-              </article>
+              <Card
+                key={message.id}
+                variant={message.userId === currentUserId ? "secondary" : "default"}
+              >
+                <Card.Header>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <strong>{message.authorName}</strong>
+                    <small>{dateTimeFormatter.format(new Date(message.createdAt))}</small>
+                  </div>
+                </Card.Header>
+                <Card.Content><p>{message.content}</p></Card.Content>
+              </Card>
             ))}
           </div>
 
           {unreadCount > 0 && (
-            <button
+            <Button
               type="button"
-              className="chat-unread-badge"
-              onClick={handleScrollToBottom}
+              className="absolute bottom-4 left-1/2 -translate-x-1/2"
+              onPress={handleScrollToBottom}
               aria-label={`새 메시지 ${unreadCount}개 확인`}
             >
               <span>새 메시지 +{unreadCount}</span>
@@ -299,30 +313,27 @@ export default function ChatRoom({ gatheringId, currentUserId, initialMessages }
                 <path d="M12 5v14" />
                 <path d="m19 12-7 7-7-7" />
               </svg>
-            </button>
+            </Button>
           )}
         </div>
       )}
 
-      <form ref={formRef} action={submitMessage}>
+      <Form ref={formRef} className="mt-4 flex flex-col gap-3" action={submitMessage}>
         <input type="hidden" name="gatheringId" value={gatheringId} />
-        <label htmlFor="chat-content">메시지</label>
-        <textarea
-          id="chat-content"
-          name="content"
-          rows="3"
-          maxLength="1000"
-          aria-describedby="chat-content-help"
-          onKeyDown={handleMessageKeyDown}
-          required
-        />
-        <small id="chat-content-help">
-          Enter로 보내고 Shift+Enter로 줄바꿈합니다.
-        </small>
-        <button type="submit" disabled={isSending}>
+        <TextField fullWidth isRequired name="content">
+          <Label>메시지</Label>
+          <TextArea
+            id="chat-content"
+            rows="3"
+            maxLength="1000"
+            onKeyDown={handleMessageKeyDown}
+          />
+          <Description>Enter로 보내고 Shift+Enter로 줄바꿈합니다.</Description>
+        </TextField>
+        <Button type="submit" isDisabled={isSending} isPending={isSending}>
           {isSending ? "보내는 중..." : "보내기"}
-        </button>
-      </form>
+        </Button>
+      </Form>
     </>
   );
 }

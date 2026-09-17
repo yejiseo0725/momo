@@ -1,3 +1,4 @@
+import { Button, Card, Chip, Typography } from "@heroui/react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
@@ -30,21 +31,24 @@ export default async function GatheringHomePage({ params, searchParams }) {
 
   return (
     <>
-      <section>
-        <p><strong>{gathering.category}</strong> · {gathering.region}</p>
-        <h1>{gathering.name}</h1>
+      <section className="flex flex-col gap-4">
+        <div className="flex flex-wrap gap-2">
+          <Chip>{gathering.category}</Chip>
+          <Chip>{gathering.region}</Chip>
+        </div>
+        <Typography type="h1">{gathering.name}</Typography>
         <p>{gathering.description}</p>
-        <p className="meta-list">
-          <span>{gathering.memberCount} / {gathering.maxMemCount}명</span>
-          <span>{gathering.isPublic ? "공개 모임" : "비공개 모임"}</span>
-          <span>{formatDate(gathering.createdAt)} 개설</span>
-        </p>
+        <div className="flex flex-wrap gap-2">
+          <Chip>{gathering.memberCount} / {gathering.maxMemCount}명</Chip>
+          <Chip>{gathering.isPublic ? "공개 모임" : "비공개 모임"}</Chip>
+          <Chip>{formatDate(gathering.createdAt)} 개설</Chip>
+        </div>
         <ToastMessage
           error={getSingleSearchParam(query.error)}
           message={getSingleSearchParam(query.message)}
         />
 
-        <div className="actions">
+        <div className="flex flex-wrap items-center gap-2">
           {!membership ? (
             <ActionButtonForm
               action={joinGatheringAction}
@@ -56,13 +60,13 @@ export default async function GatheringHomePage({ params, searchParams }) {
           ) : null}
 
           {membership?.role === "LEADER" ? (
-            <Link href={`/gatherings/${id}/edit`} className="button">모임 수정</Link>
+            <Link href={`/gatherings/${id}/edit`} className="button button--primary">모임 수정</Link>
           ) : null}
 
           {membership?.role === "MEMBER" ? (
             <form action={leaveGatheringAction}>
               <input type="hidden" name="gatheringId" value={id} />
-              <button type="submit">모임 탈퇴</button>
+              <Button type="submit" variant="danger-soft">모임 탈퇴</Button>
             </form>
           ) : null}
         </div>
@@ -72,36 +76,20 @@ export default async function GatheringHomePage({ params, searchParams }) {
         ) : null}
       </section>
 
-      <section>
-        <h2>멤버 {members.length}명</h2>
-        <ul>
+      <section className="flex flex-col gap-4">
+        <Typography type="h2">멤버 {members.length}명</Typography>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {members.map((member) => (
-            <li key={member.id}>
-              {member.displayName}
-              {member.role === "LEADER" ? (
-                <span className="leader-mark">
-                  · 모임장
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                    focusable="false"
-                  >
-                    <path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z" />
-                    <path d="M5 21h14" />
-                  </svg>
-                </span>
-              ) : " · 멤버"}
-            </li>
+            <Card key={member.id}>
+              <Card.Content>
+                <div className="flex items-center justify-between gap-2">
+                  <span>{member.displayName}</span>
+                  <Chip size="sm">{member.role === "LEADER" ? "모임장" : "멤버"}</Chip>
+                </div>
+              </Card.Content>
+            </Card>
           ))}
-        </ul>
+        </div>
       </section>
     </>
   );

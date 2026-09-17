@@ -1,3 +1,4 @@
+import { Card, Chip, Disclosure, Typography } from "@heroui/react";
 import { connection } from "next/server";
 
 import {
@@ -36,83 +37,98 @@ export default async function CashBooksPage({ params, searchParams }) {
         error={getSingleSearchParam(query.error)}
         message={getSingleSearchParam(query.message)}
       />
-      <section>
-        <h1>가계부</h1>
+      <section className="flex flex-col gap-4">
+        <Typography type="h1">가계부</Typography>
         <p>모임의 수입과 지출을 함께 기록합니다.</p>
-        <details>
-          <summary>새 가계부 내역</summary>
-          <CashBookEntryForm
-            gatheringId={id}
-            initialValues={{
-              type: "SPENDING",
-              title: "",
-              amount: "",
-              date: "",
-              memo: "",
-            }}
-            mode="create"
-          />
-        </details>
+        <Disclosure>
+          <Disclosure.Heading>
+            <Disclosure.Trigger>
+              새 가계부 내역
+              <Disclosure.Indicator />
+            </Disclosure.Trigger>
+          </Disclosure.Heading>
+          <Disclosure.Content>
+            <CashBookEntryForm
+              gatheringId={id}
+              initialValues={{
+                type: "SPENDING",
+                title: "",
+                amount: "",
+                date: "",
+                memo: "",
+              }}
+              mode="create"
+            />
+          </Disclosure.Content>
+        </Disclosure>
       </section>
 
-      <section>
-        <h2 className="visually-hidden">가계부 달력</h2>
+      <section className="flex flex-col gap-4">
+        <h2 className="sr-only">가계부 달력</h2>
         <CashBookCalendar
           gatheringId={id}
           entries={entries}
           selectedMonth={selectedMonth}
           selectedDate={selectedDate}
         />
-        <p aria-label={`${selectedMonth} 가계부 합계`}>
-          <small>
-            수입 <strong>{wonFormatter.format(totals.income)}</strong>
-            {" | "}
-            지출 <strong>{wonFormatter.format(totals.spending)}</strong>
-            {" | "}
-            합계 <strong>{wonFormatter.format(totals.balance)}</strong>
-          </small>
-        </p>
+        <div className="flex flex-wrap gap-2" aria-label={`${selectedMonth} 가계부 합계`}>
+          <Chip color="success">수입 {wonFormatter.format(totals.income)}</Chip>
+          <Chip color="danger">지출 {wonFormatter.format(totals.spending)}</Chip>
+          <Chip>합계 {wonFormatter.format(totals.balance)}</Chip>
+        </div>
       </section>
 
       {selectedDateEntries.length > 0 ? (
-        <section>
-          <h2>{selectedDate} 내역</h2>
-          <div className="stack" role="region" aria-label="가계부 내역">
+        <section className="flex flex-col gap-4">
+          <Typography type="h2">{selectedDate} 내역</Typography>
+          <div className="grid gap-4 md:grid-cols-2" role="region" aria-label="가계부 내역">
             {selectedDateEntries.map((entry) => (
-              <article key={entry.id}>
-                <h3>{entry.title}</h3>
-                <p>
-                  {entry.type === "INCOME" ? "수입" : "지출"}
-                  {" · "}
-                  <strong>{wonFormatter.format(entry.amount)}</strong>
-                </p>
-                {entry.memo ? <p>{entry.memo}</p> : null}
-                <p><small>작성자 {entry.authorName}</small></p>
+              <Card key={entry.id}>
+                <Card.Header>
+                  <Card.Title>{entry.title}</Card.Title>
+                  <Card.Description>작성자 {entry.authorName}</Card.Description>
+                </Card.Header>
+                <Card.Content className="flex flex-col gap-3">
+                  <Chip color={entry.type === "INCOME" ? "success" : "danger"}>
+                    {entry.type === "INCOME" ? "수입" : "지출"} · {wonFormatter.format(entry.amount)}
+                  </Chip>
+                  {entry.memo ? <p>{entry.memo}</p> : null}
 
-                {entry.userId === session.user.id ? (
-                  <details>
-                    <summary>수정</summary>
-                    <CashBookEntryForm
-                      entryId={entry.id}
-                      gatheringId={id}
-                      initialValues={{
-                        type: entry.type,
-                        title: entry.title,
-                        amount: entry.amount,
-                        date: entry.date,
-                        memo: entry.memo || "",
-                      }}
-                      mode="edit"
-                    />
-                    <ActionButtonForm
-                      action={deleteCashBookEntryAction}
-                      fields={{ gatheringId: id, entryId: entry.id }}
-                      label="삭제"
-                      pendingLabel="삭제하는 중..."
-                    />
-                  </details>
-                ) : null}
-              </article>
+                  {entry.userId === session.user.id ? (
+                    <Disclosure>
+                      <Disclosure.Heading>
+                        <Disclosure.Trigger>
+                          수정
+                          <Disclosure.Indicator />
+                        </Disclosure.Trigger>
+                      </Disclosure.Heading>
+                      <Disclosure.Content>
+                        <div className="flex flex-col gap-4">
+                          <CashBookEntryForm
+                            entryId={entry.id}
+                            gatheringId={id}
+                            initialValues={{
+                              type: entry.type,
+                              title: entry.title,
+                              amount: entry.amount,
+                              date: entry.date,
+                              memo: entry.memo || "",
+                            }}
+                            mode="edit"
+                          />
+                          <ActionButtonForm
+                            action={deleteCashBookEntryAction}
+                            fields={{ gatheringId: id, entryId: entry.id }}
+                            label="삭제"
+                            pendingLabel="삭제하는 중..."
+                            variant="danger"
+                          />
+                        </div>
+                      </Disclosure.Content>
+                    </Disclosure>
+                  ) : null}
+                </Card.Content>
+              </Card>
             ))}
           </div>
         </section>

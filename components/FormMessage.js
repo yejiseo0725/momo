@@ -1,15 +1,13 @@
+import { Description, ErrorMessage } from "@heroui/react";
+
 export default function FormMessage({ error, message }) {
   if (!error && !message) {
     return null;
   }
 
-  return (
-    <small
-      className={error ? "form-error" : "form-message"}
-      role={error ? "alert" : "status"}
-      aria-live="polite"
-    >
-      {error || message}
-    </small>
-  );
+  if (error) {
+    return <ErrorMessage role="alert">{error}</ErrorMessage>;
+  }
+
+  return <Description role="status">{message}</Description>;
 }

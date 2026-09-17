@@ -1,5 +1,15 @@
 "use client";
 
+import {
+  Button,
+  Form,
+  Input,
+  Label,
+  ListBox,
+  Select,
+  TextArea,
+  TextField,
+} from "@heroui/react";
 import { useActionState, useState } from "react";
 
 import {
@@ -25,64 +35,74 @@ export default function CashBookEntryForm({ entryId, gatheringId, initialValues,
   const idPrefix = mode === "create" ? "new-cash-book" : `cash-book-${entryId}`;
 
   return (
-    <form action={formAction}>
+    <Form className="flex w-full flex-col gap-4" action={formAction}>
       <input type="hidden" name="gatheringId" value={gatheringId} />
       {entryId ? <input type="hidden" name="entryId" value={entryId} /> : null}
 
-      <label htmlFor={`${idPrefix}-type`}>타입</label>
-      <select
-        id={`${idPrefix}-type`}
+      <Select
+        fullWidth
+        isRequired
         name="type"
-        value={type}
-        onChange={(event) => setType(event.target.value)}
-        required
+        selectedKey={type}
+        onSelectionChange={(key) => setType(String(key))}
       >
-        <option value="INCOME">수입</option>
-        <option value="SPENDING">지출</option>
-      </select>
+        <Label>타입</Label>
+        <Select.Trigger>
+          <Select.Value />
+          <Select.Indicator />
+        </Select.Trigger>
+        <Select.Popover>
+          <ListBox>
+            <ListBox.Item id="INCOME" textValue="수입">수입</ListBox.Item>
+            <ListBox.Item id="SPENDING" textValue="지출">지출</ListBox.Item>
+          </ListBox>
+        </Select.Popover>
+      </Select>
 
-      <label htmlFor={`${idPrefix}-title`}>내역</label>
-      <input
-        id={`${idPrefix}-title`}
-        name="title"
-        value={title}
-        onChange={(event) => setTitle(event.target.value)}
-        maxLength="120"
-        required
-      />
+      <TextField fullWidth isRequired name="title">
+        <Label>내역</Label>
+        <Input
+          id={`${idPrefix}-title`}
+          value={title}
+          onChange={(event) => setTitle(event.target.value)}
+          maxLength="120"
+        />
+      </TextField>
 
-      <label htmlFor={`${idPrefix}-amount`}>금액</label>
-      <CashBookAmountInput
-        id={`${idPrefix}-amount`}
-        value={amount}
-        onChange={setAmount}
-      />
+      <TextField fullWidth isRequired name="amount">
+        <Label>금액</Label>
+        <CashBookAmountInput
+          id={`${idPrefix}-amount`}
+          value={amount}
+          onChange={setAmount}
+        />
+      </TextField>
 
-      <label htmlFor={`${idPrefix}-date`}>날짜</label>
-      <input
-        id={`${idPrefix}-date`}
-        name="date"
-        type="date"
-        value={date}
-        onChange={(event) => setDate(event.target.value)}
-        required
-      />
+      <TextField fullWidth isRequired name="date" type="date">
+        <Label>날짜</Label>
+        <Input
+          id={`${idPrefix}-date`}
+          value={date}
+          onChange={(event) => setDate(event.target.value)}
+        />
+      </TextField>
 
-      <label htmlFor={`${idPrefix}-memo`}>메모</label>
-      <textarea
-        id={`${idPrefix}-memo`}
-        name="memo"
-        value={memo}
-        onChange={(event) => setMemo(event.target.value)}
-        maxLength="500"
-      />
+      <TextField fullWidth name="memo">
+        <Label>메모</Label>
+        <TextArea
+          id={`${idPrefix}-memo`}
+          value={memo}
+          onChange={(event) => setMemo(event.target.value)}
+          maxLength="500"
+        />
+      </TextField>
 
-      <button type="submit" disabled={pending}>
+      <Button type="submit" isDisabled={pending} isPending={pending}>
         {pending
           ? (mode === "create" ? "저장하는 중..." : "수정하는 중...")
           : (mode === "create" ? "내역 저장" : "저장")}
-      </button>
+      </Button>
       <ToastMessage error={state.error} message={state.message} trigger={state} />
-    </form>
+    </Form>
   );
 }

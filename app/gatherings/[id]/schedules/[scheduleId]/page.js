@@ -1,3 +1,4 @@
+import { Button, Card, Disclosure, Typography } from "@heroui/react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
@@ -30,15 +31,19 @@ export default async function ScheduleDetailsPage({ params, searchParams }) {
 
   return (
     <>
-      <section>
-        <p><Link href={`/gatherings/${id}/schedules`}>← 일정 달력</Link></p>
-        <h1>{schedule.title}</h1>
+      <section className="flex flex-col gap-4">
+        <p><Link className="link" href={`/gatherings/${id}/schedules`}>← 일정 달력</Link></p>
+        <Typography type="h1">{schedule.title}</Typography>
         <p>{schedule.description}</p>
-        <dl>
-          <dt>기간</dt><dd>{schedule.startDate} – {schedule.endDate}</dd>
-          <dt>장소</dt><dd>{schedule.location}</dd>
-          <dt>작성자</dt><dd>{schedule.authorName}</dd>
-        </dl>
+        <Card>
+          <Card.Content>
+            <dl className="grid gap-3 sm:grid-cols-[6rem_1fr]">
+              <dt className="font-medium">기간</dt><dd>{schedule.startDate} – {schedule.endDate}</dd>
+              <dt className="font-medium">장소</dt><dd>{schedule.location}</dd>
+              <dt className="font-medium">작성자</dt><dd>{schedule.authorName}</dd>
+            </dl>
+          </Card.Content>
+        </Card>
         <ToastMessage
           error={getSingleSearchParam(query.error)}
           message={getSingleSearchParam(query.message)}
@@ -59,36 +64,44 @@ export default async function ScheduleDetailsPage({ params, searchParams }) {
             fields={{ gatheringId: id, scheduleId }}
             label="참여 취소"
             pendingLabel="취소하는 중..."
+            variant="danger-soft"
           />
         ) : null}
       </section>
 
-      <section>
-        <h2>참여 멤버 {participants.length}명</h2>
+      <section className="flex flex-col gap-4">
+        <Typography type="h2">참여 멤버 {participants.length}명</Typography>
         <ul>{participants.map((participant) => <li key={participant.id}>{participant.displayName}</li>)}</ul>
       </section>
 
       {isAuthor ? (
-        <section>
-          <details>
-            <summary>일정 수정</summary>
-            <ScheduleForm
-              gatheringId={id}
-              initialValues={{
-                title: schedule.title,
-                description: schedule.description,
-                startDate: schedule.startDate,
-                endDate: schedule.endDate,
-                location: schedule.location,
-              }}
-              mode="edit"
-              scheduleId={scheduleId}
-            />
-          </details>
+        <section className="flex flex-col gap-4">
+          <Disclosure>
+            <Disclosure.Heading>
+              <Disclosure.Trigger>
+                일정 수정
+                <Disclosure.Indicator />
+              </Disclosure.Trigger>
+            </Disclosure.Heading>
+            <Disclosure.Content>
+              <ScheduleForm
+                gatheringId={id}
+                initialValues={{
+                  title: schedule.title,
+                  description: schedule.description,
+                  startDate: schedule.startDate,
+                  endDate: schedule.endDate,
+                  location: schedule.location,
+                }}
+                mode="edit"
+                scheduleId={scheduleId}
+              />
+            </Disclosure.Content>
+          </Disclosure>
           <form action={deleteScheduleAction}>
             <input type="hidden" name="gatheringId" value={id} />
             <input type="hidden" name="scheduleId" value={scheduleId} />
-            <button type="submit">일정 삭제</button>
+            <Button type="submit" variant="danger">일정 삭제</Button>
           </form>
         </section>
       ) : null}

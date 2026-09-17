@@ -1,5 +1,12 @@
 "use client";
 
+import {
+  Description,
+  FieldError,
+  Input,
+  Label,
+  TextField,
+} from "@heroui/react";
 import { useRef, useState } from "react";
 
 const onlineRegion = {
@@ -150,34 +157,34 @@ export default function RegionAutocomplete({
   return (
     <>
       <input type="hidden" name="region" value={regionCode} />
-      <label htmlFor={id}>지역</label>
-      <input
-        id={id}
-        type="text"
-        role="combobox"
-        aria-autocomplete="list"
-        aria-controls={dataListId}
-        aria-describedby={helpId}
-        aria-expanded={suggestions.length > 0}
-        aria-invalid={Boolean(query && !regionCode)}
-        autoComplete="off"
-        list={dataListId}
-        maxLength="100"
-        placeholder="읍면동 입력"
-        value={query}
-        onChange={handleChange}
-        onFocus={() => void updateSuggestions(query)}
-        required
-      />
-      <datalist id={dataListId}>
-        {suggestions.map((region) => (
-          <option key={region.code} value={region.name} />
-        ))}
-      </datalist>
-      <small id={helpId}>
-        {helpText || "읍면동을 입력하고 자동완성 목록에서 선택해 주세요."}
-      </small>
-      {loadError ? <small className="form-error" role="alert">{loadError}</small> : null}
+      <TextField fullWidth isInvalid={Boolean(query && !regionCode)} isRequired>
+        <Label>지역</Label>
+        <Input
+          id={id}
+          type="text"
+          role="combobox"
+          aria-autocomplete="list"
+          aria-controls={dataListId}
+          aria-describedby={helpId}
+          aria-expanded={suggestions.length > 0}
+          autoComplete="off"
+          list={dataListId}
+          maxLength="100"
+          placeholder="읍면동 입력"
+          value={query}
+          onChange={handleChange}
+          onFocus={() => void updateSuggestions(query)}
+        />
+        <datalist id={dataListId}>
+          {suggestions.map((region) => (
+            <option key={region.code} value={region.name} />
+          ))}
+        </datalist>
+        <Description id={helpId}>
+          {helpText || "읍면동을 입력하고 자동완성 목록에서 선택해 주세요."}
+        </Description>
+        {loadError ? <FieldError>{loadError}</FieldError> : null}
+      </TextField>
     </>
   );
 }

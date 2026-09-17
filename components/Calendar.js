@@ -1,3 +1,4 @@
+import { Card, Typography } from "@heroui/react";
 import Link from "next/link";
 
 import styles from "@/components/Calendar.module.css";
@@ -158,96 +159,106 @@ export default function Calendar({
   const title = `${year}년 ${month}월`;
 
   return (
-    <div role="region" aria-label={ariaLabel}>
-      <div className={styles.toolbar}>
-        <nav className={styles.navigation} aria-label={`${ariaLabel} 월 이동`}>
-          <Link
-            href={getMonthHref(monthNavigationPath, previousMonth)}
-            scroll={false}
-            aria-label={`${previousMonth}로 이동`}
-          >
-            ‹
-          </Link>
-          <Link
-            href={getMonthHref(monthNavigationPath, nextMonth)}
-            scroll={false}
-            aria-label={`${nextMonth}로 이동`}
-          >
-            ›
-          </Link>
-          {monthValue !== currentMonth ? (
-            <Link href={getMonthHref(monthNavigationPath, currentMonth)} scroll={false}>
-              오늘
-            </Link>
-          ) : null}
-        </nav>
-        <h3 className={styles.title}>{title}</h3>
-        <div aria-hidden="true" />
-      </div>
+    <Card>
+      <Card.Content>
+        <div role="region" aria-label={ariaLabel}>
+          <div className={styles.toolbar}>
+            <nav className={styles.navigation} aria-label={`${ariaLabel} 월 이동`}>
+              <Link
+                className="button button--outline button--sm"
+                href={getMonthHref(monthNavigationPath, previousMonth)}
+                scroll={false}
+                aria-label={`${previousMonth}로 이동`}
+              >
+                ‹
+              </Link>
+              <Link
+                className="button button--outline button--sm"
+                href={getMonthHref(monthNavigationPath, nextMonth)}
+                scroll={false}
+                aria-label={`${nextMonth}로 이동`}
+              >
+                ›
+              </Link>
+              {monthValue !== currentMonth ? (
+                <Link
+                  className="button button--outline button--sm"
+                  href={getMonthHref(monthNavigationPath, currentMonth)}
+                  scroll={false}
+                >
+                  오늘
+                </Link>
+              ) : null}
+            </nav>
+            <Typography type="h3">{title}</Typography>
+            <div aria-hidden="true" />
+          </div>
 
-      <div className={styles.tableContainer}>
-        <table className={styles.monthTable}>
-          <caption className="visually-hidden">{title} {ariaLabel}</caption>
-          <thead>
-            <tr>
-              {weekdayLabels.map((weekday) => <th key={weekday} scope="col">{weekday}</th>)}
-            </tr>
-          </thead>
-          <tbody>
-            {weeks.map((week) => (
-              <tr key={week[0].dateValue}>
-                {week.map((day, weekdayIndex) => {
-                  const dateEvents = getEventsForDate(events, day.dateValue);
-                  const visibleEvents = dateEvents.slice(0, maximumVisibleEvents);
-                  const hiddenEvents = dateEvents.slice(maximumVisibleEvents);
-                  const dayClassName = [
-                    styles.day,
-                    day.isCurrentMonth ? "" : styles.outsideMonth,
-                    day.dateValue === currentDate ? styles.today : "",
-                  ].filter(Boolean).join(" ");
+          <div className={styles.tableContainer}>
+            <table className={styles.monthTable}>
+              <caption className="sr-only">{title} {ariaLabel}</caption>
+              <thead>
+                <tr>
+                  {weekdayLabels.map((weekday) => <th key={weekday} scope="col">{weekday}</th>)}
+                </tr>
+              </thead>
+              <tbody>
+                {weeks.map((week) => (
+                  <tr key={week[0].dateValue}>
+                    {week.map((day, weekdayIndex) => {
+                      const dateEvents = getEventsForDate(events, day.dateValue);
+                      const visibleEvents = dateEvents.slice(0, maximumVisibleEvents);
+                      const hiddenEvents = dateEvents.slice(maximumVisibleEvents);
+                      const dayClassName = [
+                        styles.day,
+                        day.isCurrentMonth ? "" : styles.outsideMonth,
+                        day.dateValue === currentDate ? styles.today : "",
+                      ].filter(Boolean).join(" ");
 
-                  return (
-                    <td className={dayClassName} key={day.dateValue}>
-                      {dateNavigationPath ? (
-                        <Link
-                          className={styles.dateLink}
-                          href={getDateHref(dateNavigationPath, day.dateValue)}
-                          scroll={false}
-                          aria-label={`${getDateLabel(day.dateValue)} 내역 보기`}
-                          aria-current={selectedDate === day.dateValue ? "date" : undefined}
-                        >
-                          <time dateTime={day.dateValue}>{day.day}</time>
-                        </Link>
-                      ) : (
-                        <time dateTime={day.dateValue} aria-label={getDateLabel(day.dateValue)}>
-                          {day.day}
-                        </time>
-                      )}
-                      {visibleEvents.length > 0 ? (
-                        <ol className={styles.events}>
-                          {visibleEvents.map((event) => (
-                            <CalendarEvent
-                              event={event}
-                              dateValue={day.dateValue}
-                              week={week}
-                              weekdayIndex={weekdayIndex}
-                              key={event.id}
-                              showEventLink={!dateNavigationPath}
-                            />
-                          ))}
-                        </ol>
-                      ) : null}
-                      {hiddenEvents.length > 0 ? (
-                        <small>+{hiddenEvents.length}개</small>
-                      ) : null}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+                      return (
+                        <td className={dayClassName} key={day.dateValue}>
+                          {dateNavigationPath ? (
+                            <Link
+                              className={styles.dateLink}
+                              href={getDateHref(dateNavigationPath, day.dateValue)}
+                              scroll={false}
+                              aria-label={`${getDateLabel(day.dateValue)} 내역 보기`}
+                              aria-current={selectedDate === day.dateValue ? "date" : undefined}
+                            >
+                              <time dateTime={day.dateValue}>{day.day}</time>
+                            </Link>
+                          ) : (
+                            <time dateTime={day.dateValue} aria-label={getDateLabel(day.dateValue)}>
+                              {day.day}
+                            </time>
+                          )}
+                          {visibleEvents.length > 0 ? (
+                            <ol className={styles.events}>
+                              {visibleEvents.map((event) => (
+                                <CalendarEvent
+                                  event={event}
+                                  dateValue={day.dateValue}
+                                  week={week}
+                                  weekdayIndex={weekdayIndex}
+                                  key={event.id}
+                                  showEventLink={!dateNavigationPath}
+                                />
+                              ))}
+                            </ol>
+                          ) : null}
+                          {hiddenEvents.length > 0 ? (
+                            <small>+{hiddenEvents.length}개</small>
+                          ) : null}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </Card.Content>
+    </Card>
   );
 }

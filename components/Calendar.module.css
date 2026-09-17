@@ -3,7 +3,7 @@
   grid-template-columns: 1fr auto 1fr;
   gap: 1rem;
   align-items: center;
-  padding: 0.75rem;
+  padding-bottom: 1rem;
 }
 
 .navigation {
@@ -11,33 +11,6 @@
   gap: 0.35rem;
   align-items: center;
   padding: 0;
-}
-.navigation a,
-.navigation span {
-  display: inline-flex;
-  min-width: 2.25rem;
-  min-height: 2.25rem;
-  margin: 0;
-  padding: 0.25rem 0.6rem;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--border);
-  border-radius: var(--standard-border-radius);
-  background-color: var(--bg);
-  color: var(--text);
-  line-height: 1;
-  text-decoration: none;
-}
-
-.navigation span[aria-disabled="true"] {
-  color: var(--text-light);
-  cursor: not-allowed;
-  opacity: 0.65;
-}
-.title {
-  margin: 0;
-  font-size: 1.35rem;
-  text-align: center;
 }
 
 .tableContainer {
@@ -48,15 +21,23 @@
   width: 100%;
   min-width: 42rem;
   margin: 0;
+  border-collapse: collapse;
   table-layout: fixed;
 }
 
+.monthTable th,
+.monthTable td {
+  border: var(--border-width) solid var(--border);
+}
+
 .monthTable th {
+  padding: 0.5rem;
+  background-color: var(--surface-secondary);
   text-align: center;
 }
 
 .monthTable tbody tr {
-  background-color: var(--bg);
+  background-color: var(--surface);
 }
 
 .day {
@@ -76,8 +57,8 @@
 }
 
 .outsideMonth {
-  background-color: var(--accent-bg);
-  color: var(--text-light);
+  background-color: var(--surface-secondary);
+  color: var(--muted);
 }
 
 .day > time,
@@ -94,7 +75,7 @@
 .today > time,
 .today > a > time {
   background-color: var(--accent);
-  color: var(--accent-text);
+  color: var(--accent-foreground);
   font-weight: bold;
 }
 
@@ -112,9 +93,9 @@
   margin: 0;
   padding: 0.15rem 0.3rem;
   overflow: visible;
-  border-radius: 0.2rem;
-  background-color: var(--accent-bg);
-  color: var(--text);
+  border-radius: var(--radius);
+  background-color: var(--accent-soft);
+  color: var(--accent-soft-foreground);
   font-size: 0.78rem;
   line-height: 1.35;
 }
@@ -139,11 +120,11 @@
 }
 
 .spendingEvent {
-  color: #b91c1c;
+  color: var(--danger-soft-foreground);
 }
 
 .incomeEvent {
-  color: #1d4ed8;
+  color: var(--success-soft-foreground);
 }
 
 .eventContinuesFromPreviousDay {
@@ -181,16 +162,6 @@ a.eventTitle {
   pointer-events: auto;
 }
 
-@media (prefers-color-scheme: dark) {
-  .spendingEvent {
-    color: #ff8a8a;
-  }
-
-  .incomeEvent {
-    color: #8ab4ff;
-  }
-}
-
 @media (max-width: 720px) {
   .toolbar {
     grid-template-columns: 1fr;
@@ -205,8 +176,9 @@ a.eventTitle {
     order: 2;
   }
 
-  .title {
+  .toolbar > :nth-child(2) {
     order: 1;
+    text-align: center;
   }
 
   .day {

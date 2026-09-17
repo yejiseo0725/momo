@@ -1,3 +1,13 @@
+import {
+  Alert,
+  Button,
+  Input,
+  Label,
+  ListBox,
+  Select,
+  TextField,
+  Typography,
+} from "@heroui/react";
 import Link from "next/link";
 import Form from "next/form";
 import { connection } from "next/server";
@@ -61,73 +71,91 @@ export default async function GatheringsPage({ searchParams }) {
         error={getSingleSearchParam(query.error)}
         message={getSingleSearchParam(query.message)}
       />
-      <section>
-        <div className="section-heading">
+      <section className="flex flex-col gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1>모임 찾기</h1>
+            <Typography type="h1">모임 찾기</Typography>
             <p>공개된 모임을 최신순으로 둘러보세요.</p>
           </div>
-          <Link href="/gatherings/new" className="button">새 모임 만들기</Link>
+          <Link href="/gatherings/new" className="button button--primary">새 모임 만들기</Link>
         </div>
 
-        <Form action="/gatherings" className="compact-form">
-          <p><strong>조회 범위</strong></p>
-          <p className="actions" aria-label="모임 조회 범위">
+        <Form action="/gatherings" className="flex w-full max-w-xl flex-col gap-4">
+          <Typography weight="semibold">조회 범위</Typography>
+          <div className="flex flex-wrap gap-2" aria-label="모임 조회 범위">
             <Link
               href={allGatheringsPath}
-              className={nearbyOnly ? undefined : "button"}
+              className={`button ${nearbyOnly ? "button--outline" : "button--primary"}`}
               aria-current={nearbyOnly ? undefined : "page"}
             >
               전체 모임
             </Link>
             <Link
               href={nearbyGatheringsPath}
-              className={nearbyOnly ? "button" : undefined}
+              className={`button ${nearbyOnly ? "button--primary" : "button--outline"}`}
               aria-current={nearbyOnly ? "page" : undefined}
             >
               내 주변 모임
             </Link>
-          </p>
+          </div>
           {nearbyOnly ? (
-            <p className="notice">
-              {sigunguName
-                ? `${sigunguName}의 모임과 온라인 모임을 보고 있습니다.`
-                : "프로필 지역을 확인할 수 없어 온라인 모임만 보고 있습니다."}
-            </p>
+            <Alert status="accent">
+              <Alert.Indicator />
+              <Alert.Content>
+                <Alert.Description>
+                  {sigunguName
+                    ? `${sigunguName}의 모임과 온라인 모임을 보고 있습니다.`
+                    : "프로필 지역을 확인할 수 없어 온라인 모임만 보고 있습니다."}
+                </Alert.Description>
+              </Alert.Content>
+            </Alert>
           ) : null}
 
-          <label htmlFor="keyword">키워드</label>
-          <input
-            id="keyword"
-            name="keyword"
-            type="search"
-            defaultValue={keyword}
-            placeholder="모임명, 소개, 지역"
-            maxLength="100"
-          />
+          <TextField fullWidth name="keyword" type="search">
+            <Label>키워드</Label>
+            <Input
+              defaultValue={keyword}
+              placeholder="모임명, 소개, 지역"
+              maxLength="100"
+            />
+          </TextField>
 
-          <label htmlFor="category">카테고리</label>
-          <select id="category" name="category" defaultValue={selectedCategory}>
-            <option value="">전체</option>
-            {CATEGORIES.map((item) => <option key={item} value={item}>{item}</option>)}
-          </select>
+          <Select
+            fullWidth
+            name="category"
+            defaultSelectedKey={selectedCategory || "all"}
+          >
+            <Label>카테고리</Label>
+            <Select.Trigger>
+              <Select.Value />
+              <Select.Indicator />
+            </Select.Trigger>
+            <Select.Popover>
+              <ListBox>
+                <ListBox.Item id="all" textValue="전체">전체</ListBox.Item>
+                {CATEGORIES.map((item) => (
+                  <ListBox.Item id={item} key={item} textValue={item}>{item}</ListBox.Item>
+                ))}
+              </ListBox>
+            </Select.Popover>
+          </Select>
 
           {nearbyOnly ? <input type="hidden" name="nearby" value="true" /> : null}
 
-          <button type="submit">검색</button>
+          <Button type="submit">검색</Button>
         </Form>
       </section>
 
-      <section>
-        <div className="section-heading">
+      <section className="flex flex-col gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h2>모임 {gatherings.length}개</h2>
+            <Typography type="h2">모임 {gatherings.length}개</Typography>
             <p>이미 가입했거나 직접 만든 모임은 내 모임에서 확인할 수 있습니다.</p>
           </div>
-          <Link href="/my-gatherings">내 모임 보기</Link>
+          <Link className="link" href="/my-gatherings">내 모임 보기</Link>
         </div>
         {gatherings.length > 0 ? (
-          <div className="card-grid">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {gatherings.map((gathering) => (
               <GatheringCard key={gathering.id} gathering={gathering} />
             ))}

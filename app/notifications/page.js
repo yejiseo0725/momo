@@ -1,3 +1,4 @@
+import { Card, Typography } from "@heroui/react";
 import Link from "next/link";
 import { connection } from "next/server";
 
@@ -15,24 +16,30 @@ export default async function NotificationsPage({ searchParams }) {
   const notifications = await getNotifications(session.user.id);
 
   return (
-    <section>
+    <section className="flex flex-col gap-4">
       <ToastMessage
         error={getSingleSearchParam(query.error)}
         message={getSingleSearchParam(query.message)}
       />
-      <h1>알림</h1>
+      <Typography type="h1">알림</Typography>
 
       {notifications.length === 0 ? <EmptyState>도착한 알림이 없습니다.</EmptyState> : (
-        <div className="stack">
+        <div className="grid gap-4">
           {notifications.map((notification) => (
-            <article key={notification.id}>
-              <header>
-                <p><small>{notification.gatheringName} · {formatDateTime(notification.createdAt)}</small></p>
-                <h2>{notification.type === "SCHEDULE_CREATED" ? "새 일정" : "새 챌린지"}</h2>
-              </header>
-              <p>{notification.message}</p>
-              <footer><Link href={notification.href}>내용 보기</Link></footer>
-            </article>
+            <Card key={notification.id}>
+              <Card.Header>
+                <Card.Description>
+                  {notification.gatheringName} · {formatDateTime(notification.createdAt)}
+                </Card.Description>
+                <Card.Title>
+                  {notification.type === "SCHEDULE_CREATED" ? "새 일정" : "새 챌린지"}
+                </Card.Title>
+              </Card.Header>
+              <Card.Content><p>{notification.message}</p></Card.Content>
+              <Card.Footer>
+                <Link className="link" href={notification.href}>내용 보기</Link>
+              </Card.Footer>
+            </Card>
           ))}
         </div>
       )}

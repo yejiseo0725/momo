@@ -1,3 +1,4 @@
+import { Card, Chip, Typography } from "@heroui/react";
 import Link from "next/link";
 import { connection } from "next/server";
 
@@ -27,49 +28,57 @@ export default async function ProfilePage({ searchParams }) {
         message={getSingleSearchParam(query.message)}
       />
 
-      <section>
-        <div className="section-heading">
-          <header className="profile-heading">
+      <section className="flex flex-col gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <header className="flex items-center gap-3">
             <UserAvatar image={session.user.image} name={displayName} size="large" />
             <div>
-              <h1>마이페이지</h1>
+              <Typography type="h1">마이페이지</Typography>
               <p>{displayName}</p>
             </div>
           </header>
-          <Link href="/profile/edit" className="button">
+          <Link href="/profile/edit" className="button button--primary">
             내 정보 수정
           </Link>
         </div>
 
-        <h2>내 프로필 정보</h2>
-        <dl>
-          <dt>이름</dt>
-          <dd>{session.user.name}</dd>
-          <dt>성별</dt>
-          <dd>{session.user.gender}</dd>
-          <dt>닉네임</dt>
-          <dd>{session.user.nickname}</dd>
-          <dt>이메일</dt>
-          <dd>{session.user.email}</dd>
-          <dt>관심 카테고리</dt>
-          <dd>{selectedCategories.length > 0 ? selectedCategories.join(", ") : "없음"}</dd>
-          <dt>지역</dt>
-          <dd>{getRegionName(userRegionCode)}</dd>
-          <dt>새 일정·챌린지 알림</dt>
-          <dd>{session.user.notificationEnabled !== false ? "받음" : "받지 않음"}</dd>
-        </dl>
+        <Card>
+          <Card.Header><Card.Title>내 프로필 정보</Card.Title></Card.Header>
+          <Card.Content>
+            <dl className="grid gap-3 sm:grid-cols-[10rem_1fr]">
+              <dt className="font-medium">이름</dt>
+              <dd>{session.user.name}</dd>
+              <dt className="font-medium">성별</dt>
+              <dd>{session.user.gender}</dd>
+              <dt className="font-medium">닉네임</dt>
+              <dd>{session.user.nickname}</dd>
+              <dt className="font-medium">이메일</dt>
+              <dd>{session.user.email}</dd>
+              <dt className="font-medium">관심 카테고리</dt>
+              <dd className="flex flex-wrap gap-2">
+                {selectedCategories.length > 0
+                  ? selectedCategories.map((category) => <Chip key={category}>{category}</Chip>)
+                  : "없음"}
+              </dd>
+              <dt className="font-medium">지역</dt>
+              <dd>{getRegionName(userRegionCode)}</dd>
+              <dt className="font-medium">새 일정·챌린지 알림</dt>
+              <dd>{session.user.notificationEnabled !== false ? "받음" : "받지 않음"}</dd>
+            </dl>
+          </Card.Content>
+        </Card>
       </section>
 
-      <section>
-        <div className="section-heading">
-          <h2>내 모임</h2>
-          <Link href="/gatherings/new" className="button">
+      <section className="flex flex-col gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <Typography type="h2">내 모임</Typography>
+          <Link href="/gatherings/new" className="button button--primary">
             새 모임 만들기
           </Link>
         </div>
 
         {gatherings.length > 0 ? (
-          <div className="card-grid">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {gatherings.map((gathering) => (
               <GatheringCard key={gathering.id} gathering={gathering} />
             ))}

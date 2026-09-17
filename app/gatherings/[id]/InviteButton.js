@@ -1,5 +1,6 @@
 "use client";
 
+import { Button, Description, Input, Label, TextField } from "@heroui/react";
 import { useState } from "react";
 
 function copyWithTemporaryTextArea(text) {
@@ -59,27 +60,26 @@ export default function InviteButton({ inviteToken }) {
   }
 
   return (
-    <div className="invite-link">
-      <button
+    <div className="flex flex-col items-start gap-3">
+      <Button
         type="button"
         aria-controls="gathering-invite-url"
         aria-expanded={Boolean(inviteUrl)}
-        onClick={showAndCopyInviteUrl}
+        onPress={showAndCopyInviteUrl}
+        variant="secondary"
       >
         모임에 초대
-      </button>
+      </Button>
       {inviteUrl ? (
-        <div id="gathering-invite-url">
-          <label htmlFor="invite-url">초대 URL</label>
-          <input
+        <TextField id="gathering-invite-url" fullWidth isReadOnly>
+          <Label>초대 URL</Label>
+          <Input
             id="invite-url"
-            type="text"
-            readOnly
             value={inviteUrl}
             onFocus={(event) => event.currentTarget.select()}
           />
-          <small role="status">{copyMessage}</small>
-        </div>
+          <Description role="status">{copyMessage}</Description>
+        </TextField>
       ) : null}
     </div>
   );

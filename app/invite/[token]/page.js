@@ -1,3 +1,4 @@
+import { Button, Chip, Typography } from "@heroui/react";
 import { notFound, redirect } from "next/navigation";
 import { connection } from "next/server";
 
@@ -27,22 +28,22 @@ export default async function GatheringInvitationPage({ params, searchParams }) 
   const isFull = gathering.memberCount >= gathering.maxMemCount;
 
   return (
-    <section>
-      <p><strong>비공개 모임 초대</strong></p>
-      <h1>{gathering.name}</h1>
+    <section className="flex flex-col gap-4">
+      <Typography color="muted" weight="semibold">비공개 모임 초대</Typography>
+      <Typography type="h1">{gathering.name}</Typography>
       <p>{gathering.description}</p>
-      <p className="meta-list">
-        <span>{gathering.category}</span>
-        <span>{gathering.region}</span>
-        <span>{gathering.memberCount} / {gathering.maxMemCount}명</span>
-      </p>
+      <div className="flex flex-wrap gap-2">
+        <Chip>{gathering.category}</Chip>
+        <Chip>{gathering.region}</Chip>
+        <Chip>{gathering.memberCount} / {gathering.maxMemCount}명</Chip>
+      </div>
       <ToastMessage error={getSingleSearchParam(query.error)} />
 
       <form action={joinGatheringByInvitationAction}>
         <input type="hidden" name="inviteToken" value={token} />
-        <button type="submit" disabled={isFull}>
+        <Button type="submit" isDisabled={isFull}>
           {isFull ? "가입 마감" : "초대받은 모임 가입하기"}
-        </button>
+        </Button>
       </form>
     </section>
   );

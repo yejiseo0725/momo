@@ -1,3 +1,4 @@
+import { Typography } from "@heroui/react";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 
@@ -25,12 +26,12 @@ export default async function EditGatheringPage({ params, searchParams }) {
   const { gathering } = details;
 
   return (
-    <section>
+    <section className="flex flex-col gap-4">
       <ToastMessage
         error={getSingleSearchParam(query.error)}
         message={getSingleSearchParam(query.message)}
       />
-      <h1>모임 수정</h1>
+      <Typography type="h1">모임 수정</Typography>
       <GatheringForm
         categories={CATEGORIES}
         gatheringId={id}

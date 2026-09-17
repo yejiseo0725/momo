@@ -1,5 +1,14 @@
 "use client";
 
+import {
+  Button,
+  Description,
+  Form,
+  Input,
+  Label,
+  TextArea,
+  TextField,
+} from "@heroui/react";
 import { useActionState, useEffect, useRef, useState } from "react";
 
 import { createChallengeFeedAction } from "@/app/gatherings/[id]/challenges/actions";
@@ -23,40 +32,36 @@ function ChallengeFeedFields({
 
   return (
     <>
-      <label htmlFor={`done-${challengeId}`}>인증일</label>
-      <input
-        id={`done-${challengeId}`}
-        name="doneDate"
-        type="date"
-        min={minimumDate}
-        max={maximumDate}
-        value={doneDate}
-        onChange={(event) => setDoneDate(event.target.value)}
-        required
-      />
+      <TextField fullWidth isRequired name="doneDate" type="date">
+        <Label>인증일</Label>
+        <Input
+          id={`done-${challengeId}`}
+          min={minimumDate}
+          max={maximumDate}
+          value={doneDate}
+          onChange={(event) => setDoneDate(event.target.value)}
+        />
+      </TextField>
 
-      <label htmlFor={`feed-${challengeId}`}>인증 내용</label>
-      <textarea
-        id={`feed-${challengeId}`}
-        name="description"
-        maxLength="500"
-        value={description}
-        onChange={(event) => setDescription(event.target.value)}
-        required
-      />
+      <TextField fullWidth isRequired name="description">
+        <Label>인증 내용</Label>
+        <TextArea
+          id={`feed-${challengeId}`}
+          maxLength="500"
+          value={description}
+          onChange={(event) => setDescription(event.target.value)}
+        />
+      </TextField>
 
       {imageRequired ? (
-        <>
-          <label htmlFor={`image-${challengeId}`}>인증 이미지 (필수)</label>
-          <input
+        <TextField fullWidth isRequired name="image" type="file">
+          <Label>인증 이미지</Label>
+          <Input
             id={`image-${challengeId}`}
-            name="image"
-            type="file"
             accept="image/jpeg,image/png,image/webp"
-            required
           />
-          <small>JPG, PNG, WebP 형식의 5MB 이하 이미지를 선택해 주세요.</small>
-        </>
+          <Description>JPG, PNG, WebP 형식의 5MB 이하 이미지를 선택해 주세요.</Description>
+        </TextField>
       ) : null}
     </>
   );
@@ -81,14 +86,18 @@ export default function ChallengeFeedForm({
       return;
     }
 
-    const detailsElement = formRef.current?.closest("details");
-    if (detailsElement) {
-      detailsElement.open = false;
+    const disclosureElement = formRef.current?.closest('[data-slot="disclosure"]');
+    const disclosureTrigger = disclosureElement?.querySelector(
+      '[data-slot="disclosure-trigger"]',
+    );
+
+    if (disclosureTrigger?.getAttribute("aria-expanded") === "true") {
+      disclosureTrigger.click();
     }
   }, [state.resetKey]);
 
   return (
-    <form ref={formRef} action={formAction}>
+    <Form ref={formRef} className="flex w-full flex-col gap-4" action={formAction}>
       <input type="hidden" name="gatheringId" value={gatheringId} />
       <input type="hidden" name="challengeId" value={challengeId} />
 
@@ -101,10 +110,10 @@ export default function ChallengeFeedForm({
         minimumDate={minimumDate}
       />
 
-      <button type="submit" disabled={pending}>
+      <Button type="submit" isDisabled={pending} isPending={pending}>
         {pending ? "등록하는 중..." : "인증 남기기"}
-      </button>
+      </Button>
       <ToastMessage error={state.error} message={state.message} trigger={state} />
-    </form>
+    </Form>
   );
 }
