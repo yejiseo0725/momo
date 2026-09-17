@@ -152,13 +152,40 @@ export default function ChatRoom({ gatheringId, currentUserId, initialMessages }
     }
 
     function joinGatheringRoom() {
-      socket.emit("join-gathering", gatheringId, synchronizeMessages);
+      socket.emit("join-gathering", gatheringId, (result) => {
+        if (result?.allowed) {
+          void synchronizeMessages();
+        }
+      });
     }
 
     function loadNewMessages(event) {
-      if (event?.gatheringId === gatheringId) {
-        void synchronizeMessages();
+      if (event?.gatheringId !== gatheringId || !event.message) {
+        return;
       }
+
+      const currentList = messagesRef.current;
+      if (currentList.some((message) => message.id === event.message.id)) {
+        return;
+      }
+
+      const element = chatListRef.current;
+      const atBottom = isNearBottom(element);
+
+      if (atBottom || event.message.userId === currentUserId) {
+        shouldAutoScrollRef.current = true;
+      } else {
+        shouldAutoScrollRef.current = false;
+        setUnreadCount((prev) => prev + 1);
+      }
+
+      const nextMessages = [...currentList, event.message]
+        .sort((left, right) => (
+          left.createdAt.localeCompare(right.createdAt) || left.id.localeCompare(right.id)
+        ))
+        .slice(-100);
+      messagesRef.current = nextMessages;
+      setMessages(nextMessages);
     }
 
     socket.on("connect", joinGatheringRoom);
@@ -197,7 +224,7 @@ export default function ChatRoom({ gatheringId, currentUserId, initialMessages }
         return nextMessages;
       });
       formRef.current?.reset();
-      socketRef.current?.emit("notify-message-created", gatheringId);
+      socketRef.current?.emit("notify-message-created", result.socketToken);
     } catch {
       setFeedback({ error: "메시지를 보내지 못했습니다.", message: "" });
     } finally {
