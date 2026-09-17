@@ -1,4 +1,5 @@
 import { connection } from "next/server";
+import Image from "next/image";
 
 import {
   createChallengeFeedAction,
@@ -69,13 +70,15 @@ export default async function ChallengesPage({ params, searchParams }) {
                 />
                 <label htmlFor={`feed-${challenge.id}`}>인증 내용</label>
                 <textarea id={`feed-${challenge.id}`} name="description" maxLength="500" required />
-                <label htmlFor={`image-${challenge.id}`}>이미지 링크 {challenge.useImage ? "(필수)" : "(선택)"}</label>
+                <label htmlFor={`image-${challenge.id}`}>인증 이미지 {challenge.useImage ? "(필수)" : "(선택)"}</label>
                 <input
                   id={`image-${challenge.id}`}
-                  name="imageUrl"
-                  type="url"
+                  name="image"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
                   required={challenge.useImage}
                 />
+                <small>JPG, PNG, WebP 형식의 5MB 이하 이미지를 선택해 주세요.</small>
                 <button type="submit">인증 남기기</button>
               </form>
             </details>
@@ -89,7 +92,7 @@ export default async function ChallengesPage({ params, searchParams }) {
                   <label>제목<input name="title" defaultValue={challenge.title} maxLength="100" required /></label>
                   <label>설명<textarea name="description" defaultValue={challenge.description} maxLength="1000" required /></label>
                   <label>
-                    <input type="checkbox" name="useImage" defaultChecked={challenge.useImage} /> 이미지 링크 필수
+                      <input type="checkbox" name="useImage" defaultChecked={challenge.useImage} /> 인증 이미지 파일 필수
                   </label>
                   <label>시작일<input name="startDate" type="date" defaultValue={challenge.startDate} required /></label>
                   <label>종료일<input name="endDate" type="date" defaultValue={challenge.endDate} required /></label>
@@ -110,7 +113,19 @@ export default async function ChallengesPage({ params, searchParams }) {
                   {challenge.feeds.map((feed) => (
                     <li key={feed.id}>
                       <strong>{feed.doneDate} · {feed.authorName}</strong> — {feed.description}
-                      {feed.imageUrl ? <> · <a href={feed.imageUrl} target="_blank" rel="noreferrer">이미지 링크</a></> : null}
+                      {feed.imageId ? (
+                        <Image
+                          className="challenge-feed-image"
+                          src={`/api/challenge-feed-images/${feed.imageId}`}
+                          alt={`${feed.authorName}님의 챌린지 인증 이미지`}
+                          width={640}
+                          height={480}
+                          unoptimized
+                        />
+                      ) : null}
+                      {!feed.imageId && feed.imageUrl ? (
+                        <> · <a href={feed.imageUrl} target="_blank" rel="noreferrer">기존 이미지 링크</a></>
+                      ) : null}
                     </li>
                   ))}
                 </ul>

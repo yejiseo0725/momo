@@ -112,6 +112,14 @@ body > footer {
   border-left: 0.35rem solid var(--accent);
 }
 
+.challenge-feed-image {
+  display: block;
+  width: min(100%, 40rem);
+  height: auto;
+  margin-top: 0.75rem;
+  object-fit: contain;
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;

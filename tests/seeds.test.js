@@ -48,6 +48,14 @@ test("모임 초대 토큰은 고유하고 기존 모임도 허용한다", () =>
   assert.equal(inviteTokenIndex.options.sparse, true);
 });
 
+test("챌린지 인증 이미지는 GridFS 파일 ID로 저장한다", () => {
+  const challengeFeedSchema = buildCollectionJsonSchema("challengeFeeds");
+
+  assert.equal(challengeFeedSchema.properties.imageId.bsonType.includes("string"), true);
+  assert.equal(challengeFeedSchema.properties.imageId.bsonType.includes("null"), true);
+  assert.equal(challengeFeedSchema.required.includes("imageId"), false);
+});
+
 test("인덱스 이름과 관계없이 필드와 정렬 순서가 같으면 기존 인덱스로 판단한다", () => {
   assert.equal(
     hasSameIndexKeys(
