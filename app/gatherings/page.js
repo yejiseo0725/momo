@@ -16,10 +16,12 @@ export default async function GatheringsPage({ searchParams }) {
   const keyword = getSingleSearchParam(query.keyword).trim();
   const category = getSingleSearchParam(query.category);
   const selectedCategory = CATEGORIES.includes(category) ? category : "";
+  const nearbyOnly = getSingleSearchParam(query.nearby) === "true";
   const gatherings = await getPublicGatherings({
     keyword,
     category: selectedCategory,
     excludeUserId: session.user.id,
+    nearbyRegionCode: nearbyOnly ? session.user.region : "",
   });
 
   return (
@@ -53,6 +55,16 @@ export default async function GatheringsPage({ searchParams }) {
             <option value="">전체</option>
             {CATEGORIES.map((item) => <option key={item} value={item}>{item}</option>)}
           </select>
+
+          <label>
+            <input
+              name="nearby"
+              type="checkbox"
+              value="true"
+              defaultChecked={nearbyOnly}
+            /> 내 주변 모임
+          </label>
+          <small>내 지역과 같은 시군구의 모임과 온라인 모임을 함께 찾습니다.</small>
 
           <button type="submit">검색</button>
         </Form>
