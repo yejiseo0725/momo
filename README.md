@@ -33,6 +33,18 @@ npm run seed
 
 `npm run db:seed`도 같은 작업을 수행합니다. Better Auth가 예시 계정을 생성하고 `users`, `accounts` 컬렉션을 관리합니다.
 
+배포 환경에서는 아래 명령으로 예시 데이터를 변경하지 않고 컬렉션 검증 규칙, 인덱스와
+기존 데이터 보강만 적용할 수 있습니다. `npm run dev`와 `npm start`를 실행할 때도 이 작업이
+서버 시작 전에 자동으로 실행됩니다.
+
+```bash
+npm run db:migrate
+```
+
+배포 프로세스는 `node server.js`를 직접 실행하지 말고 `npm start` 또는 `npm run dev`를
+사용해야 자동 동기화가 적용됩니다. 배포용 MongoDB 계정에는 컬렉션 검증 규칙과 인덱스를
+갱신할 권한이 필요합니다.
+
 | 구분 | 이메일 | 기본 비밀번호 |
 | --- | --- | --- |
 | 리더 | `leader@momo.local` | `momo1234!` |

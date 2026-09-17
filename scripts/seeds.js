@@ -944,6 +944,18 @@ async function backfillGatheringInviteTokens(database) {
   }
 }
 
+async function synchronizeDatabaseStructure(database) {
+  const applicationCollections = Object.entries(seedDataStructure.collections)
+    .filter(([, definition]) => !definition.managedBy)
+    .map(([collectionName]) => collectionName);
+
+  for (const collectionName of applicationCollections) {
+    await createOrUpdateCollection(database, collectionName);
+  }
+
+  await backfillGatheringInviteTokens(database);
+}
+
 async function upsertGatheringMember(database, membership) {
   await database.collection("gatheringMembers").updateOne(
     {
@@ -1164,7 +1176,7 @@ async function seedExampleData(database, client) {
   return { leaderId, memberId, password };
 }
 
-async function initializeDatabaseStructure() {
+async function initializeDatabaseStructure({ structureOnly = false } = {}) {
   const mongoUri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017";
   const databaseName = process.env.MONGODB_DB_NAME || "momo";
   const client = new MongoClient(mongoUri, {
@@ -1175,15 +1187,13 @@ async function initializeDatabaseStructure() {
   try {
     await client.connect();
     const database = client.db(databaseName);
-    const applicationCollections = Object.entries(seedDataStructure.collections)
-      .filter(([, definition]) => !definition.managedBy)
-      .map(([collectionName]) => collectionName);
+    await synchronizeDatabaseStructure(database);
 
-    for (const collectionName of applicationCollections) {
-      await createOrUpdateCollection(database, collectionName);
+    if (structureOnly) {
+      console.log(`momo ${databaseName} 데이터 구조 동기화를 완료했습니다.`);
+      return;
     }
 
-    await backfillGatheringInviteTokens(database);
     const result = await seedExampleData(database, client);
     console.log("momo 초기 컬렉션과 예시 데이터 구성을 완료했습니다.");
     console.log(`리더 계정: leader@momo.local / ${result.password}`);
@@ -1194,7 +1204,9 @@ async function initializeDatabaseStructure() {
 }
 
 if (require.main === module) {
-  initializeDatabaseStructure().catch((error) => {
+  initializeDatabaseStructure({
+    structureOnly: process.argv.includes("--structure-only"),
+  }).catch((error) => {
     console.error("MongoDB 초기 구성에 실패했습니다.", error.message);
     process.exitCode = 1;
   });
@@ -1210,4 +1222,5 @@ module.exports = {
   sampleUsers,
   seedExampleData,
   seedDataStructure,
+  synchronizeDatabaseStructure,
 };

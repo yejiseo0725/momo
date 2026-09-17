@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import {
+  GatheringCreationError,
   GatheringError,
   createGathering,
   joinGathering,
@@ -51,7 +52,19 @@ export async function createGatheringAction(_previousState, formData) {
   let gatheringId;
   try {
     gatheringId = await createGathering(session.user.id, input);
-  } catch {
+  } catch (error) {
+    const failedCollection = error instanceof GatheringCreationError
+      ? error.collectionName
+      : "unknown";
+    const originalError = error instanceof GatheringCreationError
+      ? error.cause
+      : error;
+
+    console.error(
+      `[createGatheringAction] ${failedCollection} 저장 실패`,
+      originalError,
+    );
+
     return {
       error: "모임을 만들지 못했습니다. 잠시 후 다시 시도해 주세요.",
       message: "",
