@@ -9,15 +9,15 @@ export default function GatheringCard({ gathering }) {
         href={`/gatherings/${gathering.id}`}
         aria-label={`${gathering.name} 모임 보기`}
       >
-        <div className="mx-auto aspect-square w-full max-w-[300px] overflow-hidden">
+        <div className="mx-auto aspect-square w-full max-w-[400px] overflow-hidden">
           <Image
             className="h-full w-full object-cover"
             src={gathering.imageUrl || "/gathering-default.svg"}
             alt={gathering.imageUrl
               ? `${gathering.name} 모임 이미지`
               : "모임 기본 이미지"}
-            width={300}
-            height={300}
+            width={400}
+            height={400}
             unoptimized
           />
         </div>

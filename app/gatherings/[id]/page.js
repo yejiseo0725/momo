@@ -1,4 +1,5 @@
 import { Button, Card, Chip, Typography } from "@heroui/react";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
@@ -32,6 +33,18 @@ export default async function GatheringHomePage({ params, searchParams }) {
   return (
     <>
       <section className="flex flex-col gap-4">
+        <div className="mr-auto w-full max-w-[600px] overflow-hidden">
+          <Image
+            className="h-full w-full object-cover"
+            src={gathering.imageUrl || "/gathering-default.svg"}
+            alt={gathering.imageUrl
+              ? `${gathering.name} 모임 이미지`
+              : "모임 기본 이미지"}
+            width={600}
+            height={400}
+            unoptimized
+          />
+        </div>
         <div className="flex flex-wrap gap-2">
           <Chip>{gathering.category}</Chip>
           <Chip>{gathering.region}</Chip>
