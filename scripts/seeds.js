@@ -1,6 +1,6 @@
 "use strict";
 
-const { createHash, randomBytes } = require("node:crypto");
+const { createHash } = require("node:crypto");
 const { MongoClient, ObjectId } = require("mongodb");
 const legalDongData = require("../public/data/legal-dongs.json");
 
@@ -599,10 +599,6 @@ const sampleIds = {
   studyNotification: new ObjectId("660000000000000000000091"),
 };
 
-function createInviteToken() {
-  return randomBytes(24).toString("base64url");
-}
-
 function createSeedInviteToken(gatheringId) {
   return createHash("sha256")
     .update(`momo:${gatheringId}:invite`)
@@ -948,24 +944,6 @@ async function replaceSeedDocuments(database, collectionName, documents) {
   }
 }
 
-async function backfillGatheringInviteTokens(database) {
-  const gatherings = await database.collection("gatherings").find(
-    { inviteToken: { $exists: false } },
-    { projection: { _id: 1 } },
-  ).toArray();
-
-  for (const gathering of gatherings) {
-    await database.collection("gatherings").updateOne(
-      { _id: gathering._id, inviteToken: { $exists: false } },
-      { $set: { inviteToken: createInviteToken() } },
-    );
-  }
-
-  if (gatherings.length > 0) {
-    console.log(`[갱신] 기존 모임 ${gatherings.length}개에 초대 토큰 추가`);
-  }
-}
-
 function normalizeStoredRegion(value) {
   if (typeof value !== "string") {
     return "";
@@ -985,75 +963,6 @@ function normalizeStoredRegion(value) {
   }
 
   return legalDongCodeByName.get(normalizedValue) || "";
-}
-
-async function backfillRegionCodes(database) {
-  const unresolvedValues = new Set();
-
-  for (const collectionName of ["users", "gatherings"]) {
-    const documents = await database.collection(collectionName).find(
-      { region: { $type: "string" } },
-      { projection: { _id: 1, region: 1 } },
-    ).toArray();
-    let updatedCount = 0;
-
-    for (const document of documents) {
-      const regionCode = normalizeStoredRegion(document.region);
-
-      if (!regionCode) {
-        unresolvedValues.add(`${collectionName}: ${document.region}`);
-        continue;
-      }
-
-      if (regionCode === document.region) {
-        continue;
-      }
-
-      await database.collection(collectionName).updateOne(
-        { _id: document._id, region: document.region },
-        { $set: { region: regionCode } },
-      );
-      updatedCount += 1;
-    }
-
-    if (updatedCount > 0) {
-      console.log(`[갱신] ${collectionName} 지역 ${updatedCount}개를 법정동 코드로 변환`);
-    }
-  }
-
-  if (unresolvedValues.size > 0) {
-    console.warn("[확인 필요] 다음 region 값은 법정동 코드로 자동 변환하지 못했습니다.");
-    for (const value of unresolvedValues) {
-      console.warn(`- ${value}`);
-    }
-  }
-}
-
-async function migrateScheduleLocations(database) {
-  const schedulesExist = await database
-    .listCollections({ name: "schedules" }, { nameOnly: true })
-    .hasNext();
-
-  if (!schedulesExist) {
-    return;
-  }
-
-  const schedules = database.collection("schedules");
-  const renamed = await schedules.updateMany(
-    { region: { $exists: true }, location: { $exists: false } },
-    { $rename: { region: "location" } },
-    { bypassDocumentValidation: true },
-  );
-  const removed = await schedules.updateMany(
-    { region: { $exists: true }, location: { $exists: true } },
-    { $unset: { region: "" } },
-    { bypassDocumentValidation: true },
-  );
-  const migratedCount = renamed.modifiedCount + removed.modifiedCount;
-
-  if (migratedCount > 0) {
-    console.log(`[갱신] 기존 일정 ${migratedCount}개의 region 장소를 location으로 이동`);
-  }
 }
 
 async function upsertGatheringMember(database, membership) {
@@ -1287,13 +1196,12 @@ async function initializeDatabaseStructure() {
   try {
     await client.connect();
     const database = client.db(databaseName);
+    await database.dropDatabase();
+    console.log(`[초기화] ${databaseName} 데이터베이스 삭제`);
+
     const applicationCollections = Object.entries(seedDataStructure.collections)
       .filter(([, definition]) => !definition.managedBy)
       .map(([collectionName]) => collectionName);
-
-    await backfillGatheringInviteTokens(database);
-    await backfillRegionCodes(database);
-    await migrateScheduleLocations(database);
 
     for (const collectionName of applicationCollections) {
       await createOrUpdateCollection(database, collectionName);

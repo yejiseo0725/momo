@@ -111,10 +111,14 @@ export default async function GatheringsPage({ searchParams }) {
             </Alert>
           ) : null}
 
-          <TextField fullWidth name="keyword" type="search">
+          <TextField
+            fullWidth
+            name="keyword"
+            type="search"
+            defaultValue={keyword}
+          >
             <Label>키워드</Label>
             <Input
-              defaultValue={keyword}
               placeholder="모임명, 소개, 지역"
               maxLength="100"
             />
