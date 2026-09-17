@@ -19,7 +19,6 @@ export default async function MyGatheringsPage({ searchParams }) {
       <div className="section-heading">
         <div>
           <h1>내 모임</h1>
-          <p>내가 참여하거나 모임장으로 운영하는 모임입니다.</p>
         </div>
         <Link href="/gatherings/new" className="button">새 모임 만들기</Link>
       </div>

@@ -17,7 +17,6 @@ export default async function ProfilePage() {
         <UserAvatar image={session.user.image} name={displayName} size="large" />
         <div>
           <h1>프로필</h1>
-          <p>이메일과 비밀번호를 제외한 기본 정보를 수정할 수 있습니다.</p>
         </div>
       </header>
       <ProfileForm

@@ -14,7 +14,6 @@ export default async function NotificationsPage() {
   return (
     <section>
       <h1>알림</h1>
-      <p>알림 페이지를 열면 읽지 않은 알림이 모두 읽음 처리됩니다.</p>
 
       {notifications.length === 0 ? <EmptyState>도착한 알림이 없습니다.</EmptyState> : (
         <div className="stack">
