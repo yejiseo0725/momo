@@ -152,7 +152,8 @@ const seedDataStructure = {
           "type": "string",
           "format": "url",
           "required": false,
-          "nullable": true
+          "nullable": true,
+          "description": "GridFS에 저장한 모임 이미지를 조회하는 앱 내부 URL"
         },
         "category": {
           "type": "string",

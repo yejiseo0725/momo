@@ -25,6 +25,7 @@ export default async function NewGatheringPage({ searchParams }) {
           region: "",
           regionName: "",
           description: "",
+          imageUrl: null,
           maxMemCount: "",
           category: "",
           visibility: "public",

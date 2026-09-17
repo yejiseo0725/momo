@@ -40,6 +40,7 @@ export default async function EditGatheringPage({ params, searchParams }) {
           region: gathering.regionCode,
           regionName: gathering.region,
           description: gathering.description,
+          imageUrl: gathering.imageUrl || null,
           maxMemCount: gathering.maxMemCount,
           category: gathering.category,
           visibility: gathering.isPublic ? "public" : "private",

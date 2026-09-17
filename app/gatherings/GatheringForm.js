@@ -18,6 +18,7 @@ import {
   createGatheringAction,
   updateGatheringAction,
 } from "@/app/gatherings/actions";
+import ImageFileField from "@/components/ImageFileField";
 import RegionAutocomplete from "@/components/RegionAutocomplete";
 import ToastMessage from "@/components/ToastMessage";
 
@@ -69,6 +70,16 @@ export default function GatheringForm({
           maxLength="1000"
         />
       </TextField>
+
+      <ImageFileField
+        emptyText={initialValues.imageUrl
+          ? "새 이미지를 선택하지 않으면 현재 이미지를 유지합니다."
+          : "선택된 파일 없음"}
+        helpText="선택 사항입니다. JPG, PNG, WebP 형식의 5MB 이하 이미지를 선택해 주세요."
+        id={`gathering-image-${gatheringId || "new"}`}
+        label="모임 이미지"
+        name="image"
+      />
 
       <TextField fullWidth isRequired name="maxMemCount" type="number">
         <Label>최대 인원</Label>
