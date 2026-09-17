@@ -154,10 +154,6 @@ body > footer {
   margin-top: var(--momo-gap);
 }
 
-.invite-link p {
-  overflow-wrap: anywhere;
-}
-
 .leader-mark,
 .unread-mark {
   font-weight: bold;
