@@ -83,6 +83,14 @@ body > footer {
   border-left-color: var(--code);
 }
 
+.invite-link {
+  margin-top: var(--momo-gap);
+}
+
+.invite-link p {
+  overflow-wrap: anywhere;
+}
+
 .leader-mark,
 .unread-mark {
   font-weight: bold;

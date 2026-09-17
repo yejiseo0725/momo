@@ -1,5 +1,6 @@
 "use strict";
 
+const { createHash, randomBytes } = require("node:crypto");
 const { MongoClient, ObjectId } = require("mongodb");
 
 // 컬렉션 검증 규칙을 만들 때 사용하는 데이터 구조다.
@@ -106,6 +107,11 @@ const seedDataStructure = {
           "required": true,
           "references": "users.id",
           "description": "모임을 생성한 사용자"
+        },
+        "inviteToken": {
+          "type": "string",
+          "required": false,
+          "description": "모임 ID를 노출하지 않는 초대 URL 토큰"
         },
         "name": {
           "type": "string",
@@ -561,6 +567,17 @@ const sampleIds = {
   studyNotification: new ObjectId("660000000000000000000091"),
 };
 
+function createInviteToken() {
+  return randomBytes(24).toString("base64url");
+}
+
+function createSeedInviteToken(gatheringId) {
+  return createHash("sha256")
+    .update(`momo:${gatheringId}:invite`)
+    .digest("base64url")
+    .slice(0, 32);
+}
+
 const sampleUsers = [
   {
     name: "모모 리더",
@@ -585,6 +602,7 @@ const collectionIndexes = {
     { keys: { isPublic: 1, createdAt: -1 }, options: { name: "gatherings_public_createdAt" } },
     { keys: { category: 1, isPublic: 1, createdAt: -1 }, options: { name: "gatherings_category_public_createdAt" } },
     { keys: { userId: 1, createdAt: -1 }, options: { name: "gatherings_user_createdAt" } },
+    { keys: { inviteToken: 1 }, options: { name: "gatherings_inviteToken_unique", unique: true, sparse: true } },
   ],
   gatheringMembers: [
     { keys: { gatheringId: 1, userId: 1 }, options: { name: "gatheringMembers_gathering_user_unique", unique: true } },
@@ -887,6 +905,24 @@ async function replaceSeedDocuments(database, collectionName, documents) {
   }
 }
 
+async function backfillGatheringInviteTokens(database) {
+  const gatherings = await database.collection("gatherings").find(
+    { inviteToken: { $exists: false } },
+    { projection: { _id: 1 } },
+  ).toArray();
+
+  for (const gathering of gatherings) {
+    await database.collection("gatherings").updateOne(
+      { _id: gathering._id, inviteToken: { $exists: false } },
+      { $set: { inviteToken: createInviteToken() } },
+    );
+  }
+
+  if (gatherings.length > 0) {
+    console.log(`[갱신] 기존 모임 ${gatherings.length}개에 초대 토큰 추가`);
+  }
+}
+
 async function upsertGatheringMember(database, membership) {
   await database.collection("gatheringMembers").updateOne(
     {
@@ -944,6 +980,7 @@ async function seedExampleData(database, client) {
     {
       _id: sampleIds.studyGathering,
       userId: leaderId,
+      inviteToken: createSeedInviteToken(studyGatheringId),
       name: "주말 함께 읽기",
       region: "서울 마포구",
       description: "주말마다 한 권의 책을 정하고 편하게 이야기를 나눕니다.",
@@ -957,6 +994,7 @@ async function seedExampleData(database, client) {
     {
       _id: sampleIds.runningGathering,
       userId: memberId,
+      inviteToken: createSeedInviteToken(runningGatheringId),
       name: "퇴근 후 가볍게 달리기",
       region: "서울 서대문구",
       description: "기록보다 꾸준함을 목표로 천천히 달리는 모임입니다.",
@@ -1124,6 +1162,7 @@ async function initializeDatabaseStructure() {
       await createOrUpdateCollection(database, collectionName);
     }
 
+    await backfillGatheringInviteTokens(database);
     const result = await seedExampleData(database, client);
     console.log("momo 초기 컬렉션과 예시 데이터 구성을 완료했습니다.");
     console.log(`리더 계정: leader@momo.local / ${result.password}`);
