@@ -68,4 +68,4 @@ npm run build
 - MongoDB에 저장되는 모임 채팅과 Socket.IO 실시간 갱신
 - Simple.css와 최소 레이아웃 CSS를 사용한 반응형 UI
 
-데이터 변경은 Server Action에서 세션, 모임 멤버 여부, 작성자 권한과 입력값을 다시 검증합니다.
+데이터 변경은 Server Action에서 세션, 모임 멤버 여부, 작성자 권한과 입력값을 다시 검증합니다. 입력 폼은 `useActionState`와 `useState`로 작성값, 제출 상태, 인라인 오류를 관리하며, 검색 폼은 `next/form`의 클라이언트 내비게이션을 사용합니다.

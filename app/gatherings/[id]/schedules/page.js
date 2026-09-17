@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { connection } from "next/server";
 
-import { createScheduleAction } from "@/app/gatherings/[id]/schedules/actions";
 import ScheduleCalendar from "@/app/gatherings/[id]/schedules/ScheduleCalendar";
+import ScheduleForm from "@/app/gatherings/[id]/schedules/ScheduleForm";
 import Message from "@/components/Message";
 import { getSchedules } from "@/lib/schedules";
 import { requireSession } from "@/lib/session";
@@ -35,15 +35,17 @@ export default async function SchedulesPage({ params, searchParams }) {
 
         <details>
           <summary>새 일정 만들기</summary>
-          <form action={createScheduleAction}>
-            <input type="hidden" name="gatheringId" value={id} />
-            <label>제목<input name="title" maxLength="100" required /></label>
-            <label>설명<textarea name="description" maxLength="1000" required /></label>
-            <label>시작일<input name="startDate" type="date" required /></label>
-            <label>종료일<input name="endDate" type="date" required /></label>
-            <label>장소<input name="region" maxLength="150" required /></label>
-            <button type="submit">일정 만들기</button>
-          </form>
+          <ScheduleForm
+            gatheringId={id}
+            initialValues={{
+              title: "",
+              description: "",
+              startDate: "",
+              endDate: "",
+              region: "",
+            }}
+            mode="create"
+          />
         </details>
       </section>
 

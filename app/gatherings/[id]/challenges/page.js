@@ -2,27 +2,24 @@ import { connection } from "next/server";
 import Image from "next/image";
 
 import {
-  createChallengeFeedAction,
   deleteChallengeAction,
-  updateChallengeAction,
 } from "@/app/gatherings/[id]/challenges/actions";
-import CreateChallengeForm from "@/app/gatherings/[id]/challenges/CreateChallengeForm";
+import ChallengeFeedForm from "@/app/gatherings/[id]/challenges/ChallengeFeedForm";
+import ChallengeForm from "@/app/gatherings/[id]/challenges/ChallengeForm";
+import ActionButtonForm from "@/components/ActionButtonForm";
 import EmptyState from "@/components/EmptyState";
-import Message from "@/components/Message";
 import { getChallenges } from "@/lib/challenges";
 import { requireSession } from "@/lib/session";
 import { getTodayDateOnly } from "@/lib/utils/documents";
-import { getSingleSearchParam } from "@/lib/utils/validation";
 
 function getLatestDoneDate(challengeEndDate, today) {
   return challengeEndDate < today ? challengeEndDate : today;
 }
 
-export default async function ChallengesPage({ params, searchParams }) {
+export default async function ChallengesPage({ params }) {
   await connection();
   const session = await requireSession();
   const { id } = await params;
-  const query = await searchParams;
   const challenges = await getChallenges(id, session.user.id);
   const today = getTodayDateOnly();
 
@@ -31,14 +28,19 @@ export default async function ChallengesPage({ params, searchParams }) {
       <section>
         <h1>챌린지</h1>
         <p>모임 멤버와 함께할 목표를 만들고 실천을 인증하세요.</p>
-        <Message
-          error={getSingleSearchParam(query.error)}
-          message={getSingleSearchParam(query.message)}
-        />
-
         <details>
           <summary>새 챌린지 만들기</summary>
-          <CreateChallengeForm gatheringId={id} />
+          <ChallengeForm
+            gatheringId={id}
+            initialValues={{
+              title: "",
+              description: "",
+              useImage: false,
+              startDate: "",
+              endDate: "",
+            }}
+            mode="create"
+          />
         </details>
       </section>
 
@@ -55,54 +57,37 @@ export default async function ChallengesPage({ params, searchParams }) {
 
             <details>
               <summary>실천 인증하기</summary>
-              <form action={createChallengeFeedAction}>
-                <input type="hidden" name="gatheringId" value={id} />
-                <input type="hidden" name="challengeId" value={challenge.id} />
-                <label htmlFor={`done-${challenge.id}`}>인증일</label>
-                <input
-                  id={`done-${challenge.id}`}
-                  name="doneDate"
-                  type="date"
-                  min={challenge.startDate}
-                  max={getLatestDoneDate(challenge.endDate, today)}
-                  defaultValue={getLatestDoneDate(challenge.endDate, today)}
-                  required
-                />
-                <label htmlFor={`feed-${challenge.id}`}>인증 내용</label>
-                <textarea id={`feed-${challenge.id}`} name="description" maxLength="500" required />
-                <label htmlFor={`image-${challenge.id}`}>인증 이미지 {challenge.useImage ? "(필수)" : "(선택)"}</label>
-                <input
-                  id={`image-${challenge.id}`}
-                  name="image"
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp"
-                  required={challenge.useImage}
-                />
-                <small>JPG, PNG, WebP 형식의 5MB 이하 이미지를 선택해 주세요.</small>
-                <button type="submit">인증 남기기</button>
-              </form>
+              <ChallengeFeedForm
+                challengeId={challenge.id}
+                defaultDate={getLatestDoneDate(challenge.endDate, today)}
+                gatheringId={id}
+                imageRequired={challenge.useImage}
+                maximumDate={getLatestDoneDate(challenge.endDate, today)}
+                minimumDate={challenge.startDate}
+              />
             </details>
 
             {challenge.userId === session.user.id ? (
               <details>
                 <summary>챌린지 수정</summary>
-                <form action={updateChallengeAction}>
-                  <input type="hidden" name="gatheringId" value={id} />
-                  <input type="hidden" name="challengeId" value={challenge.id} />
-                  <label>제목<input name="title" defaultValue={challenge.title} maxLength="100" required /></label>
-                  <label>설명<textarea name="description" defaultValue={challenge.description} maxLength="1000" required /></label>
-                  <label>
-                      <input type="checkbox" name="useImage" defaultChecked={challenge.useImage} /> 인증 이미지 파일 필수
-                  </label>
-                  <label>시작일<input name="startDate" type="date" defaultValue={challenge.startDate} required /></label>
-                  <label>종료일<input name="endDate" type="date" defaultValue={challenge.endDate} required /></label>
-                  <button type="submit">수정 저장</button>
-                </form>
-                <form action={deleteChallengeAction}>
-                  <input type="hidden" name="gatheringId" value={id} />
-                  <input type="hidden" name="challengeId" value={challenge.id} />
-                  <button type="submit">챌린지 삭제</button>
-                </form>
+                <ChallengeForm
+                  challengeId={challenge.id}
+                  gatheringId={id}
+                  initialValues={{
+                    title: challenge.title,
+                    description: challenge.description,
+                    useImage: challenge.useImage,
+                    startDate: challenge.startDate,
+                    endDate: challenge.endDate,
+                  }}
+                  mode="edit"
+                />
+                <ActionButtonForm
+                  action={deleteChallengeAction}
+                  fields={{ gatheringId: id, challengeId: challenge.id }}
+                  label="챌린지 삭제"
+                  pendingLabel="삭제하는 중..."
+                />
               </details>
             ) : null}
 

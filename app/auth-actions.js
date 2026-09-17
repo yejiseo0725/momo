@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -16,11 +17,7 @@ import {
   readRequiredText,
 } from "@/lib/utils/validation";
 
-function redirectWithError(pathname, message) {
-  redirect(`${pathname}?error=${encodeURIComponent(message)}`);
-}
-
-export async function signupAction(formData) {
+export async function signupAction(_previousState, formData) {
   let userInput;
 
   try {
@@ -35,7 +32,7 @@ export async function signupAction(formData) {
     };
   } catch (error) {
     if (error instanceof ValidationError) {
-      redirectWithError("/signup", error.message);
+      return { error: error.message, message: "" };
     }
     throw error;
   }
@@ -43,13 +40,16 @@ export async function signupAction(formData) {
   try {
     await auth.api.signUpEmail({ body: userInput });
   } catch {
-    redirectWithError("/signup", "회원가입에 실패했습니다. 이미 사용 중인 이메일인지 확인해 주세요.");
+    return {
+      error: "회원가입에 실패했습니다. 이미 사용 중인 이메일인지 확인해 주세요.",
+      message: "",
+    };
   }
 
   redirect("/");
 }
 
-export async function loginAction(formData) {
+export async function loginAction(_previousState, formData) {
   let email;
   let password;
   const nextPathValue = formData.get("next");
@@ -60,7 +60,7 @@ export async function loginAction(formData) {
     password = readPassword(formData);
   } catch (error) {
     if (error instanceof ValidationError) {
-      redirectWithError("/login", error.message);
+      return { error: error.message, message: "" };
     }
     throw error;
   }
@@ -70,7 +70,7 @@ export async function loginAction(formData) {
       body: { email, password },
     });
   } catch {
-    redirectWithError("/login", "이메일 또는 비밀번호를 확인해 주세요.");
+    return { error: "이메일 또는 비밀번호를 확인해 주세요.", message: "" };
   }
 
   redirect(nextPath);
@@ -83,7 +83,7 @@ export async function logoutAction() {
   redirect("/");
 }
 
-export async function updateProfileAction(formData) {
+export async function updateProfileAction(_previousState, formData) {
   await requireSession();
   let profile;
 
@@ -97,7 +97,7 @@ export async function updateProfileAction(formData) {
     };
   } catch (error) {
     if (error instanceof ValidationError) {
-      redirectWithError("/profile", error.message);
+      return { error: error.message, message: "" };
     }
     throw error;
   }
@@ -108,8 +108,12 @@ export async function updateProfileAction(formData) {
       body: profile,
     });
   } catch {
-    redirectWithError("/profile", "프로필을 수정하지 못했습니다. 잠시 후 다시 시도해 주세요.");
+    return {
+      error: "프로필을 수정하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+      message: "",
+    };
   }
 
-  redirect(`/profile?message=${encodeURIComponent("프로필을 수정했습니다.")}`);
+  revalidatePath("/profile");
+  return { error: "", message: "프로필을 수정했습니다." };
 }

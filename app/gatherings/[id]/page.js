@@ -7,6 +7,7 @@ import {
   leaveGatheringAction,
 } from "@/app/gatherings/actions";
 import InviteButton from "@/app/gatherings/[id]/InviteButton";
+import ActionButtonForm from "@/components/ActionButtonForm";
 import Message from "@/components/Message";
 import { getGatheringDetails } from "@/lib/gatherings";
 import { requireSession } from "@/lib/session";
@@ -45,12 +46,13 @@ export default async function GatheringHomePage({ params, searchParams }) {
 
         <div className="actions">
           {!membership ? (
-            <form action={joinGatheringAction}>
-              <input type="hidden" name="gatheringId" value={id} />
-              <button type="submit" disabled={isFull}>
-                {isFull ? "가입 마감" : "가입하기"}
-              </button>
-            </form>
+            <ActionButtonForm
+              action={joinGatheringAction}
+              disabled={isFull}
+              fields={{ gatheringId: id }}
+              label={isFull ? "가입 마감" : "가입하기"}
+              pendingLabel="가입하는 중..."
+            />
           ) : null}
 
           {membership?.role === "LEADER" ? (

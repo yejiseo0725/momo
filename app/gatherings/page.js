@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Form from "next/form";
 import { connection } from "next/server";
 
 import EmptyState from "@/components/EmptyState";
@@ -30,7 +31,7 @@ export default async function GatheringsPage({ searchParams }) {
           <Link href="/gatherings/new" className="button">새 모임 만들기</Link>
         </div>
 
-        <form method="get" className="compact-form">
+        <Form action="/gatherings" className="compact-form">
           <label htmlFor="keyword">키워드</label>
           <input
             id="keyword"
@@ -48,7 +49,7 @@ export default async function GatheringsPage({ searchParams }) {
           </select>
 
           <button type="submit">검색</button>
-        </form>
+        </Form>
       </section>
 
       <section>

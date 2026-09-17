@@ -144,6 +144,12 @@ body > footer {
   color: var(--code);
 }
 
+.form-message {
+  display: block;
+  margin-top: 0.5rem;
+  color: var(--accent);
+}
+
 .invite-link {
   margin-top: var(--momo-gap);
 }

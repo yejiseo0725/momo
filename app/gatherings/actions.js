@@ -39,7 +39,7 @@ function redirectWithError(pathname, message) {
   redirect(`${pathname}?error=${encodeURIComponent(message)}`);
 }
 
-export async function createGatheringAction(formData) {
+export async function createGatheringAction(_previousState, formData) {
   const session = await requireSession();
   let input;
 
@@ -47,7 +47,7 @@ export async function createGatheringAction(formData) {
     input = readGatheringInput(formData);
   } catch (error) {
     if (error instanceof ValidationError) {
-      redirectWithError("/gatherings/new", error.message);
+      return { error: error.message, message: "" };
     }
     throw error;
   }
@@ -56,13 +56,16 @@ export async function createGatheringAction(formData) {
   try {
     gatheringId = await createGathering(session.user.id, input);
   } catch {
-    redirectWithError("/gatherings/new", "모임을 만들지 못했습니다. 잠시 후 다시 시도해 주세요.");
+    return {
+      error: "모임을 만들지 못했습니다. 잠시 후 다시 시도해 주세요.",
+      message: "",
+    };
   }
 
   redirect(`/gatherings/${gatheringId}?message=${encodeURIComponent("모임을 만들었습니다.")}`);
 }
 
-export async function updateGatheringAction(formData) {
+export async function updateGatheringAction(_previousState, formData) {
   const session = await requireSession();
   let gatheringId;
   let input;
@@ -71,9 +74,8 @@ export async function updateGatheringAction(formData) {
     gatheringId = getGatheringId(formData);
     input = readGatheringInput(formData);
   } catch (error) {
-    const fallbackId = formData.get("gatheringId") || "";
     if (error instanceof ValidationError) {
-      redirectWithError(`/gatherings/${fallbackId}/edit`, error.message);
+      return { error: error.message, message: "" };
     }
     throw error;
   }
@@ -84,14 +86,14 @@ export async function updateGatheringAction(formData) {
     const message = error instanceof GatheringError
       ? error.message
       : "모임을 수정하지 못했습니다. 잠시 후 다시 시도해 주세요.";
-    redirectWithError(`/gatherings/${gatheringId}/edit`, message);
+    return { error: message, message: "" };
   }
 
   revalidatePath(`/gatherings/${gatheringId}`, "layout");
   redirect(`/gatherings/${gatheringId}?message=${encodeURIComponent("모임 정보를 수정했습니다.")}`);
 }
 
-export async function joinGatheringAction(formData) {
+export async function joinGatheringAction(_previousState, formData) {
   const session = await requireSession();
   const gatheringId = getGatheringId(formData);
 
@@ -101,11 +103,11 @@ export async function joinGatheringAction(formData) {
     const message = error instanceof GatheringError
       ? error.message
       : "모임에 가입하지 못했습니다. 잠시 후 다시 시도해 주세요.";
-    redirectWithError(`/gatherings/${gatheringId}`, message);
+    return { error: message, message: "" };
   }
 
   revalidatePath(`/gatherings/${gatheringId}`, "layout");
-  redirect(`/gatherings/${gatheringId}?message=${encodeURIComponent("모임에 가입했습니다.")}`);
+  return { error: "", message: "모임에 가입했습니다." };
 }
 
 export async function joinGatheringByInvitationAction(formData) {
