@@ -27,7 +27,7 @@ export default async function MyGatheringsPage({ searchParams }) {
       {gatherings.length > 0 ? (
         <div className="card-grid">
           {gatherings.map((gathering) => (
-            <GatheringCard key={gathering.id} gathering={gathering} showLeader />
+            <GatheringCard key={gathering.id} gathering={gathering} />
           ))}
         </div>
       ) : (

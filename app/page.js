@@ -81,7 +81,7 @@ export default async function HomePage() {
         {joinedGatherings.length > 0 ? (
           <div className="card-grid">
             {joinedGatherings.map((gathering) => (
-              <GatheringCard key={gathering.id} gathering={gathering} showLeader />
+              <GatheringCard key={gathering.id} gathering={gathering} />
             ))}
           </div>
         ) : (
