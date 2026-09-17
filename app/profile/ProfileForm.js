@@ -3,8 +3,8 @@
 import { useActionState, useState } from "react";
 
 import { updateProfileAction } from "@/app/auth-actions";
-import FormMessage from "@/components/FormMessage";
 import RegionAutocomplete from "@/components/RegionAutocomplete";
+import ToastMessage from "@/components/ToastMessage";
 
 const initialActionState = {
   error: "",
@@ -109,7 +109,7 @@ export default function ProfileForm({ categories, email, genders, initialValues 
       <button type="submit" disabled={pending}>
         {pending ? "저장하는 중..." : "프로필 저장"}
       </button>
-      <FormMessage error={state.error} message={state.message} />
+      <ToastMessage error={state.error} message={state.message} trigger={state} />
     </form>
   );
 }

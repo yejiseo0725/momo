@@ -3,7 +3,7 @@
 import { useActionState, useState } from "react";
 
 import { loginAction } from "@/app/auth-actions";
-import FormMessage from "@/components/FormMessage";
+import ToastMessage from "@/components/ToastMessage";
 
 const initialActionState = {
   error: "",
@@ -46,7 +46,7 @@ export default function LoginForm({ nextPath }) {
       <button type="submit" disabled={pending}>
         {pending ? "로그인 중..." : "로그인"}
       </button>
-      <FormMessage error={state.error} message={state.message} />
+      <ToastMessage error={state.error} message={state.message} trigger={state} />
     </form>
   );
 }

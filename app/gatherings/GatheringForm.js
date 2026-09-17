@@ -6,8 +6,8 @@ import {
   createGatheringAction,
   updateGatheringAction,
 } from "@/app/gatherings/actions";
-import FormMessage from "@/components/FormMessage";
 import RegionAutocomplete from "@/components/RegionAutocomplete";
+import ToastMessage from "@/components/ToastMessage";
 
 const initialActionState = {
   error: "",
@@ -114,7 +114,7 @@ export default function GatheringForm({
           ? (mode === "create" ? "만드는 중..." : "저장하는 중...")
           : (mode === "create" ? "모임 만들기" : "수정 내용 저장")}
       </button>
-      <FormMessage error={state.error} message={state.message} />
+      <ToastMessage error={state.error} message={state.message} trigger={state} />
     </form>
   );
 }

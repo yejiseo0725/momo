@@ -5,7 +5,7 @@ import { io } from "socket.io-client";
 
 import { sendChatMessageAction } from "@/app/gatherings/[id]/chat/actions";
 import EmptyState from "@/components/EmptyState";
-import Message from "@/components/Message";
+import ToastMessage from "@/components/ToastMessage";
 
 const dateTimeFormatter = new Intl.DateTimeFormat("ko-KR", {
   year: "numeric",
@@ -17,7 +17,7 @@ const dateTimeFormatter = new Intl.DateTimeFormat("ko-KR", {
 
 export default function ChatRoom({ gatheringId, currentUserId, initialMessages }) {
   const [messages, setMessages] = useState(initialMessages);
-  const [error, setError] = useState("");
+  const [feedback, setFeedback] = useState({ error: "", message: "" });
   const [isSending, setIsSending] = useState(false);
   const formRef = useRef(null);
   const socketRef = useRef(null);
@@ -65,14 +65,14 @@ export default function ChatRoom({ gatheringId, currentUserId, initialMessages }
   }, [gatheringId]);
 
   async function submitMessage(formData) {
-    setError("");
+    setFeedback({ error: "", message: "" });
     setIsSending(true);
 
     try {
       const result = await sendChatMessageAction(formData);
 
       if (result.error) {
-        setError(result.error);
+        setFeedback({ error: result.error, message: "" });
         return;
       }
 
@@ -85,8 +85,9 @@ export default function ChatRoom({ gatheringId, currentUserId, initialMessages }
       });
       formRef.current?.reset();
       socketRef.current?.emit("notify-message-created", gatheringId);
+      setFeedback({ error: "", message: "메시지를 보냈습니다." });
     } catch {
-      setError("메시지를 보내지 못했습니다.");
+      setFeedback({ error: "메시지를 보내지 못했습니다.", message: "" });
     } finally {
       setIsSending(false);
     }
@@ -110,7 +111,11 @@ export default function ChatRoom({ gatheringId, currentUserId, initialMessages }
 
   return (
     <>
-      <Message error={error} />
+      <ToastMessage
+        error={feedback.error}
+        message={feedback.message}
+        trigger={feedback}
+      />
 
       {messages.length === 0 ? <EmptyState>첫 메시지를 남겨 보세요.</EmptyState> : (
         <div className="stack chat-list" aria-live="polite">

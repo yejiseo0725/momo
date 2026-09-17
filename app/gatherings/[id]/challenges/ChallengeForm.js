@@ -6,7 +6,7 @@ import {
   createChallengeAction,
   updateChallengeAction,
 } from "@/app/gatherings/[id]/challenges/actions";
-import FormMessage from "@/components/FormMessage";
+import ToastMessage from "@/components/ToastMessage";
 
 const initialActionState = {
   error: "",
@@ -98,7 +98,7 @@ export default function ChallengeForm({ challengeId, gatheringId, initialValues,
           ? (mode === "create" ? "생성하는 중..." : "저장하는 중...")
           : (mode === "create" ? "챌린지 만들기" : "수정 저장")}
       </button>
-      <FormMessage error={state.error} message={state.message} />
+      <ToastMessage error={state.error} message={state.message} trigger={state} />
     </form>
   );
 }

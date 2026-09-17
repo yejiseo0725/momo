@@ -6,7 +6,7 @@ import {
   createScheduleAction,
   updateScheduleAction,
 } from "@/app/gatherings/[id]/schedules/actions";
-import FormMessage from "@/components/FormMessage";
+import ToastMessage from "@/components/ToastMessage";
 
 const initialActionState = {
   error: "",
@@ -83,7 +83,7 @@ export default function ScheduleForm({ gatheringId, initialValues, mode, schedul
           ? (mode === "create" ? "만드는 중..." : "저장하는 중...")
           : (mode === "create" ? "일정 만들기" : "수정 저장")}
       </button>
-      <FormMessage error={state.error} message={state.message} />
+      <ToastMessage error={state.error} message={state.message} trigger={state} />
     </form>
   );
 }
