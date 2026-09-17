@@ -10,6 +10,7 @@
     "start": "node server.js --production",
     "lint": "eslint",
     "test": "node --test",
+    "data:update-regions": "node scripts/update-legal-dongs.js",
     "db:migrate": "node --env-file-if-exists=.env.local scripts/seeds.js --structure-only",
     "db:seed": "node --env-file-if-exists=.env.local scripts/seeds.js",
     "seed": "node --env-file-if-exists=.env.local scripts/seeds.js"

@@ -4,6 +4,7 @@ import { connection } from "next/server";
 import ProfileForm from "@/app/profile/ProfileForm";
 import ToastMessage from "@/components/ToastMessage";
 import UserAvatar from "@/components/UserAvatar";
+import { getRegionName } from "@/lib/regions";
 import { requireSession } from "@/lib/session";
 import { CATEGORIES, GENDERS, getSingleSearchParam } from "@/lib/utils/validation";
 
@@ -39,6 +40,7 @@ export default async function EditProfilePage({ searchParams }) {
           nickname: session.user.nickname,
           categories: selectedCategories,
           region: session.user.region,
+          regionName: getRegionName(session.user.region),
           notificationEnabled: session.user.notificationEnabled !== false,
         }}
       />

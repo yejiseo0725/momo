@@ -14,6 +14,7 @@ import {
   readEmail,
   readEnum,
   readPassword,
+  readRegionCode,
   readRequiredText,
 } from "@/lib/utils/validation";
 
@@ -27,7 +28,7 @@ export async function signupAction(_previousState, formData) {
       email: readEmail(formData),
       password: readPassword(formData),
       nickname: readRequiredText(formData, "nickname", "닉네임", 30),
-      region: readRequiredText(formData, "region", "지역", 100),
+      region: readRegionCode(formData),
       category: readCategories(formData),
       notificationEnabled: true,
     };
@@ -93,7 +94,7 @@ export async function updateProfileAction(_previousState, formData) {
       name: readRequiredText(formData, "name", "이름", 50),
       gender: readEnum(formData, "gender", "성별", GENDERS),
       nickname: readRequiredText(formData, "nickname", "닉네임", 30),
-      region: readRequiredText(formData, "region", "지역", 100),
+      region: readRegionCode(formData),
       category: readCategories(formData),
       notificationEnabled: formData.get("notificationEnabled") === "on",
     };

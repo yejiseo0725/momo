@@ -7,6 +7,7 @@ import {
   updateGatheringAction,
 } from "@/app/gatherings/actions";
 import FormMessage from "@/components/FormMessage";
+import RegionAutocomplete from "@/components/RegionAutocomplete";
 
 const initialActionState = {
   error: "",
@@ -23,7 +24,6 @@ export default function GatheringForm({
   const action = mode === "create" ? createGatheringAction : updateGatheringAction;
   const [state, formAction, pending] = useActionState(action, initialActionState);
   const [name, setName] = useState(initialValues.name);
-  const [region, setRegion] = useState(initialValues.region);
   const [description, setDescription] = useState(initialValues.description);
   const [maxMemCount, setMaxMemCount] = useState(String(initialValues.maxMemCount));
   const [category, setCategory] = useState(initialValues.category);
@@ -44,17 +44,11 @@ export default function GatheringForm({
         required
       />
 
-      <label htmlFor="region">지역</label>
-      <input
-        id="region"
-        name="region"
-        type="text"
-        value={region}
-        onChange={(event) => setRegion(event.target.value)}
-        maxLength="100"
-        required
+      <RegionAutocomplete
+        helpText="읍면동 입력, 온라인 모임은 “온라인”으로 입력해 주세요."
+        initialRegionCode={initialValues.region}
+        initialRegionName={initialValues.regionName}
       />
-      {mode === "create" ? <small>온라인 모임은 “온라인”으로 입력해 주세요.</small> : null}
 
       <label htmlFor="description">소개</label>
       <textarea

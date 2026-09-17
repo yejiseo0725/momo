@@ -2,6 +2,15 @@
 
 const { createHash, randomBytes } = require("node:crypto");
 const { MongoClient, ObjectId } = require("mongodb");
+const legalDongData = require("../public/data/legal-dongs.json");
+
+const onlineRegionCode = "ONLINE";
+const legalDongCodeByName = new Map(
+  legalDongData.regions.map((region) => [
+    [region.sido, region.sigungu, region.eupMyeonDong].filter(Boolean).join(" "),
+    region.code,
+  ]),
+);
 
 // 컬렉션 검증 규칙을 만들 때 사용하는 데이터 구조다.
 // 이 객체의 모든 값은 JSON으로 직렬화할 수 있다.
@@ -78,6 +87,7 @@ const seedDataStructure = {
         "region": {
           "type": "string",
           "required": true,
+          "description": "법정동 코드 10자리 또는 온라인을 뜻하는 'ONLINE'",
           "betterAuthAdditionalField": true
         },
         "category": {
@@ -126,7 +136,7 @@ const seedDataStructure = {
         "region": {
           "type": "string",
           "required": true,
-          "description": "온라인 모임은 '온라인'으로 저장"
+          "description": "법정동 코드 10자리 또는 온라인 모임은 'ONLINE'"
         },
         "description": {
           "type": "string",
@@ -599,7 +609,7 @@ const sampleUsers = [
     email: "leader@momo.local",
     gender: "여성",
     nickname: "모임지기",
-    region: "서울 마포구",
+    region: "1144012300",
     category: ["공부", "친목"],
   },
   {
@@ -607,7 +617,7 @@ const sampleUsers = [
     email: "member@momo.local",
     gender: "남성",
     nickname: "함께해요",
-    region: "서울 서대문구",
+    region: "1141011700",
     category: ["운동", "공부"],
   },
 ];
@@ -944,6 +954,51 @@ async function backfillGatheringInviteTokens(database) {
   }
 }
 
+function normalizeStoredRegion(value) {
+  if (typeof value !== "string") {
+    return "";
+  }
+
+  const normalizedValue = value.trim().replace(/\s+/g, " ");
+
+  if (
+    normalizedValue === "온라인"
+    || normalizedValue.toUpperCase() === onlineRegionCode
+  ) {
+    return onlineRegionCode;
+  }
+
+  return legalDongCodeByName.get(normalizedValue) || "";
+}
+
+async function backfillRegionCodes(database) {
+  for (const collectionName of ["users", "gatherings"]) {
+    const documents = await database.collection(collectionName).find(
+      { region: { $type: "string" } },
+      { projection: { _id: 1, region: 1 } },
+    ).toArray();
+    let updatedCount = 0;
+
+    for (const document of documents) {
+      const regionCode = normalizeStoredRegion(document.region);
+
+      if (!regionCode || regionCode === document.region) {
+        continue;
+      }
+
+      await database.collection(collectionName).updateOne(
+        { _id: document._id, region: document.region },
+        { $set: { region: regionCode } },
+      );
+      updatedCount += 1;
+    }
+
+    if (updatedCount > 0) {
+      console.log(`[갱신] ${collectionName} 지역 ${updatedCount}개를 법정동 코드로 변환`);
+    }
+  }
+}
+
 async function synchronizeDatabaseStructure(database) {
   const applicationCollections = Object.entries(seedDataStructure.collections)
     .filter(([, definition]) => !definition.managedBy)
@@ -954,6 +1009,7 @@ async function synchronizeDatabaseStructure(database) {
   }
 
   await backfillGatheringInviteTokens(database);
+  await backfillRegionCodes(database);
 }
 
 async function upsertGatheringMember(database, membership) {
@@ -1015,7 +1071,7 @@ async function seedExampleData(database, client) {
       userId: leaderId,
       inviteToken: createSeedInviteToken(studyGatheringId),
       name: "주말 함께 읽기",
-      region: "서울 마포구",
+      region: "1144012300",
       description: "주말마다 한 권의 책을 정하고 편하게 이야기를 나눕니다.",
       imageUrl: null,
       category: "공부",
@@ -1029,7 +1085,7 @@ async function seedExampleData(database, client) {
       userId: memberId,
       inviteToken: createSeedInviteToken(runningGatheringId),
       name: "퇴근 후 가볍게 달리기",
-      region: "서울 서대문구",
+      region: "1141011700",
       description: "기록보다 꾸준함을 목표로 천천히 달리는 모임입니다.",
       imageUrl: null,
       category: "운동",
@@ -1218,6 +1274,7 @@ module.exports = {
   createOrUpdateCollection,
   hasSameIndexKeys,
   initializeDatabaseStructure,
+  normalizeStoredRegion,
   sampleIds,
   sampleUsers,
   seedExampleData,

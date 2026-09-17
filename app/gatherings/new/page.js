@@ -22,6 +22,7 @@ export default async function NewGatheringPage({ searchParams }) {
         initialValues={{
           name: "",
           region: "",
+          regionName: "",
           description: "",
           maxMemCount: "",
           category: "",

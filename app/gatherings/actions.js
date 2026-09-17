@@ -18,13 +18,14 @@ import {
   ValidationError,
   readEnum,
   readInteger,
+  readRegionCode,
   readRequiredText,
 } from "@/lib/utils/validation";
 
 function readGatheringInput(formData) {
   return {
     name: readRequiredText(formData, "name", "모임명", 80),
-    region: readRequiredText(formData, "region", "지역", 100),
+    region: readRegionCode(formData),
     description: readRequiredText(formData, "description", "소개", 1000),
     maxMemCount: readInteger(formData, "maxMemCount", "최대 인원", 1, 300),
     category: readEnum(formData, "category", "카테고리", CATEGORIES),
