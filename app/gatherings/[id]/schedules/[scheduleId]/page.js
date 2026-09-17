@@ -49,15 +49,15 @@ export default async function ScheduleDetailsPage({ params, searchParams }) {
             <input type="hidden" name="scheduleId" value={scheduleId} />
             <button type="submit">참여하기</button>
           </form>
-        ) : !isAuthor ? (
+        ) : null}
+
+        {isParticipating && !isAuthor ? (
           <form action={leaveScheduleAction}>
             <input type="hidden" name="gatheringId" value={id} />
             <input type="hidden" name="scheduleId" value={scheduleId} />
             <button type="submit">참여 취소</button>
           </form>
-        ) : (
-          <p className="notice">일정 작성자는 참여자로 등록되어 있습니다.</p>
-        )}
+        ) : null}
       </section>
 
       <section>

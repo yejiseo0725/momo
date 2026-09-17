@@ -65,7 +65,7 @@ export async function createScheduleAction(formData) {
   } catch (error) {
     fail(`/gatherings/${gatheringId}/schedules`, error instanceof ScheduleError ? error.message : "일정을 만들지 못했습니다.");
   }
-  redirect(`/gatherings/${gatheringId}/schedules/${scheduleId}?message=${encodeURIComponent("일정을 만들었습니다.")}`);
+  redirect(`/gatherings/${gatheringId}/schedules/${scheduleId}`);
 }
 
 export async function updateScheduleAction(formData) {
