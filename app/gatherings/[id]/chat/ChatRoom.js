@@ -92,6 +92,22 @@ export default function ChatRoom({ gatheringId, currentUserId, initialMessages }
     }
   }
 
+  function handleMessageKeyDown(event) {
+    if (
+      event.key !== "Enter"
+      || event.shiftKey
+      || event.nativeEvent.isComposing
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+
+    if (!isSending) {
+      event.currentTarget.form?.requestSubmit();
+    }
+  }
+
   return (
     <>
       <Message error={error} />
@@ -113,7 +129,18 @@ export default function ChatRoom({ gatheringId, currentUserId, initialMessages }
       <form ref={formRef} action={submitMessage}>
         <input type="hidden" name="gatheringId" value={gatheringId} />
         <label htmlFor="chat-content">메시지</label>
-        <textarea id="chat-content" name="content" rows="3" maxLength="1000" required />
+        <textarea
+          id="chat-content"
+          name="content"
+          rows="3"
+          maxLength="1000"
+          aria-describedby="chat-content-help"
+          onKeyDown={handleMessageKeyDown}
+          required
+        />
+        <small id="chat-content-help">
+          Enter로 보내고 Shift+Enter로 줄바꿈합니다.
+        </small>
         <button type="submit" disabled={isSending}>
           {isSending ? "보내는 중..." : "보내기"}
         </button>

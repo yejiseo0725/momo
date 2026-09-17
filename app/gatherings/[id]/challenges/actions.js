@@ -40,8 +40,9 @@ function readChallengeInput(formData) {
   };
 }
 
-export async function createChallengeAction(_previousState, formData) {
+export async function createChallengeAction(previousState, formData) {
   const session = await requireSession();
+  const resetKey = Number.isSafeInteger(previousState.resetKey) ? previousState.resetKey : 0;
   let gatheringId = "";
   let input;
 
@@ -50,7 +51,7 @@ export async function createChallengeAction(_previousState, formData) {
     input = readChallengeInput(formData);
   } catch (error) {
     if (error instanceof ValidationError) {
-      return { error: error.message, message: "" };
+      return { error: error.message, message: "", resetKey };
     }
     throw error;
   }
@@ -61,10 +62,11 @@ export async function createChallengeAction(_previousState, formData) {
     return {
       error: error instanceof ChallengeError ? error.message : "챌린지를 만들지 못했습니다.",
       message: "",
+      resetKey,
     };
   }
   revalidatePath(`/gatherings/${gatheringId}/challenges`);
-  return { error: "", message: "챌린지를 만들었습니다." };
+  return { error: "", message: "챌린지를 만들었습니다.", resetKey: resetKey + 1 };
 }
 
 export async function updateChallengeAction(_previousState, formData) {

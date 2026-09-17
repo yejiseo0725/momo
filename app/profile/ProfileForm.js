@@ -4,6 +4,7 @@ import { useActionState, useState } from "react";
 
 import { updateProfileAction } from "@/app/auth-actions";
 import FormMessage from "@/components/FormMessage";
+import RegionAutocomplete from "@/components/RegionAutocomplete";
 
 const initialActionState = {
   error: "",
@@ -16,7 +17,6 @@ export default function ProfileForm({ categories, email, genders, initialValues 
   const [gender, setGender] = useState(initialValues.gender);
   const [nickname, setNickname] = useState(initialValues.nickname);
   const [selectedCategories, setSelectedCategories] = useState(initialValues.categories);
-  const [region, setRegion] = useState(initialValues.region);
   const [notificationEnabled, setNotificationEnabled] = useState(
     initialValues.notificationEnabled,
   );
@@ -88,15 +88,10 @@ export default function ProfileForm({ categories, email, genders, initialValues 
         ))}
       </fieldset>
 
-      <label htmlFor="region">지역</label>
-      <input
-        id="region"
-        name="region"
-        type="text"
-        value={region}
-        onChange={(event) => setRegion(event.target.value)}
-        maxLength="100"
-        required
+      <RegionAutocomplete
+        helpText="읍면동 입력, 온라인 모임은 “온라인”으로 입력해 주세요."
+        initialRegionCode={initialValues.region}
+        initialRegionName={initialValues.regionName}
       />
 
       <fieldset>

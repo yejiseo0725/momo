@@ -11,23 +11,18 @@ import FormMessage from "@/components/FormMessage";
 const initialActionState = {
   error: "",
   message: "",
+  resetKey: 0,
 };
 
-export default function ChallengeForm({ challengeId, gatheringId, initialValues, mode }) {
-  const action = mode === "create" ? createChallengeAction : updateChallengeAction;
-  const [state, formAction, pending] = useActionState(action, initialActionState);
+function ChallengeFields({ idPrefix, initialValues }) {
   const [title, setTitle] = useState(initialValues.title);
   const [description, setDescription] = useState(initialValues.description);
   const [useImage, setUseImage] = useState(initialValues.useImage);
   const [startDate, setStartDate] = useState(initialValues.startDate);
   const [endDate, setEndDate] = useState(initialValues.endDate);
-  const idPrefix = mode === "create" ? "new-challenge" : `challenge-${challengeId}`;
 
   return (
-    <form action={formAction}>
-      <input type="hidden" name="gatheringId" value={gatheringId} />
-      {challengeId ? <input type="hidden" name="challengeId" value={challengeId} /> : null}
-
+    <>
       <label htmlFor={`${idPrefix}-title`}>제목</label>
       <input
         id={`${idPrefix}-title`}
@@ -76,6 +71,26 @@ export default function ChallengeForm({ challengeId, gatheringId, initialValues,
         value={endDate}
         onChange={(event) => setEndDate(event.target.value)}
         required
+      />
+    </>
+  );
+}
+
+export default function ChallengeForm({ challengeId, gatheringId, initialValues, mode }) {
+  const action = mode === "create" ? createChallengeAction : updateChallengeAction;
+  const [state, formAction, pending] = useActionState(action, initialActionState);
+  const idPrefix = mode === "create" ? "new-challenge" : `challenge-${challengeId}`;
+  const fieldsKey = mode === "create" ? state.resetKey : challengeId;
+
+  return (
+    <form action={formAction}>
+      <input type="hidden" name="gatheringId" value={gatheringId} />
+      {challengeId ? <input type="hidden" name="challengeId" value={challengeId} /> : null}
+
+      <ChallengeFields
+        key={fieldsKey}
+        idPrefix={idPrefix}
+        initialValues={initialValues}
       />
 
       <button type="submit" disabled={pending}>

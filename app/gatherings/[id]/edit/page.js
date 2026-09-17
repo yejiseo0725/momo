@@ -36,7 +36,8 @@ export default async function EditGatheringPage({ params, searchParams }) {
         gatheringId={id}
         initialValues={{
           name: gathering.name,
-          region: gathering.region,
+          region: gathering.regionCode,
+          regionName: gathering.region,
           description: gathering.description,
           maxMemCount: gathering.maxMemCount,
           category: gathering.category,

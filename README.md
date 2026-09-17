@@ -33,6 +33,21 @@ npm run seed
 
 `npm run db:seed`도 같은 작업을 수행합니다. Better Auth가 예시 계정을 생성하고 `users`, `accounts` 컬렉션을 관리합니다.
 
+사용자와 모임의 `region`에는 법정동 코드 10자리 또는 온라인을 뜻하는 `ONLINE`을
+저장합니다. 화면에는 코드 대신 시·도, 시·군·구, 읍·면·동 명칭을 표시합니다.
+자동완성 원본은 공공데이터포털의
+[`국토교통부_전국 법정동`](https://www.data.go.kr/data/15063424/fileData.do)이며, 현존 데이터에서
+읍면동명이 있고 리명이 없는 항목을 `public/data/legal-dongs.json`에 저장합니다.
+공식 데이터가 갱신되면 다음 명령으로 프로젝트의 목록을 다시 생성할 수 있습니다.
+
+```bash
+npm run data:update-regions
+```
+
+`npm run dev`와 `npm start`는 데이터베이스 초기화나 시드를 자동 실행하지 않습니다.
+컬렉션 구조와 예시 데이터를 변경하려면 필요한 데이터베이스를 확인한 뒤 `npm run seed`
+또는 `npm run db:seed`를 명시적으로 실행해야 합니다.
+
 | 구분 | 이메일 | 기본 비밀번호 |
 | --- | --- | --- |
 | 리더 | `leader@momo.local` | `momo1234!` |

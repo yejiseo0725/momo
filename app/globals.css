@@ -7,6 +7,13 @@ body > footer {
   padding-block: 1rem;
 }
 
+/* Sonner의 section에 Simple.css의 일반 section 여백과 테두리가 적용되지 않게 한다. */
+section[aria-label^="토스트 알림"] {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
 .site-nav,
 .gathering-nav,
 .section-heading,
@@ -187,10 +194,11 @@ body > footer {
 
 .challenge-feed-image {
   display: block;
-  width: min(100%, 40rem);
-  height: auto;
+  width: 100%;
+  max-width: 300px;
+  height: 300px;
   margin-top: 0.75rem;
-  object-fit: contain;
+  object-fit: cover;
 }
 
 .visually-hidden {

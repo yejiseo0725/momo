@@ -4,6 +4,7 @@ import { useActionState, useState } from "react";
 
 import { signupAction } from "@/app/auth-actions";
 import FormMessage from "@/components/FormMessage";
+import RegionAutocomplete from "@/components/RegionAutocomplete";
 
 const initialActionState = {
   error: "",
@@ -18,7 +19,6 @@ export default function SignupForm({ categories }) {
   const [password, setPassword] = useState("");
   const [nickname, setNickname] = useState("");
   const [selectedCategories, setSelectedCategories] = useState([]);
-  const [region, setRegion] = useState("");
 
   function updateCategory(event) {
     const { checked, value } = event.target;
@@ -117,15 +117,8 @@ export default function SignupForm({ categories }) {
         ))}
       </fieldset>
 
-      <label htmlFor="region">지역</label>
-      <input
-        id="region"
-        name="region"
-        type="text"
-        maxLength="100"
-        value={region}
-        onChange={(event) => setRegion(event.target.value)}
-        required
+      <RegionAutocomplete
+        helpText="읍면동 입력, 온라인 모임은 “온라인”으로 입력해 주세요."
       />
 
       <button type="submit" disabled={pending}>

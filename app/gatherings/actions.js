@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import {
+  GatheringCreationError,
   GatheringError,
   createGathering,
   joinGathering,
@@ -17,13 +18,14 @@ import {
   ValidationError,
   readEnum,
   readInteger,
+  readRegionCode,
   readRequiredText,
 } from "@/lib/utils/validation";
 
 function readGatheringInput(formData) {
   return {
     name: readRequiredText(formData, "name", "모임명", 80),
-    region: readRequiredText(formData, "region", "지역", 100),
+    region: readRegionCode(formData),
     description: readRequiredText(formData, "description", "소개", 1000),
     maxMemCount: readInteger(formData, "maxMemCount", "최대 인원", 1, 300),
     category: readEnum(formData, "category", "카테고리", CATEGORIES),
@@ -51,7 +53,19 @@ export async function createGatheringAction(_previousState, formData) {
   let gatheringId;
   try {
     gatheringId = await createGathering(session.user.id, input);
-  } catch {
+  } catch (error) {
+    const failedCollection = error instanceof GatheringCreationError
+      ? error.collectionName
+      : "unknown";
+    const originalError = error instanceof GatheringCreationError
+      ? error.cause
+      : error;
+
+    console.error(
+      `[createGatheringAction] ${failedCollection} 저장 실패`,
+      originalError,
+    );
+
     return {
       error: "모임을 만들지 못했습니다. 잠시 후 다시 시도해 주세요.",
       message: "",

@@ -73,7 +73,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="ko" data-scroll-behavior="smooth">
       <body>
-        <Toaster position="top-right" />
+        <Toaster position="top-right" containerAriaLabel="토스트 알림" />
         <header>
           <SiteNavigation />
         </header>
