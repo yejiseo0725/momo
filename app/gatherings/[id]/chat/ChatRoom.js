@@ -131,7 +131,6 @@ export default function ChatRoom({ gatheringId, currentUserId, initialMessages }
       });
       formRef.current?.reset();
       socketRef.current?.emit("notify-message-created", gatheringId);
-      setFeedback({ error: "", message: "메시지를 보냈습니다." });
     } catch {
       setFeedback({ error: "메시지를 보내지 못했습니다.", message: "" });
     } finally {
