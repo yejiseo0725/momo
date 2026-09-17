@@ -11,7 +11,7 @@ import { CATEGORIES, getSingleSearchParam } from "@/lib/utils/validation";
 
 export default async function GatheringsPage({ searchParams }) {
   await connection();
-  await requireSession();
+  const session = await requireSession();
   const query = await searchParams;
   const keyword = getSingleSearchParam(query.keyword).trim();
   const category = getSingleSearchParam(query.category);
@@ -19,6 +19,7 @@ export default async function GatheringsPage({ searchParams }) {
   const gatherings = await getPublicGatherings({
     keyword,
     category: selectedCategory,
+    excludeUserId: session.user.id,
   });
 
   return (
@@ -58,7 +59,13 @@ export default async function GatheringsPage({ searchParams }) {
       </section>
 
       <section>
-        <h2>모임 {gatherings.length}개</h2>
+        <div className="section-heading">
+          <div>
+            <h2>모임 {gatherings.length}개</h2>
+            <p>이미 가입했거나 직접 만든 모임은 내 모임에서 확인할 수 있습니다.</p>
+          </div>
+          <Link href="/my-gatherings">내 모임 보기</Link>
+        </div>
         {gatherings.length > 0 ? (
           <div className="card-grid">
             {gatherings.map((gathering) => (
@@ -66,7 +73,7 @@ export default async function GatheringsPage({ searchParams }) {
             ))}
           </div>
         ) : (
-          <EmptyState>조건에 맞는 공개 모임이 없습니다.</EmptyState>
+          <EmptyState>조건에 맞는 가입 가능한 공개 모임이 없습니다.</EmptyState>
         )}
       </section>
     </>
