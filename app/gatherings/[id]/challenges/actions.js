@@ -112,8 +112,9 @@ export async function deleteChallengeAction(_previousState, formData) {
   return { error: "", message: "챌린지를 삭제했습니다." };
 }
 
-export async function createChallengeFeedAction(_previousState, formData) {
+export async function createChallengeFeedAction(previousState, formData) {
   const session = await requireSession();
+  const resetKey = Number.isSafeInteger(previousState.resetKey) ? previousState.resetKey : 0;
   let ids = { gatheringId: "", challengeId: "" };
   let input;
 
@@ -126,7 +127,7 @@ export async function createChallengeFeedAction(_previousState, formData) {
     };
   } catch (error) {
     if (error instanceof ValidationError) {
-      return { error: error.message, message: "" };
+      return { error: error.message, message: "", resetKey };
     }
     throw error;
   }
@@ -137,8 +138,9 @@ export async function createChallengeFeedAction(_previousState, formData) {
     return {
       error: error instanceof ChallengeError ? error.message : "챌린지를 인증하지 못했습니다.",
       message: "",
+      resetKey,
     };
   }
   revalidatePath(`/gatherings/${ids.gatheringId}/challenges`);
-  return { error: "", message: "챌린지를 인증했습니다." };
+  return { error: "", message: "챌린지를 인증했습니다.", resetKey: resetKey + 1 };
 }

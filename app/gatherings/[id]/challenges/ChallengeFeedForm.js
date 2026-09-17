@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 
 import { createChallengeFeedAction } from "@/app/gatherings/[id]/challenges/actions";
 import ToastMessage from "@/components/ToastMessage";
@@ -8,28 +8,21 @@ import ToastMessage from "@/components/ToastMessage";
 const initialActionState = {
   error: "",
   message: "",
+  resetKey: 0,
 };
 
-export default function ChallengeFeedForm({
+function ChallengeFeedFields({
   challengeId,
   defaultDate,
-  gatheringId,
   imageRequired,
   maximumDate,
   minimumDate,
 }) {
-  const [state, formAction, pending] = useActionState(
-    createChallengeFeedAction,
-    initialActionState,
-  );
   const [doneDate, setDoneDate] = useState(defaultDate);
   const [description, setDescription] = useState("");
 
   return (
-    <form action={formAction}>
-      <input type="hidden" name="gatheringId" value={gatheringId} />
-      <input type="hidden" name="challengeId" value={challengeId} />
-
+    <>
       <label htmlFor={`done-${challengeId}`}>인증일</label>
       <input
         id={`done-${challengeId}`}
@@ -65,6 +58,48 @@ export default function ChallengeFeedForm({
           <small>JPG, PNG, WebP 형식의 5MB 이하 이미지를 선택해 주세요.</small>
         </>
       ) : null}
+    </>
+  );
+}
+
+export default function ChallengeFeedForm({
+  challengeId,
+  defaultDate,
+  gatheringId,
+  imageRequired,
+  maximumDate,
+  minimumDate,
+}) {
+  const [state, formAction, pending] = useActionState(
+    createChallengeFeedAction,
+    initialActionState,
+  );
+  const formRef = useRef(null);
+
+  useEffect(() => {
+    if (state.resetKey === initialActionState.resetKey) {
+      return;
+    }
+
+    const detailsElement = formRef.current?.closest("details");
+    if (detailsElement) {
+      detailsElement.open = false;
+    }
+  }, [state.resetKey]);
+
+  return (
+    <form ref={formRef} action={formAction}>
+      <input type="hidden" name="gatheringId" value={gatheringId} />
+      <input type="hidden" name="challengeId" value={challengeId} />
+
+      <ChallengeFeedFields
+        key={state.resetKey}
+        challengeId={challengeId}
+        defaultDate={defaultDate}
+        imageRequired={imageRequired}
+        maximumDate={maximumDate}
+        minimumDate={minimumDate}
+      />
 
       <button type="submit" disabled={pending}>
         {pending ? "등록하는 중..." : "인증 남기기"}
