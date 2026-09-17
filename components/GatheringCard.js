@@ -14,7 +14,7 @@ export default function GatheringCard({ gathering, showLeader = false }) {
           ) : null}
         </h3>
       </header>
-      <p>{gathering.description}</p>
+      <p className="gathering-card-description">{gathering.description}</p>
       <footer>
         <small>
           만든 사람: {gathering.creatorName}

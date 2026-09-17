@@ -44,6 +44,15 @@ body > footer {
   margin: 0;
 }
 
+.gathering-card-description {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+  line-clamp: 5;
+  text-overflow: ellipsis;
+}
+
 .stack {
   display: grid;
   gap: var(--momo-gap);
