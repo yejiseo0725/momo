@@ -52,17 +52,19 @@ export default function ChallengeFeedForm({
         required
       />
 
-      <label htmlFor={`image-${challengeId}`}>
-        인증 이미지 {imageRequired ? "(필수)" : "(선택)"}
-      </label>
-      <input
-        id={`image-${challengeId}`}
-        name="image"
-        type="file"
-        accept="image/jpeg,image/png,image/webp"
-        required={imageRequired}
-      />
-      <small>JPG, PNG, WebP 형식의 5MB 이하 이미지를 선택해 주세요.</small>
+      {imageRequired ? (
+        <>
+          <label htmlFor={`image-${challengeId}`}>인증 이미지 (필수)</label>
+          <input
+            id={`image-${challengeId}`}
+            name="image"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            required
+          />
+          <small>JPG, PNG, WebP 형식의 5MB 이하 이미지를 선택해 주세요.</small>
+        </>
+      ) : null}
 
       <button type="submit" disabled={pending}>
         {pending ? "등록하는 중..." : "인증 남기기"}
