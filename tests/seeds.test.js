@@ -51,6 +51,42 @@ test("사용자 알림 수신 설정은 기본적으로 켜져 있다", () => {
   assert.equal(notificationEnabled.defaultValue, true);
 });
 
+test("Better Auth 사용자는 실제 ObjectId 저장 구조를 설명한다", () => {
+  const { users } = seedDataStructure.collections;
+
+  assert.equal(users.managedBy, "better-auth");
+  assert.equal(users.fields._id.type, "ObjectId");
+  assert.equal(users.fields.id, undefined);
+});
+
+test("Better Auth 내부 컬렉션은 시드 구조에 포함하지 않는다", () => {
+  for (const collectionName of ["accounts", "sessions", "verifications"]) {
+    assert.equal(seedDataStructure.collections[collectionName], undefined);
+  }
+});
+
+test("애플리케이션의 사용자 외래키는 users._id의 문자열 값을 저장한다", () => {
+  const userReferenceFields = [
+    ["gatherings", "userId"],
+    ["gatheringMembers", "userId"],
+    ["challenges", "userId"],
+    ["challengeFeeds", "userId"],
+    ["schedules", "userId"],
+    ["scheduleMembers", "userId"],
+    ["cashBooks", "userId"],
+    ["chatMessages", "userId"],
+    ["notifications", "userId"],
+    ["notifications", "actorUserId"],
+  ];
+
+  for (const [collectionName, fieldName] of userReferenceFields) {
+    const field = seedDataStructure.collections[collectionName].fields[fieldName];
+
+    assert.equal(field.type, "string");
+    assert.equal(field.references, "users._id");
+  }
+});
+
 test("모임 초대 토큰은 고유하고 기존 모임도 허용한다", () => {
   const gatheringSchema = buildCollectionJsonSchema("gatherings");
   const inviteTokenIndex = collectionIndexes.gatherings.find(
