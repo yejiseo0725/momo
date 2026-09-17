@@ -3,6 +3,7 @@ import "./globals.css";
 
 import Link from "next/link";
 
+import NotificationLink from "@/app/NotificationLink";
 import { logoutAction } from "@/app/auth-actions";
 import { getOptionalSession } from "@/lib/session";
 import { getUnreadNotificationCount } from "@/lib/notifications";
@@ -39,9 +40,7 @@ async function SiteNavigation() {
           <li><Link href="/gatherings">모임 찾기</Link></li>
           <li><Link href="/my-gatherings">내 모임</Link></li>
           <li>
-            <Link href="/notifications">
-              알림{unreadCount > 0 ? <span className="unread-mark"> ●</span> : null}
-            </Link>
+            <NotificationLink hasUnreadNotifications={unreadCount > 0} />
           </li>
           <li><Link href="/profile">{session.user.nickname || session.user.name}</Link></li>
           <li>
