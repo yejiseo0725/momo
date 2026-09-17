@@ -10,7 +10,12 @@ import EmptyState from "@/components/EmptyState";
 import Message from "@/components/Message";
 import { getChallenges } from "@/lib/challenges";
 import { requireSession } from "@/lib/session";
+import { getTodayDateOnly } from "@/lib/utils/documents";
 import { getSingleSearchParam } from "@/lib/utils/validation";
+
+function getLatestDoneDate(challengeEndDate, today) {
+  return challengeEndDate < today ? challengeEndDate : today;
+}
 
 export default async function ChallengesPage({ params, searchParams }) {
   await connection();
@@ -18,7 +23,7 @@ export default async function ChallengesPage({ params, searchParams }) {
   const { id } = await params;
   const query = await searchParams;
   const challenges = await getChallenges(id, session.user.id);
-  const today = new Date().toISOString().slice(0, 10);
+  const today = getTodayDateOnly();
 
   return (
     <>
@@ -58,8 +63,8 @@ export default async function ChallengesPage({ params, searchParams }) {
                   name="doneDate"
                   type="date"
                   min={challenge.startDate}
-                  max={challenge.endDate}
-                  defaultValue={today}
+                  max={getLatestDoneDate(challenge.endDate, today)}
+                  defaultValue={getLatestDoneDate(challenge.endDate, today)}
                   required
                 />
                 <label htmlFor={`feed-${challenge.id}`}>인증 내용</label>
