@@ -7,7 +7,8 @@ import {
   leaveGatheringAction,
 } from "@/app/gatherings/actions";
 import InviteButton from "@/app/gatherings/[id]/InviteButton";
-import Message from "@/components/Message";
+import ActionButtonForm from "@/components/ActionButtonForm";
+import ToastMessage from "@/components/ToastMessage";
 import { getGatheringDetails } from "@/lib/gatherings";
 import { requireSession } from "@/lib/session";
 import { formatDate } from "@/lib/utils/documents";
@@ -38,19 +39,20 @@ export default async function GatheringHomePage({ params, searchParams }) {
           <span>{gathering.isPublic ? "공개 모임" : "비공개 모임"}</span>
           <span>{formatDate(gathering.createdAt)} 개설</span>
         </p>
-        <Message
+        <ToastMessage
           error={getSingleSearchParam(query.error)}
           message={getSingleSearchParam(query.message)}
         />
 
         <div className="actions">
           {!membership ? (
-            <form action={joinGatheringAction}>
-              <input type="hidden" name="gatheringId" value={id} />
-              <button type="submit" disabled={isFull}>
-                {isFull ? "가입 마감" : "가입하기"}
-              </button>
-            </form>
+            <ActionButtonForm
+              action={joinGatheringAction}
+              disabled={isFull}
+              fields={{ gatheringId: id }}
+              label={isFull ? "가입 마감" : "가입하기"}
+              pendingLabel="가입하는 중..."
+            />
           ) : null}
 
           {membership?.role === "LEADER" ? (
@@ -76,7 +78,27 @@ export default async function GatheringHomePage({ params, searchParams }) {
           {members.map((member) => (
             <li key={member.id}>
               {member.displayName}
-              {member.role === "LEADER" ? <span className="leader-mark"> · 모임장 ★</span> : " · 멤버"}
+              {member.role === "LEADER" ? (
+                <span className="leader-mark">
+                  · 모임장
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z" />
+                    <path d="M5 21h14" />
+                  </svg>
+                </span>
+              ) : " · 멤버"}
             </li>
           ))}
         </ul>

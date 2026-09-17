@@ -107,17 +107,42 @@
 }
 
 .event {
+  position: relative;
   min-width: 0;
   margin: 0;
   padding: 0.15rem 0.3rem;
-  overflow: hidden;
+  overflow: visible;
   border-radius: 0.2rem;
   background-color: var(--accent-bg);
   color: var(--text);
   font-size: 0.78rem;
   line-height: 1.35;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+}
+
+.event::before {
+  display: block;
+  content: "\00a0";
+}
+
+.eventHasTitle {
+  z-index: 2;
+}
+
+.spendingEvent,
+.incomeEvent {
+  padding-right: 0;
+  padding-left: 0;
+  background-color: transparent;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.spendingEvent {
+  color: #b91c1c;
+}
+
+.incomeEvent {
+  color: #1d4ed8;
 }
 
 .eventContinuesFromPreviousDay {
@@ -134,13 +159,35 @@
   border-bottom-right-radius: 0;
 }
 
-.event a,
-.event span {
+.eventTitle {
+  position: absolute;
+  top: 0.15rem;
+  left: var(--event-title-anchor);
   display: block;
+  width: max-content;
+  max-width: calc(var(--event-title-span) * 100%);
   overflow: hidden;
   color: inherit;
+  line-height: 1.35;
+  pointer-events: none;
+  text-align: center;
   text-overflow: ellipsis;
+  transform: translateX(-50%);
   white-space: nowrap;
+}
+
+a.eventTitle {
+  pointer-events: auto;
+}
+
+@media (prefers-color-scheme: dark) {
+  .spendingEvent {
+    color: #ff8a8a;
+  }
+
+  .incomeEvent {
+    color: #8ab4ff;
+  }
 }
 
 @media (max-width: 720px) {

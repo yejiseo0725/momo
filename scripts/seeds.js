@@ -87,6 +87,12 @@ const seedDataStructure = {
           "uniqueItems": true,
           "enumRef": "category",
           "betterAuthAdditionalField": true
+        },
+        "notificationEnabled": {
+          "type": "boolean",
+          "required": false,
+          "defaultValue": true,
+          "betterAuthAdditionalField": true
         }
       },
       "rules": [
@@ -556,6 +562,7 @@ const seedDataStructure = {
       },
       "rules": [
         "새 일정과 새 챌린지 알림은 작성자를 제외한 모든 모임 멤버에게 생성한다.",
+        "알림 수신 설정을 끈 사용자에게는 새 알림을 생성하지 않는다.",
         "알림 목록을 조회하면 해당 사용자의 읽지 않은 알림을 읽음 처리한다."
       ]
     }
@@ -850,6 +857,12 @@ function createSeedAuth(database, client) {
         category: {
           type: "string[]",
           required: true,
+          input: true,
+        },
+        notificationEnabled: {
+          type: "boolean",
+          required: false,
+          defaultValue: true,
           input: true,
         },
       },

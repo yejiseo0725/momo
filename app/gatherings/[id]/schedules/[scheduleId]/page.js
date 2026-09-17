@@ -6,9 +6,10 @@ import {
   deleteScheduleAction,
   joinScheduleAction,
   leaveScheduleAction,
-  updateScheduleAction,
 } from "@/app/gatherings/[id]/schedules/actions";
-import Message from "@/components/Message";
+import ScheduleForm from "@/app/gatherings/[id]/schedules/ScheduleForm";
+import ActionButtonForm from "@/components/ActionButtonForm";
+import ToastMessage from "@/components/ToastMessage";
 import { getScheduleDetails } from "@/lib/schedules";
 import { requireSession } from "@/lib/session";
 import { getSingleSearchParam } from "@/lib/utils/validation";
@@ -38,25 +39,27 @@ export default async function ScheduleDetailsPage({ params, searchParams }) {
           <dt>장소</dt><dd>{schedule.region}</dd>
           <dt>작성자</dt><dd>{schedule.authorName}</dd>
         </dl>
-        <Message
+        <ToastMessage
           error={getSingleSearchParam(query.error)}
           message={getSingleSearchParam(query.message)}
         />
 
         {!isParticipating ? (
-          <form action={joinScheduleAction}>
-            <input type="hidden" name="gatheringId" value={id} />
-            <input type="hidden" name="scheduleId" value={scheduleId} />
-            <button type="submit">참여하기</button>
-          </form>
+          <ActionButtonForm
+            action={joinScheduleAction}
+            fields={{ gatheringId: id, scheduleId }}
+            label="참여하기"
+            pendingLabel="참여하는 중..."
+          />
         ) : null}
 
         {isParticipating && !isAuthor ? (
-          <form action={leaveScheduleAction}>
-            <input type="hidden" name="gatheringId" value={id} />
-            <input type="hidden" name="scheduleId" value={scheduleId} />
-            <button type="submit">참여 취소</button>
-          </form>
+          <ActionButtonForm
+            action={leaveScheduleAction}
+            fields={{ gatheringId: id, scheduleId }}
+            label="참여 취소"
+            pendingLabel="취소하는 중..."
+          />
         ) : null}
       </section>
 
@@ -69,16 +72,18 @@ export default async function ScheduleDetailsPage({ params, searchParams }) {
         <section>
           <details>
             <summary>일정 수정</summary>
-            <form action={updateScheduleAction}>
-              <input type="hidden" name="gatheringId" value={id} />
-              <input type="hidden" name="scheduleId" value={scheduleId} />
-              <label>제목<input name="title" defaultValue={schedule.title} maxLength="100" required /></label>
-              <label>설명<textarea name="description" defaultValue={schedule.description} maxLength="1000" required /></label>
-              <label>시작일<input name="startDate" type="date" defaultValue={schedule.startDate} required /></label>
-              <label>종료일<input name="endDate" type="date" defaultValue={schedule.endDate} required /></label>
-              <label>장소<input name="region" defaultValue={schedule.region} maxLength="150" required /></label>
-              <button type="submit">수정 저장</button>
-            </form>
+            <ScheduleForm
+              gatheringId={id}
+              initialValues={{
+                title: schedule.title,
+                description: schedule.description,
+                startDate: schedule.startDate,
+                endDate: schedule.endDate,
+                region: schedule.region,
+              }}
+              mode="edit"
+              scheduleId={scheduleId}
+            />
           </details>
           <form action={deleteScheduleAction}>
             <input type="hidden" name="gatheringId" value={id} />

@@ -35,6 +35,14 @@ test("gatheringMembers는 모임과 사용자 조합을 유일하게 제한한�
   assert.equal(uniqueIndex.options.unique, true);
 });
 
+test("사용자 알림 수신 설정은 기본적으로 켜져 있다", () => {
+  const notificationEnabled = seedDataStructure.collections.users.fields.notificationEnabled;
+
+  assert.equal(notificationEnabled.type, "boolean");
+  assert.equal(notificationEnabled.required, false);
+  assert.equal(notificationEnabled.defaultValue, true);
+});
+
 test("모임 초대 토큰은 고유하고 기존 모임도 허용한다", () => {
   const gatheringSchema = buildCollectionJsonSchema("gatherings");
   const inviteTokenIndex = collectionIndexes.gatherings.find(

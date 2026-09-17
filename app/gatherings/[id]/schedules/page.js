@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { connection } from "next/server";
 
-import { createScheduleAction } from "@/app/gatherings/[id]/schedules/actions";
 import ScheduleCalendar from "@/app/gatherings/[id]/schedules/ScheduleCalendar";
-import Message from "@/components/Message";
+import ScheduleForm from "@/app/gatherings/[id]/schedules/ScheduleForm";
+import ToastMessage from "@/components/ToastMessage";
 import { getSchedules } from "@/lib/schedules";
 import { requireSession } from "@/lib/session";
 import { normalizeMonth } from "@/lib/utils/calendar";
@@ -28,22 +28,24 @@ export default async function SchedulesPage({ params, searchParams }) {
       <section>
         <h1>일정</h1>
         <p>모임 일정을 달력에서 확인하고 참여 여부를 남기세요.</p>
-        <Message
+        <ToastMessage
           error={getSingleSearchParam(query.error)}
           message={getSingleSearchParam(query.message)}
         />
 
         <details>
           <summary>새 일정 만들기</summary>
-          <form action={createScheduleAction}>
-            <input type="hidden" name="gatheringId" value={id} />
-            <label>제목<input name="title" maxLength="100" required /></label>
-            <label>설명<textarea name="description" maxLength="1000" required /></label>
-            <label>시작일<input name="startDate" type="date" required /></label>
-            <label>종료일<input name="endDate" type="date" required /></label>
-            <label>장소<input name="region" maxLength="150" required /></label>
-            <button type="submit">일정 만들기</button>
-          </form>
+          <ScheduleForm
+            gatheringId={id}
+            initialValues={{
+              title: "",
+              description: "",
+              startDate: "",
+              endDate: "",
+              region: "",
+            }}
+            mode="create"
+          />
         </details>
       </section>
 

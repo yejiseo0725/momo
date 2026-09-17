@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export default function GatheringCard({ gathering, showLeader = false }) {
+export default function GatheringCard({ gathering }) {
   return (
     <article>
       <header>
@@ -9,9 +9,6 @@ export default function GatheringCard({ gathering, showLeader = false }) {
         </p>
         <h3>
           <Link href={`/gatherings/${gathering.id}`}>{gathering.name}</Link>
-          {showLeader && gathering.role === "LEADER" ? (
-            <span className="leader-mark" aria-label="모임장"> ★</span>
-          ) : null}
         </h3>
       </header>
       <p className="gathering-card-description">{gathering.description}</p>

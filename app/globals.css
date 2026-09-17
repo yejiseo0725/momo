@@ -144,18 +144,36 @@ body > footer {
   color: var(--code);
 }
 
-.invite-link {
-  margin-top: var(--momo-gap);
+.form-message {
+  display: block;
+  margin-top: 0.5rem;
+  color: var(--accent);
 }
 
-.invite-link p {
-  overflow-wrap: anywhere;
+.invite-link {
+  margin-top: var(--momo-gap);
 }
 
 .leader-mark,
 .unread-mark {
   font-weight: bold;
   color: var(--accent);
+}
+
+.leader-mark,
+.notification-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.leader-mark {
+  margin-left: 0.25rem;
+}
+
+.leader-mark svg,
+.notification-link svg {
+  flex: 0 0 auto;
 }
 
 .chat-list {

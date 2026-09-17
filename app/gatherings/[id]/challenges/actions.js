@@ -1,6 +1,6 @@
 "use server";
 
-import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 import {
   ChallengeError,
@@ -40,10 +40,6 @@ function readChallengeInput(formData) {
   };
 }
 
-function fail(gatheringId, message) {
-  redirect(`/gatherings/${gatheringId}/challenges?error=${encodeURIComponent(message)}`);
-}
-
 export async function createChallengeAction(_previousState, formData) {
   const session = await requireSession();
   let gatheringId = "";
@@ -54,7 +50,7 @@ export async function createChallengeAction(_previousState, formData) {
     input = readChallengeInput(formData);
   } catch (error) {
     if (error instanceof ValidationError) {
-      return { error: error.message };
+      return { error: error.message, message: "" };
     }
     throw error;
   }
@@ -64,12 +60,14 @@ export async function createChallengeAction(_previousState, formData) {
   } catch (error) {
     return {
       error: error instanceof ChallengeError ? error.message : "챌린지를 만들지 못했습니다.",
+      message: "",
     };
   }
-  redirect(`/gatherings/${gatheringId}/challenges?message=${encodeURIComponent("챌린지를 만들었습니다.")}`);
+  revalidatePath(`/gatherings/${gatheringId}/challenges`);
+  return { error: "", message: "챌린지를 만들었습니다." };
 }
 
-export async function updateChallengeAction(formData) {
+export async function updateChallengeAction(_previousState, formData) {
   const session = await requireSession();
   let ids = { gatheringId: "", challengeId: "" };
   let input;
@@ -79,7 +77,7 @@ export async function updateChallengeAction(formData) {
     input = readChallengeInput(formData);
   } catch (error) {
     if (error instanceof ValidationError) {
-      fail(ids.gatheringId, error.message);
+      return { error: error.message, message: "" };
     }
     throw error;
   }
@@ -87,24 +85,32 @@ export async function updateChallengeAction(formData) {
   try {
     await updateChallenge(ids.challengeId, ids.gatheringId, session.user.id, input);
   } catch (error) {
-    fail(ids.gatheringId, error instanceof ChallengeError ? error.message : "챌린지를 수정하지 못했습니다.");
+    return {
+      error: error instanceof ChallengeError ? error.message : "챌린지를 수정하지 못했습니다.",
+      message: "",
+    };
   }
-  redirect(`/gatherings/${ids.gatheringId}/challenges?message=${encodeURIComponent("챌린지를 수정했습니다.")}`);
+  revalidatePath(`/gatherings/${ids.gatheringId}/challenges`);
+  return { error: "", message: "챌린지를 수정했습니다." };
 }
 
-export async function deleteChallengeAction(formData) {
+export async function deleteChallengeAction(_previousState, formData) {
   const session = await requireSession();
   const ids = getIds(formData);
 
   try {
     await deleteChallenge(ids.challengeId, ids.gatheringId, session.user.id);
   } catch (error) {
-    fail(ids.gatheringId, error instanceof ChallengeError ? error.message : "챌린지를 삭제하지 못했습니다.");
+    return {
+      error: error instanceof ChallengeError ? error.message : "챌린지를 삭제하지 못했습니다.",
+      message: "",
+    };
   }
-  redirect(`/gatherings/${ids.gatheringId}/challenges?message=${encodeURIComponent("챌린지를 삭제했습니다.")}`);
+  revalidatePath(`/gatherings/${ids.gatheringId}/challenges`);
+  return { error: "", message: "챌린지를 삭제했습니다." };
 }
 
-export async function createChallengeFeedAction(formData) {
+export async function createChallengeFeedAction(_previousState, formData) {
   const session = await requireSession();
   let ids = { gatheringId: "", challengeId: "" };
   let input;
@@ -118,7 +124,7 @@ export async function createChallengeFeedAction(formData) {
     };
   } catch (error) {
     if (error instanceof ValidationError) {
-      fail(ids.gatheringId, error.message);
+      return { error: error.message, message: "" };
     }
     throw error;
   }
@@ -126,7 +132,11 @@ export async function createChallengeFeedAction(formData) {
   try {
     await createChallengeFeed(ids.challengeId, ids.gatheringId, session.user.id, input);
   } catch (error) {
-    fail(ids.gatheringId, error instanceof ChallengeError ? error.message : "챌린지를 인증하지 못했습니다.");
+    return {
+      error: error instanceof ChallengeError ? error.message : "챌린지를 인증하지 못했습니다.",
+      message: "",
+    };
   }
-  redirect(`/gatherings/${ids.gatheringId}/challenges?message=${encodeURIComponent("챌린지를 인증했습니다.")}`);
+  revalidatePath(`/gatherings/${ids.gatheringId}/challenges`);
+  return { error: "", message: "챌린지를 인증했습니다." };
 }

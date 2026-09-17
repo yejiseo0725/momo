@@ -1,6 +1,6 @@
 "use server";
 
-import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 import {
   CashBookError,
@@ -48,11 +48,7 @@ function readInput(formData) {
   };
 }
 
-function fail(gatheringId, message) {
-  redirect(`/gatherings/${gatheringId}/cash-books?error=${encodeURIComponent(message)}`);
-}
-
-export async function createCashBookEntryAction(formData) {
+export async function createCashBookEntryAction(_previousState, formData) {
   const session = await requireSession();
   let gatheringId = "";
   let input;
@@ -61,7 +57,7 @@ export async function createCashBookEntryAction(formData) {
     input = readInput(formData);
   } catch (error) {
     if (error instanceof ValidationError) {
-      fail(gatheringId, error.message);
+      return { error: error.message, message: "" };
     }
     throw error;
   }
@@ -69,12 +65,16 @@ export async function createCashBookEntryAction(formData) {
   try {
     await createCashBookEntry(gatheringId, session.user.id, input);
   } catch (error) {
-    fail(gatheringId, error instanceof CashBookError ? error.message : "가계부 내역을 만들지 못했습니다.");
+    return {
+      error: error instanceof CashBookError ? error.message : "가계부 내역을 만들지 못했습니다.",
+      message: "",
+    };
   }
-  redirect(`/gatherings/${gatheringId}/cash-books?message=${encodeURIComponent("가계부 내역을 만들었습니다.")}`);
+  revalidatePath(`/gatherings/${gatheringId}/cash-books`);
+  return { error: "", message: "가계부 내역을 만들었습니다." };
 }
 
-export async function updateCashBookEntryAction(formData) {
+export async function updateCashBookEntryAction(_previousState, formData) {
   const session = await requireSession();
   let ids = { gatheringId: "", entryId: "" };
   let input;
@@ -83,7 +83,7 @@ export async function updateCashBookEntryAction(formData) {
     input = readInput(formData);
   } catch (error) {
     if (error instanceof ValidationError) {
-      fail(ids.gatheringId, error.message);
+      return { error: error.message, message: "" };
     }
     throw error;
   }
@@ -91,18 +91,26 @@ export async function updateCashBookEntryAction(formData) {
   try {
     await updateCashBookEntry(ids.entryId, ids.gatheringId, session.user.id, input);
   } catch (error) {
-    fail(ids.gatheringId, error instanceof CashBookError ? error.message : "가계부 내역을 수정하지 못했습니다.");
+    return {
+      error: error instanceof CashBookError ? error.message : "가계부 내역을 수정하지 못했습니다.",
+      message: "",
+    };
   }
-  redirect(`/gatherings/${ids.gatheringId}/cash-books?message=${encodeURIComponent("가계부 내역을 수정했습니다.")}`);
+  revalidatePath(`/gatherings/${ids.gatheringId}/cash-books`);
+  return { error: "", message: "가계부 내역을 수정했습니다." };
 }
 
-export async function deleteCashBookEntryAction(formData) {
+export async function deleteCashBookEntryAction(_previousState, formData) {
   const session = await requireSession();
   const ids = readIds(formData);
   try {
     await deleteCashBookEntry(ids.entryId, ids.gatheringId, session.user.id);
   } catch (error) {
-    fail(ids.gatheringId, error instanceof CashBookError ? error.message : "가계부 내역을 삭제하지 못했습니다.");
+    return {
+      error: error instanceof CashBookError ? error.message : "가계부 내역을 삭제하지 못했습니다.",
+      message: "",
+    };
   }
-  redirect(`/gatherings/${ids.gatheringId}/cash-books?message=${encodeURIComponent("가계부 내역을 삭제했습니다.")}`);
+  revalidatePath(`/gatherings/${ids.gatheringId}/cash-books`);
+  return { error: "", message: "가계부 내역을 삭제했습니다." };
 }

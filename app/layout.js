@@ -2,6 +2,7 @@ import "simpledotcss/simple.css";
 import "./globals.css";
 
 import Link from "next/link";
+import { Toaster } from "sonner";
 
 import NotificationLink from "@/app/NotificationLink";
 import UserAvatar from "@/components/UserAvatar";
@@ -72,6 +73,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="ko" data-scroll-behavior="smooth">
       <body>
+        <Toaster position="top-right" />
         <header>
           <SiteNavigation />
         </header>
