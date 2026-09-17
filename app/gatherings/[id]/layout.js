@@ -1,10 +1,10 @@
-import { Typography } from "@heroui/react";
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import { connection } from "next/server";
-
-import { getGatheringDetails } from "@/lib/gatherings";
-import { requireSession } from "@/lib/session";
+import GatheringNavigation from '@/app/gatherings/[id]/GatheringNavigation';
+import { getGatheringDetails } from '@/lib/gatherings';
+import { requireSession } from '@/lib/session';
+import { Typography } from '@heroui/react';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { connection } from 'next/server';
 
 export default async function GatheringLayout({ children, params }) {
   await connection();
@@ -17,24 +17,19 @@ export default async function GatheringLayout({ children, params }) {
   }
 
   return (
-    <>
-      <nav
-        className="flex flex-wrap items-center gap-2 border-b border-border pb-4"
+    <div className="grid gap-8 md:grid-cols-[12rem_minmax(0,1fr)] md:items-start">
+      <aside
+        className="md:sticky md:top-4 md:self-start"
         aria-label={`${details.gathering.name} 메뉴`}
       >
-        <Link className="link mr-2" href={`/gatherings/${id}`}>
-          <Typography weight="semibold">{details.gathering.name}</Typography>
-        </Link>
-        {details.membership ? (
-          <>
-            <Link className="button button--ghost button--sm" href={`/gatherings/${id}/challenges`}>챌린지</Link>
-            <Link className="button button--ghost button--sm" href={`/gatherings/${id}/schedules`}>일정</Link>
-            <Link className="button button--ghost button--sm" href={`/gatherings/${id}/cash-books`}>가계부</Link>
-            <Link className="button button--ghost button--sm" href={`/gatherings/${id}/chat`}>채팅</Link>
-          </>
-        ) : null}
-      </nav>
-      {children}
-    </>
+        <div className="flex flex-col gap-4">
+          <Link href={`/gatherings/${id}`} className="link">
+            <Typography type="h1">{details.gathering.name}</Typography>
+          </Link>
+          {details.membership ? <GatheringNavigation gatheringId={id} /> : null}
+        </div>
+      </aside>
+      <div className="min-w-0 flex flex-col gap-8">{children}</div>
+    </div>
   );
 }

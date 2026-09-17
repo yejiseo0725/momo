@@ -1,49 +1,97 @@
-import { Card, Chip } from "@heroui/react";
-import Image from "next/image";
-import Link from "next/link";
+import { Card, Chip } from '@heroui/react';
 
-export default function GatheringCard({ gathering }) {
+import UserAvatar from '@/components/UserAvatar';
+import Image from 'next/image';
+import Link from 'next/link';
+
+export default function GatheringCard({ gathering, loading = 'eager' }) {
+  const isFull = gathering.memberCount >= gathering.maxMemCount;
+
   return (
-    <Card>
+    <Card className="overflow-hidden border-none bg-white/80 p-0 shadow-[0_12px_32px_-8px_rgba(0,0,0,0.06)] backdrop-blur-md">
       <Link
         href={`/gatherings/${gathering.id}`}
         aria-label={`${gathering.name} 모임 보기`}
+        className="group relative block aspect-square w-full overflow-hidden"
       >
-        <div className="mx-auto aspect-square w-full max-w-[400px] overflow-hidden">
-          <Image
-            className="h-full w-full object-cover"
-            src={gathering.imageUrl || "/gathering-default.svg"}
-            alt={gathering.imageUrl
+        <Image
+          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          src={gathering.imageUrl || '/gathering-default.svg'}
+          alt={
+            gathering.imageUrl
               ? `${gathering.name} 모임 이미지`
-              : "모임 기본 이미지"}
-            width={400}
-            height={400}
-            unoptimized
-          />
+              : '모임 기본 이미지'
+          }
+          width={400}
+          height={400}
+          loading={loading}
+          unoptimized
+        />
+
+        <div className="absolute top-4 right-4 z-10 flex flex-wrap justify-end gap-2">
+          <Chip
+            size="sm"
+            className="rounded-full bg-white/90 text-primary shadow-sm backdrop-blur-sm"
+          >
+            {gathering.isPublic ? '공개 모임' : '비공개 모임'}
+          </Chip>
+          <Chip
+            size="sm"
+            className={`rounded-full shadow-sm backdrop-blur-sm ${
+              isFull
+                ? 'bg-warning text-warning-foreground'
+                : 'bg-white/90 text-foreground'
+            }`}
+          >
+            최대 {gathering.maxMemCount}명
+          </Chip>
         </div>
+
+        {/* 카드 하단에서 사진 위로 자연스럽게 올라가는 그라데이션 */}
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-surface via-surface/80 to-transparent"
+          aria-hidden="true"
+        />
       </Link>
-      <Card.Header>
-        <Card.Description>{gathering.category} · {gathering.region}</Card.Description>
-        <Card.Title>
-          <span className="flex flex-wrap items-center gap-2">
-            <Link className="link" href={`/gatherings/${gathering.id}`}>
-              {gathering.name}
-            </Link>
-            {gathering.role === "LEADER" ? <Chip size="sm">모임장</Chip> : null}
-          </span>
-        </Card.Title>
-      </Card.Header>
-      <Card.Content>
-        <p>{gathering.description}</p>
-      </Card.Content>
-      <Card.Footer>
-        <small>
-          만든 사람: {gathering.creatorName}
-          <br />
-          {gathering.memberCount} / {gathering.maxMemCount}명
-          {gathering.isPublic ? " · 공개" : " · 비공개"}
-        </small>
-      </Card.Footer>
+
+      {/* 카드 본문: 모임 제목이 사진 하단 위로 살짝 오버랩 */}
+      <div className="relative -mt-8 z-10 flex flex-1 flex-col gap-3 px-4 pb-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <Chip
+            size="sm"
+            className="rounded-full bg-accent-sky text-primary font-medium"
+          >
+            {gathering.category}
+          </Chip>
+          <Link
+            href={`/gatherings/${gathering.id}`}
+            className="line-clamp-1 font-bold leading-snug text-foreground transition-colors hover:text-primary"
+          >
+            {gathering.name}
+          </Link>
+          {gathering.role === 'LEADER' ? (
+            <Chip
+              size="sm"
+              className="bg-accent-pink text-white font-semibold shadow-xs"
+            >
+              모임장
+            </Chip>
+          ) : null}
+        </div>
+
+        <span className="text-muted">{gathering.region}</span>
+
+        <p className="line-clamp-2 text-muted">{gathering.description}</p>
+
+        <div className="mt-auto flex items-end justify-end gap-4 pt-1">
+          <div className="flex min-w-0 items-center gap-2">
+            <UserAvatar name={gathering.creatorName} />
+            <span className="line-clamp-1 font-medium text-foreground/80">
+              {gathering.creatorName}
+            </span>
+          </div>
+        </div>
+      </div>
     </Card>
   );
 }

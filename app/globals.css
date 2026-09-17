@@ -1,2 +1,84 @@
-@import "tailwindcss";
-@import "@heroui/styles";
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+@import 'tailwindcss';
+@import '@heroui/styles';
+
+@theme {
+  --font-sans:
+    'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont,
+    system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo',
+    'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', sans-serif;
+
+  --radius-small: 12px;
+  --radius-medium: 20px;
+  --radius-large: 28px;
+
+  /* 폰트 사이즈 3단계 */
+  --text-sm: 0.875rem; /* 14px — 보조 텍스트, 칩, 태그, 설명 */
+  --text-base: 1rem; /* 16px — 본문 기본, 섹션 제목 이하 */
+  --text-lg: 1.25rem; /* 20px — 페이지 제목(h1), 카드 제목 */
+
+  --color-primary: #2997ff;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #fff0e8;
+  --color-secondary-foreground: #c94f2c;
+  --color-warning: #ff6f3c;
+  --color-warning-foreground: #ffffff;
+  --color-accent-pink: #ff5c93;
+  --color-accent-sky: #e8f4fd;
+  --color-surface: var(--surface, #ffffff);
+}
+
+:root {
+  --radius-small: 12px;
+  --radius-medium: 20px;
+  --radius-large: 28px;
+
+  /* Theme point colors */
+  --primary: #2997ff;
+  --primary-foreground: #ffffff;
+  --secondary: #fff0e8;
+  --secondary-foreground: #c94f2c;
+  --accent: #2997ff;
+  --accent-foreground: #ffffff;
+  --accent-hover: #1b85ed;
+  --warning: #ff6f3c;
+  --warning-foreground: #ffffff;
+  --warning-hover: #e85e2c;
+  --accent-pink: #ff5c93;
+  --accent-sky: #e8f4fd;
+  --surface: #ffffff;
+}
+
+/* ───── 기본 타이포그래피 ───── */
+body {
+  font-family: var(--font-sans);
+  font-size: 1rem; /* base: 16px */
+  line-height: 1.6;
+}
+
+/* HeroUI Typography 오버라이드: 3단계로 통일 */
+.typography--h1,
+.typography--h2,
+.typography--h3,
+.typography--h4,
+.typography--h5,
+.typography--h6 {
+  font-size: 1.25rem; /* lg: 20px */
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+
+.typography--body,
+.typography--body-sm,
+.typography--body-xs {
+  font-size: 1rem; /* base: 16px */
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+/* HeroUI Chip은 프로젝트 규칙에 따라 항상 pill 형태로 표시합니다. */
+[data-slot='chip'] {
+  border-radius: 9999px;
+}

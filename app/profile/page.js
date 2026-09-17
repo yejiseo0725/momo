@@ -1,16 +1,17 @@
-import { Card, Chip, Typography } from "@heroui/react";
-import Link from "next/link";
-import { connection } from "next/server";
+import { Card, Chip, Typography } from '@heroui/react';
 
-import EmptyState from "@/components/EmptyState";
-import GatheringCard from "@/components/GatheringCard";
-import ToastMessage from "@/components/ToastMessage";
-import UserAvatar from "@/components/UserAvatar";
-import { getJoinedGatherings } from "@/lib/gatherings";
-import { getRegionName } from "@/lib/regions";
-import { requireSession } from "@/lib/session";
-import { getUserRegion } from "@/lib/users";
-import { getSingleSearchParam } from "@/lib/utils/validation";
+import EmptyState from '@/components/EmptyState';
+import GatheringCard from '@/components/GatheringCard';
+import HeroToast from '@/components/HeroToast';
+import PlusIcon from '@/components/PlusIcon';
+import UserAvatar from '@/components/UserAvatar';
+import { getJoinedGatherings } from '@/lib/gatherings';
+import { getRegionName } from '@/lib/regions';
+import { requireSession } from '@/lib/session';
+import { getUserRegion } from '@/lib/users';
+import { getSingleSearchParam } from '@/lib/utils/validation';
+import Link from 'next/link';
+import { connection } from 'next/server';
 
 export default async function ProfilePage({ searchParams }) {
   await connection();
@@ -18,12 +19,14 @@ export default async function ProfilePage({ searchParams }) {
   const query = await searchParams;
   const gatherings = await getJoinedGatherings(session.user.id);
   const userRegionCode = await getUserRegion(session.user.id);
-  const selectedCategories = Array.isArray(session.user.category) ? session.user.category : [];
+  const selectedCategories = Array.isArray(session.user.category)
+    ? session.user.category
+    : [];
   const displayName = session.user.nickname || session.user.name;
 
   return (
     <>
-      <ToastMessage
+      <HeroToast
         error={getSingleSearchParam(query.error)}
         message={getSingleSearchParam(query.message)}
       />
@@ -31,7 +34,11 @@ export default async function ProfilePage({ searchParams }) {
       <section className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <header className="flex items-center gap-3">
-            <UserAvatar image={session.user.image} name={displayName} size="large" />
+            <UserAvatar
+              image={session.user.image}
+              name={displayName}
+              size="large"
+            />
             <div>
               <Typography type="h1">마이페이지</Typography>
               <p>{displayName}</p>
@@ -43,7 +50,9 @@ export default async function ProfilePage({ searchParams }) {
         </div>
 
         <Card>
-          <Card.Header><Card.Title>내 프로필 정보</Card.Title></Card.Header>
+          <Card.Header>
+            <Card.Title>내 프로필 정보</Card.Title>
+          </Card.Header>
           <Card.Content>
             <dl className="grid gap-3 sm:grid-cols-[10rem_1fr]">
               <dt className="font-medium">이름</dt>
@@ -57,23 +66,29 @@ export default async function ProfilePage({ searchParams }) {
               <dt className="font-medium">관심 카테고리</dt>
               <dd className="flex flex-wrap gap-2">
                 {selectedCategories.length > 0
-                  ? selectedCategories.map((category) => <Chip key={category}>{category}</Chip>)
-                  : "없음"}
+                  ? selectedCategories.map((category) => (
+                      <Chip key={category}>{category}</Chip>
+                    ))
+                  : '없음'}
               </dd>
               <dt className="font-medium">지역</dt>
               <dd>{getRegionName(userRegionCode)}</dd>
               <dt className="font-medium">새 일정·챌린지 알림</dt>
-              <dd>{session.user.notificationEnabled !== false ? "받음" : "받지 않음"}</dd>
+              <dd>
+                {session.user.notificationEnabled !== false
+                  ? '받음'
+                  : '받지 않음'}
+              </dd>
             </dl>
           </Card.Content>
         </Card>
       </section>
 
       <section className="flex flex-col gap-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-4">
           <Typography type="h2">내 모임</Typography>
           <Link href="/gatherings/new" className="button button--primary">
-            새 모임 만들기
+            <PlusIcon />새 모임 만들기
           </Link>
         </div>
 

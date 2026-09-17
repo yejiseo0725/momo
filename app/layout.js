@@ -1,17 +1,17 @@
-import "./globals.css";
+import './globals.css';
 
-import { Button, Toast, Typography } from "@heroui/react";
-import Link from "next/link";
+import { Button, Toast, Typography } from '@heroui/react';
 
-import NotificationLink from "@/app/NotificationLink";
-import UserAvatar from "@/components/UserAvatar";
-import { logoutAction } from "@/app/auth-actions";
-import { getOptionalSession } from "@/lib/session";
-import { getUnreadNotificationCount } from "@/lib/notifications";
+import { logoutAction } from '@/app/auth-actions';
+import NotificationLink from '@/app/NotificationLink';
+import UserAvatar from '@/components/UserAvatar';
+import { getUnreadNotificationCount } from '@/lib/notifications';
+import { getOptionalSession } from '@/lib/session';
+import Link from 'next/link';
 
 export const metadata = {
-  title: "momo",
-  description: "함께 시작하고 꾸준히 이어가는 모임 서비스",
+  title: 'momo',
+  description: '함께 시작하고 꾸준히 이어가는 모임 서비스',
 };
 
 async function SiteNavigation() {
@@ -27,16 +27,25 @@ async function SiteNavigation() {
   }
 
   return (
-    <nav className="flex flex-wrap items-center justify-between gap-3" aria-label="주요 메뉴">
+    <nav
+      className="flex flex-wrap items-center justify-between gap-3"
+      aria-label="주요 메뉴"
+    >
       <Link className="link" href="/">
-        <Typography type="h4">momo</Typography>
+        <Typography type="h4">MoMo</Typography>
       </Link>
 
       {session ? (
         <div className="flex flex-wrap items-center justify-end gap-1">
-          <Link className="button button--ghost button--sm" href="/gatherings">모임 찾기</Link>
-          <Link className="button button--ghost button--sm" href="/my-gatherings">내 모임</Link>
-          <NotificationLink hasUnreadNotifications={unreadCount > 0} />
+          <Link className="button button--ghost button--sm" href="/gatherings">
+            모임 찾기
+          </Link>
+          <Link
+            className="button button--ghost button--sm"
+            href="/my-gatherings"
+          >
+            내 모임
+          </Link>
           <Link className="button button--ghost button--sm" href="/profile">
             <span className="flex items-center gap-2">
               <UserAvatar
@@ -46,14 +55,21 @@ async function SiteNavigation() {
               <span>{session.user.nickname || session.user.name}</span>
             </span>
           </Link>
+          <NotificationLink hasUnreadNotifications={unreadCount > 0} />
           <form action={logoutAction}>
-            <Button type="submit" size="sm" variant="ghost">로그아웃</Button>
+            <Button type="submit" size="sm" variant="ghost">
+              로그아웃
+            </Button>
           </form>
         </div>
       ) : (
         <div className="flex items-center gap-1">
-          <Link className="button button--ghost button--sm" href="/login">로그인</Link>
-          <Link className="button button--primary button--sm" href="/signup">회원가입</Link>
+          <Link className="button button--ghost button--sm" href="/login">
+            로그인
+          </Link>
+          <Link className="button button--primary button--sm" href="/signup">
+            회원가입
+          </Link>
         </div>
       )}
     </nav>
@@ -62,19 +78,32 @@ async function SiteNavigation() {
 
 export default function RootLayout({ children }) {
   return (
-    <html className="light" data-theme="light" lang="ko" data-scroll-behavior="smooth">
-      <body className="flex min-h-screen flex-col bg-background text-foreground">
+    <html
+      className="light"
+      data-theme="light"
+      lang="ko"
+      data-scroll-behavior="smooth"
+    >
+      <head>
+        <link
+          rel="stylesheet"
+          as="style"
+          crossOrigin="anonymous"
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+        />
+      </head>
+      <body className="flex min-h-screen flex-col bg-background text-foreground font-sans">
         <Toast.Provider placement="top end" />
         <header className="border-b border-border bg-surface">
-          <div className="mx-auto w-full max-w-6xl px-4 py-3">
+          <div className="mx-auto w-full max-w-3xl px-4 py-3">
             <SiteNavigation />
           </div>
         </header>
-        <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-4 py-8">
+        <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-4 py-8">
           {children}
         </main>
         <footer className="border-t border-border">
-          <div className="mx-auto w-full max-w-6xl px-4 py-6">
+          <div className="mx-auto w-full max-w-3xl px-4 py-6">
             <Typography color="muted" type="body-sm">
               momo · 함께할 사람과 오래 이어지는 모임
             </Typography>

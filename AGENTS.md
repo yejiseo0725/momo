@@ -28,10 +28,10 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ### 컴포넌트와 UI
 
+- 스타일링 및 디자인 시스템: UI 및 컴포넌트 작업 전 반드시 [STYLING.md](./STYLING.md)를 읽고 간격(`gap-*`, `p-*`, `mt-*`), 라운딩(Radius), 컬러 규격을 엄격히 준수
 - React Hook: `useState`, `useEffect`, `useRef`, `useActionState` 기본, 그 외 Hook은 이유·대안 보고 및 승인 후 사용
 - Client Component: 브라우저 이벤트·로컬 상태·즉각적 UI 반응이 필요한 최소 영역만 분리
-- SimpleDotCss 상태로 layout 구성을 위한 최소한의 CSS만 사용
-- Layout: `layout.js`에 해당 route 구조 직접 작성
+- Layout: `layout.js`에 해당 route 구조 직접 작성 (전역 너비 `max-w-3xl` 준수)
 - Layout 금지 사항: 외부 주입·불필요한 추상화·복잡한 합성·빈 컴포넌트
 
 ### 렌더링과 데이터 흐름

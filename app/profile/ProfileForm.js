@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Button,
@@ -10,24 +10,34 @@ import {
   Radio,
   RadioGroup,
   TextField,
-} from "@heroui/react";
-import { useActionState, useState } from "react";
+} from '@heroui/react';
+import { useActionState, useState } from 'react';
 
-import { updateProfileAction } from "@/app/auth-actions";
-import RegionAutocomplete from "@/components/RegionAutocomplete";
-import ToastMessage from "@/components/ToastMessage";
+import { updateProfileAction } from '@/app/auth-actions';
+import HeroToast from '@/components/HeroToast';
+import RegionAutocomplete from '@/components/RegionAutocomplete';
 
 const initialActionState = {
-  error: "",
-  message: "",
+  error: '',
+  message: '',
 };
 
-export default function ProfileForm({ categories, email, genders, initialValues }) {
-  const [state, formAction, pending] = useActionState(updateProfileAction, initialActionState);
+export default function ProfileForm({
+  categories,
+  email,
+  genders,
+  initialValues,
+}) {
+  const [state, formAction, pending] = useActionState(
+    updateProfileAction,
+    initialActionState,
+  );
   const [name, setName] = useState(initialValues.name);
   const [gender, setGender] = useState(initialValues.gender);
   const [nickname, setNickname] = useState(initialValues.nickname);
-  const [selectedCategories, setSelectedCategories] = useState(initialValues.categories);
+  const [selectedCategories, setSelectedCategories] = useState(
+    initialValues.categories,
+  );
   const [notificationEnabled, setNotificationEnabled] = useState(
     initialValues.notificationEnabled,
   );
@@ -53,7 +63,9 @@ export default function ProfileForm({ categories, email, genders, initialValues 
         {genders.map((genderOption) => (
           <Radio key={genderOption} value={genderOption}>
             <Radio.Content>
-              <Radio.Control><Radio.Indicator /></Radio.Control>
+              <Radio.Control>
+                <Radio.Indicator />
+              </Radio.Control>
               {genderOption}
             </Radio.Content>
           </Radio>
@@ -78,7 +90,9 @@ export default function ProfileForm({ categories, email, genders, initialValues 
         {categories.map((category) => (
           <Checkbox key={category} value={category}>
             <Checkbox.Content>
-              <Checkbox.Control><Checkbox.Indicator /></Checkbox.Control>
+              <Checkbox.Control>
+                <Checkbox.Indicator />
+              </Checkbox.Control>
               {category}
             </Checkbox.Content>
           </Checkbox>
@@ -97,15 +111,17 @@ export default function ProfileForm({ categories, email, genders, initialValues 
         onChange={setNotificationEnabled}
       >
         <Checkbox.Content>
-          <Checkbox.Control><Checkbox.Indicator /></Checkbox.Control>
+          <Checkbox.Control>
+            <Checkbox.Indicator />
+          </Checkbox.Control>
           새 일정과 새 챌린지 알림 받기
         </Checkbox.Content>
       </Checkbox>
 
       <Button type="submit" isDisabled={pending} isPending={pending}>
-        {pending ? "저장하는 중..." : "프로필 저장"}
+        {pending ? '저장하는 중...' : '프로필 저장'}
       </Button>
-      <ToastMessage error={state.error} message={state.message} trigger={state} />
+      <HeroToast error={state.error} message={state.message} trigger={state} />
     </Form>
   );
 }

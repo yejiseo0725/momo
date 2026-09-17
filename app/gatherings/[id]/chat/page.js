@@ -1,11 +1,11 @@
-import { Typography } from "@heroui/react";
-import { connection } from "next/server";
+import { Typography } from '@heroui/react';
+import { connection } from 'next/server';
 
-import ChatRoom from "@/app/gatherings/[id]/chat/ChatRoom";
-import ToastMessage from "@/components/ToastMessage";
-import { getChatMessages } from "@/lib/chat";
-import { requireSession } from "@/lib/session";
-import { getSingleSearchParam } from "@/lib/utils/validation";
+import ChatRoom from '@/app/gatherings/[id]/chat/ChatRoom';
+import HeroToast from '@/components/HeroToast';
+import { getChatMessages } from '@/lib/chat';
+import { requireSession } from '@/lib/session';
+import { getSingleSearchParam } from '@/lib/utils/validation';
 
 export default async function ChatPage({ params, searchParams }) {
   await connection();
@@ -16,7 +16,7 @@ export default async function ChatPage({ params, searchParams }) {
 
   return (
     <section className="flex flex-col gap-4">
-      <ToastMessage
+      <HeroToast
         error={getSingleSearchParam(query.error)}
         message={getSingleSearchParam(query.message)}
       />
