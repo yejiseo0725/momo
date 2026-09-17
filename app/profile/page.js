@@ -29,6 +29,7 @@ export default async function ProfilePage() {
           nickname: session.user.nickname,
           categories: selectedCategories,
           region: session.user.region,
+          notificationEnabled: session.user.notificationEnabled !== false,
         }}
       />
     </section>

@@ -29,6 +29,7 @@ export async function signupAction(_previousState, formData) {
       nickname: readRequiredText(formData, "nickname", "닉네임", 30),
       region: readRequiredText(formData, "region", "지역", 100),
       category: readCategories(formData),
+      notificationEnabled: true,
     };
   } catch (error) {
     if (error instanceof ValidationError) {
@@ -94,6 +95,7 @@ export async function updateProfileAction(_previousState, formData) {
       nickname: readRequiredText(formData, "nickname", "닉네임", 30),
       region: readRequiredText(formData, "region", "지역", 100),
       category: readCategories(formData),
+      notificationEnabled: formData.get("notificationEnabled") === "on",
     };
   } catch (error) {
     if (error instanceof ValidationError) {

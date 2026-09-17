@@ -17,6 +17,9 @@ export default function ProfileForm({ categories, email, genders, initialValues 
   const [nickname, setNickname] = useState(initialValues.nickname);
   const [selectedCategories, setSelectedCategories] = useState(initialValues.categories);
   const [region, setRegion] = useState(initialValues.region);
+  const [notificationEnabled, setNotificationEnabled] = useState(
+    initialValues.notificationEnabled,
+  );
 
   function updateCategory(event) {
     const { checked, value } = event.target;
@@ -95,6 +98,18 @@ export default function ProfileForm({ categories, email, genders, initialValues 
         maxLength="100"
         required
       />
+
+      <fieldset>
+        <legend>알림 설정</legend>
+        <label>
+          <input
+            type="checkbox"
+            name="notificationEnabled"
+            checked={notificationEnabled}
+            onChange={(event) => setNotificationEnabled(event.target.checked)}
+          /> 새 일정과 새 챌린지 알림 받기
+        </label>
+      </fieldset>
 
       <button type="submit" disabled={pending}>
         {pending ? "저장하는 중..." : "프로필 저장"}
