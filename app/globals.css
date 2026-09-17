@@ -183,6 +183,11 @@ section[aria-label^="토스트 알림"] {
   flex: 0 0 auto;
 }
 
+.chat-container {
+  position: relative;
+  margin-bottom: var(--momo-gap);
+}
+
 .chat-list {
   max-height: 34rem;
   overflow-y: auto;
@@ -190,6 +195,36 @@ section[aria-label^="토스트 알림"] {
 
 .chat-list article[data-mine="true"] {
   border-left: 0.35rem solid var(--accent);
+}
+
+.chat-unread-badge {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.875rem;
+  font-weight: bold;
+  border-radius: 9999px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 5;
+  cursor: pointer;
+  animation: chat-unread-pop 0.2s ease-out;
+}
+
+@keyframes chat-unread-pop {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
 }
 
 .challenge-feed-image {

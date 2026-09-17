@@ -15,18 +15,69 @@ const dateTimeFormatter = new Intl.DateTimeFormat("ko-KR", {
   minute: "2-digit",
 });
 
+const SCROLL_THRESHOLD = 60;
+
 export default function ChatRoom({ gatheringId, currentUserId, initialMessages }) {
   const [messages, setMessages] = useState(initialMessages);
   const [feedback, setFeedback] = useState({ error: "", message: "" });
   const [isSending, setIsSending] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const formRef = useRef(null);
   const socketRef = useRef(null);
+  const chatListRef = useRef(null);
+  const shouldAutoScrollRef = useRef(true);
+  const isInitialMountRef = useRef(true);
   const messagesRef = useRef(messages);
   const isSynchronizingRef = useRef(false);
   const needsSynchronizationRef = useRef(false);
 
+  function isNearBottom(element) {
+    if (!element) {
+      return true;
+    }
+    return element.scrollHeight - element.scrollTop - element.clientHeight <= SCROLL_THRESHOLD;
+  }
+
+  function handleScroll() {
+    const element = chatListRef.current;
+    if (!element) {
+      return;
+    }
+
+    const atBottom = isNearBottom(element);
+    shouldAutoScrollRef.current = atBottom;
+
+    if (atBottom) {
+      setUnreadCount(0);
+    }
+  }
+
+  function handleScrollToBottom() {
+    const element = chatListRef.current;
+    if (element) {
+      element.scrollTo({
+        top: element.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+    shouldAutoScrollRef.current = true;
+    setUnreadCount(0);
+  }
+
   useEffect(() => {
     messagesRef.current = messages;
+
+    if (isInitialMountRef.current) {
+      isInitialMountRef.current = false;
+      if (chatListRef.current) {
+        chatListRef.current.scrollTop = chatListRef.current.scrollHeight;
+      }
+      return;
+    }
+
+    if (shouldAutoScrollRef.current && chatListRef.current) {
+      chatListRef.current.scrollTop = chatListRef.current.scrollHeight;
+    }
   }, [messages]);
 
   useEffect(() => {
@@ -64,13 +115,26 @@ export default function ChatRoom({ gatheringId, currentUserId, initialMessages }
           }
 
           const currentIds = new Set(currentList.map((message) => message.id));
-          const newMessages = data.messages.filter((message) => !currentIds.has(message.id));
+          const newIncomingMessages = data.messages.filter((message) => !currentIds.has(message.id));
 
-          if (newMessages.length === 0) {
+          if (newIncomingMessages.length === 0) {
             continue;
           }
 
-          const nextMessages = [...currentList, ...newMessages].slice(-100);
+          const element = chatListRef.current;
+          const atBottom = isNearBottom(element);
+          const othersNewMessages = newIncomingMessages.filter(
+            (message) => message.userId !== currentUserId,
+          );
+
+          if (atBottom || othersNewMessages.length === 0) {
+            shouldAutoScrollRef.current = true;
+          } else {
+            shouldAutoScrollRef.current = false;
+            setUnreadCount((prev) => prev + othersNewMessages.length);
+          }
+
+          const nextMessages = [...currentList, ...newIncomingMessages].slice(-100);
           messagesRef.current = nextMessages;
           setMessages(nextMessages);
         } while (needsSynchronizationRef.current);
@@ -106,7 +170,7 @@ export default function ChatRoom({ gatheringId, currentUserId, initialMessages }
       socket.disconnect();
       socketRef.current = null;
     };
-  }, [gatheringId]);
+  }, [gatheringId, currentUserId]);
 
   async function submitMessage(formData) {
     setFeedback({ error: "", message: "" });
@@ -119,6 +183,9 @@ export default function ChatRoom({ gatheringId, currentUserId, initialMessages }
         setFeedback({ error: result.error, message: "" });
         return;
       }
+
+      shouldAutoScrollRef.current = true;
+      setUnreadCount(0);
 
       setMessages((currentMessages) => {
         if (currentMessages.some((message) => message.id === result.message.id)) {
@@ -163,16 +230,50 @@ export default function ChatRoom({ gatheringId, currentUserId, initialMessages }
       />
 
       {messages.length === 0 ? <EmptyState>첫 메시지를 남겨 보세요.</EmptyState> : (
-        <div className="stack chat-list" aria-live="polite">
-          {messages.map((message) => (
-            <article key={message.id} data-mine={message.userId === currentUserId}>
-              <p className="chat-meta">
-                <strong>{message.authorName}</strong>
-                <small>{dateTimeFormatter.format(new Date(message.createdAt))}</small>
-              </p>
-              <p>{message.content}</p>
-            </article>
-          ))}
+        <div className="chat-container">
+          <div
+            ref={chatListRef}
+            className="stack chat-list"
+            aria-live="polite"
+            onScroll={handleScroll}
+          >
+            {messages.map((message) => (
+              <article key={message.id} data-mine={message.userId === currentUserId}>
+                <p className="chat-meta">
+                  <strong>{message.authorName}</strong>
+                  <small>{dateTimeFormatter.format(new Date(message.createdAt))}</small>
+                </p>
+                <p>{message.content}</p>
+              </article>
+            ))}
+          </div>
+
+          {unreadCount > 0 && (
+            <button
+              type="button"
+              className="chat-unread-badge"
+              onClick={handleScrollToBottom}
+              aria-label={`새 메시지 ${unreadCount}개 확인`}
+            >
+              <span>새 메시지 +{unreadCount}</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path d="M12 5v14" />
+                <path d="m19 12-7 7-7-7" />
+              </svg>
+            </button>
+          )}
         </div>
       )}
 
