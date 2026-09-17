@@ -1142,7 +1142,7 @@ async function seedExampleData(database, client) {
       gatheringId: studyGatheringId,
       type: "SCHEDULE_CREATED",
       targetId: sampleIds.studySchedule.toString(),
-      message: "새 일정 ‘9월 독서 모임’이 등록되었습니다.",
+      message: "새 일정을 등록했습니다.",
       isRead: false,
       createdAt: now,
     },
