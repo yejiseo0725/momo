@@ -4,6 +4,7 @@ import "./globals.css";
 import Link from "next/link";
 
 import NotificationLink from "@/app/NotificationLink";
+import UserAvatar from "@/components/UserAvatar";
 import { logoutAction } from "@/app/auth-actions";
 import { getOptionalSession } from "@/lib/session";
 import { getUnreadNotificationCount } from "@/lib/notifications";
@@ -42,7 +43,15 @@ async function SiteNavigation() {
           <li>
             <NotificationLink hasUnreadNotifications={unreadCount > 0} />
           </li>
-          <li><Link href="/profile">{session.user.nickname || session.user.name}</Link></li>
+          <li>
+            <Link href="/profile" className="user-profile-link">
+              <UserAvatar
+                image={session.user.image}
+                name={session.user.nickname || session.user.name}
+              />
+              <span>{session.user.nickname || session.user.name}</span>
+            </Link>
+          </li>
           <li>
             <form action={logoutAction} className="inline-form">
               <button type="submit">로그아웃</button>

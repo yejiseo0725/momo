@@ -29,6 +29,52 @@ body > footer {
   margin-left: auto;
 }
 
+.user-profile-link,
+.profile-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.user-avatar {
+  position: relative;
+  display: inline-grid;
+  flex: 0 0 auto;
+  width: 2rem;
+  height: 2rem;
+  overflow: hidden;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background-color: var(--accent-bg);
+  color: var(--text);
+  font-weight: bold;
+  line-height: 1;
+}
+
+.user-avatar-large {
+  width: 6rem;
+  height: 6rem;
+  font-size: 2rem;
+}
+
+.user-avatar-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-heading {
+  margin-bottom: var(--momo-gap);
+}
+
+.profile-heading h1,
+.profile-heading p {
+  margin: 0;
+}
+
 .section-heading {
   justify-content: space-between;
 }
