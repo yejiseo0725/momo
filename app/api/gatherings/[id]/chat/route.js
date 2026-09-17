@@ -10,9 +10,10 @@ export async function GET(request, { params }) {
   }
 
   const { id } = await params;
+  const afterMessageId = new URL(request.url).searchParams.get("after") || "";
 
   try {
-    const messages = await getChatMessages(id, session.user.id);
+    const messages = await getChatMessages(id, session.user.id, { afterMessageId });
     return Response.json({ messages });
   } catch (error) {
     if (error instanceof GatheringError) {

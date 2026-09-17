@@ -662,6 +662,7 @@ const collectionIndexes = {
   ],
   chatMessages: [
     { keys: { chatRoomId: 1, createdAt: -1 }, options: { name: "chatMessages_room_createdAt" } },
+    { keys: { chatRoomId: 1, _id: 1 }, options: { name: "chatMessages_room_id" } },
   ],
   notifications: [
     { keys: { userId: 1, isRead: 1, createdAt: -1 }, options: { name: "notifications_user_read_createdAt" } },

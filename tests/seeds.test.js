@@ -35,6 +35,14 @@ test("gatheringMembers는 모임과 사용자 조합을 유일하게 제한한�
   assert.equal(uniqueIndex.options.unique, true);
 });
 
+test("채팅 메시지는 방과 메시지 ID 기준 증분 조회 인덱스를 사용한다", () => {
+  const cursorIndex = collectionIndexes.chatMessages.find(
+    (index) => index.options.name === "chatMessages_room_id",
+  );
+
+  assert.deepEqual(cursorIndex.keys, { chatRoomId: 1, _id: 1 });
+});
+
 test("사용자 알림 수신 설정은 기본적으로 켜져 있다", () => {
   const notificationEnabled = seedDataStructure.collections.users.fields.notificationEnabled;
 
