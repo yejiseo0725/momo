@@ -89,7 +89,7 @@ export default function ProfileForm({ categories, email, genders, initialValues 
       </fieldset>
 
       <RegionAutocomplete
-        helpText="읍면동 입력, 온라인 모임은 “온라인”으로 입력해 주세요."
+        helpText="읍면동 또는 온라인을 입력하고 자동완성 목록에서 선택해 주세요."
         initialRegionCode={initialValues.region}
         initialRegionName={initialValues.regionName}
       />

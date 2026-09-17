@@ -37,7 +37,7 @@ function readScheduleInput(formData) {
     description: readRequiredText(formData, "description", "설명", 1000),
     startDate,
     endDate,
-    region: readRequiredText(formData, "region", "장소", 150),
+    location: readRequiredText(formData, "location", "장소", 150),
   };
 }
 

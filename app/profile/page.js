@@ -8,6 +8,7 @@ import UserAvatar from "@/components/UserAvatar";
 import { getJoinedGatherings } from "@/lib/gatherings";
 import { getRegionName } from "@/lib/regions";
 import { requireSession } from "@/lib/session";
+import { getUserRegion } from "@/lib/users";
 import { getSingleSearchParam } from "@/lib/utils/validation";
 
 export default async function ProfilePage({ searchParams }) {
@@ -15,6 +16,7 @@ export default async function ProfilePage({ searchParams }) {
   const session = await requireSession();
   const query = await searchParams;
   const gatherings = await getJoinedGatherings(session.user.id);
+  const userRegionCode = await getUserRegion(session.user.id);
   const selectedCategories = Array.isArray(session.user.category) ? session.user.category : [];
   const displayName = session.user.nickname || session.user.name;
 
@@ -52,7 +54,7 @@ export default async function ProfilePage({ searchParams }) {
           <dt>관심 카테고리</dt>
           <dd>{selectedCategories.length > 0 ? selectedCategories.join(", ") : "없음"}</dd>
           <dt>지역</dt>
-          <dd>{getRegionName(session.user.region)}</dd>
+          <dd>{getRegionName(userRegionCode)}</dd>
           <dt>새 일정·챌린지 알림</dt>
           <dd>{session.user.notificationEnabled !== false ? "받음" : "받지 않음"}</dd>
         </dl>

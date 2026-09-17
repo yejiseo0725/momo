@@ -20,7 +20,7 @@ export default function ScheduleForm({ gatheringId, initialValues, mode, schedul
   const [description, setDescription] = useState(initialValues.description);
   const [startDate, setStartDate] = useState(initialValues.startDate);
   const [endDate, setEndDate] = useState(initialValues.endDate);
-  const [region, setRegion] = useState(initialValues.region);
+  const [location, setLocation] = useState(initialValues.location);
   const idPrefix = mode === "create" ? "new-schedule" : `schedule-${scheduleId}`;
 
   return (
@@ -68,12 +68,12 @@ export default function ScheduleForm({ gatheringId, initialValues, mode, schedul
         required
       />
 
-      <label htmlFor={`${idPrefix}-region`}>장소</label>
+      <label htmlFor={`${idPrefix}-location`}>장소</label>
       <input
-        id={`${idPrefix}-region`}
-        name="region"
-        value={region}
-        onChange={(event) => setRegion(event.target.value)}
+        id={`${idPrefix}-location`}
+        name="location"
+        value={location}
+        onChange={(event) => setLocation(event.target.value)}
         maxLength="150"
         required
       />

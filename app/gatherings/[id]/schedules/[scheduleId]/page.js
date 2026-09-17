@@ -36,7 +36,7 @@ export default async function ScheduleDetailsPage({ params, searchParams }) {
         <p>{schedule.description}</p>
         <dl>
           <dt>기간</dt><dd>{schedule.startDate} – {schedule.endDate}</dd>
-          <dt>장소</dt><dd>{schedule.region}</dd>
+          <dt>장소</dt><dd>{schedule.location}</dd>
           <dt>작성자</dt><dd>{schedule.authorName}</dd>
         </dl>
         <ToastMessage
@@ -79,7 +79,7 @@ export default async function ScheduleDetailsPage({ params, searchParams }) {
                 description: schedule.description,
                 startDate: schedule.startDate,
                 endDate: schedule.endDate,
-                region: schedule.region,
+                location: schedule.location,
               }}
               mode="edit"
               scheduleId={scheduleId}
