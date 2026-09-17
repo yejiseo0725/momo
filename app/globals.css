@@ -160,6 +160,22 @@ body > footer {
   color: var(--accent);
 }
 
+.leader-mark,
+.notification-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.leader-mark {
+  margin-left: 0.25rem;
+}
+
+.leader-mark svg,
+.notification-link svg {
+  flex: 0 0 auto;
+}
+
 .chat-list {
   max-height: 34rem;
   overflow-y: auto;
