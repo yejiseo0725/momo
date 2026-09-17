@@ -45,7 +45,7 @@ function fail(gatheringId, message) {
   redirect(`/gatherings/${gatheringId}/challenges?error=${encodeURIComponent(message)}`);
 }
 
-export async function createChallengeAction(formData) {
+export async function createChallengeAction(_previousState, formData) {
   const session = await requireSession();
   let gatheringId = "";
   let input;
@@ -55,7 +55,7 @@ export async function createChallengeAction(formData) {
     input = readChallengeInput(formData);
   } catch (error) {
     if (error instanceof ValidationError) {
-      fail(gatheringId, error.message);
+      return { error: error.message };
     }
     throw error;
   }
@@ -63,7 +63,9 @@ export async function createChallengeAction(formData) {
   try {
     await createChallenge(gatheringId, session.user.id, input);
   } catch (error) {
-    fail(gatheringId, error instanceof ChallengeError ? error.message : "챌린지를 만들지 못했습니다.");
+    return {
+      error: error instanceof ChallengeError ? error.message : "챌린지를 만들지 못했습니다.",
+    };
   }
   redirect(`/gatherings/${gatheringId}/challenges?message=${encodeURIComponent("챌린지를 만들었습니다.")}`);
 }
