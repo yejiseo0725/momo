@@ -1,16 +1,21 @@
 import { connection } from "next/server";
 
 import {
-  createChallengeAction,
   createChallengeFeedAction,
   deleteChallengeAction,
   updateChallengeAction,
 } from "@/app/gatherings/[id]/challenges/actions";
+import CreateChallengeForm from "@/app/gatherings/[id]/challenges/CreateChallengeForm";
 import EmptyState from "@/components/EmptyState";
 import Message from "@/components/Message";
 import { getChallenges } from "@/lib/challenges";
 import { requireSession } from "@/lib/session";
+import { getTodayDateOnly } from "@/lib/utils/documents";
 import { getSingleSearchParam } from "@/lib/utils/validation";
+
+function getLatestDoneDate(challengeEndDate, today) {
+  return challengeEndDate < today ? challengeEndDate : today;
+}
 
 export default async function ChallengesPage({ params, searchParams }) {
   await connection();
@@ -18,7 +23,7 @@ export default async function ChallengesPage({ params, searchParams }) {
   const { id } = await params;
   const query = await searchParams;
   const challenges = await getChallenges(id, session.user.id);
-  const today = new Date().toISOString().slice(0, 10);
+  const today = getTodayDateOnly();
 
   return (
     <>
@@ -32,19 +37,7 @@ export default async function ChallengesPage({ params, searchParams }) {
 
         <details>
           <summary>새 챌린지 만들기</summary>
-          <form action={createChallengeAction}>
-            <input type="hidden" name="gatheringId" value={id} />
-            <label htmlFor="challenge-title">제목</label>
-            <input id="challenge-title" name="title" type="text" maxLength="100" required />
-            <label htmlFor="challenge-description">설명</label>
-            <textarea id="challenge-description" name="description" maxLength="1000" required />
-            <label><input type="checkbox" name="useImage" /> 인증할 때 이미지 링크 필수</label>
-            <label htmlFor="challenge-start">시작일</label>
-            <input id="challenge-start" name="startDate" type="date" required />
-            <label htmlFor="challenge-end">종료일</label>
-            <input id="challenge-end" name="endDate" type="date" required />
-            <button type="submit">챌린지 만들기</button>
-          </form>
+          <CreateChallengeForm gatheringId={id} />
         </details>
       </section>
 
@@ -70,8 +63,8 @@ export default async function ChallengesPage({ params, searchParams }) {
                   name="doneDate"
                   type="date"
                   min={challenge.startDate}
-                  max={challenge.endDate}
-                  defaultValue={today}
+                  max={getLatestDoneDate(challenge.endDate, today)}
+                  defaultValue={getLatestDoneDate(challenge.endDate, today)}
                   required
                 />
                 <label htmlFor={`feed-${challenge.id}`}>인증 내용</label>
