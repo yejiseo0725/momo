@@ -64,7 +64,7 @@ export default async function HomePage({ searchParams }) {
   try {
     [joinedGatherings, recommendedGatherings] = await Promise.all([
       getJoinedGatherings(session.user.id, 9),
-      getPublicGatherings({ limit: 9 }),
+      getPublicGatherings({ limit: 9, excludeUserId: session.user.id }),
     ]);
   } catch {
     databaseError = true;
@@ -112,7 +112,7 @@ export default async function HomePage({ searchParams }) {
             ))}
           </div>
         ) : (
-          <EmptyState>아직 공개된 모임이 없습니다.</EmptyState>
+          <EmptyState>추천할 가입 가능한 공개 모임이 없습니다.</EmptyState>
         )}
       </section>
     </>
