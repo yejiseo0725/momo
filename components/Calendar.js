@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import styles from "@/components/MomoCalendar.module.css";
+import styles from "@/components/Calendar.module.css";
 import { getCurrentMonth, normalizeMonth } from "@/lib/utils/calendar";
 
 const weekdayLabels = ["일", "월", "화", "수", "목", "금", "토"];
@@ -86,7 +86,7 @@ function CalendarEvent({ event, showEventLink }) {
   return <li className={styles.event}>{content}</li>;
 }
 
-export default function MomoCalendar({
+export default function Calendar({
   ariaLabel,
   events,
   selectedMonth,

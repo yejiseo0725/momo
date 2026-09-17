@@ -1,4 +1,4 @@
-import MomoCalendar from "@/components/MomoCalendar";
+import Calendar from "@/components/Calendar";
 
 export default function ScheduleCalendar({ gatheringId, schedules, selectedMonth, selectedDate }) {
   const events = schedules.map((schedule) => ({
@@ -9,7 +9,7 @@ export default function ScheduleCalendar({ gatheringId, schedules, selectedMonth
   }));
 
   return (
-    <MomoCalendar
+    <Calendar
       ariaLabel="일정 달력"
       events={events}
       selectedMonth={selectedMonth}

@@ -1,4 +1,4 @@
-import MomoCalendar from "@/components/MomoCalendar";
+import Calendar from "@/components/Calendar";
 
 const amountFormatter = new Intl.NumberFormat("ko-KR");
 
@@ -14,7 +14,7 @@ export default function CashBookCalendar({ gatheringId, entries, selectedMonth, 
   });
 
   return (
-    <MomoCalendar
+    <Calendar
       ariaLabel="가계부 달력"
       events={events}
       selectedMonth={selectedMonth}
