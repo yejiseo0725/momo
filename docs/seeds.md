@@ -4,8 +4,9 @@
 // 이 객체의 모든 값은 JSON으로 직렬화할 수 있다.
 const seedDataStructure = {
   "conventions": {
-    "primaryKey": "MongoDB ObjectId",
-    "foreignKey": "참조 대상 ObjectId 또는 Better Auth user.id의 문자열 값",
+    "primaryKey": "MongoDB ObjectId (_id)",
+    "foreignKey": "애플리케이션 컬렉션은 참조 대상 ObjectId를 문자열로 저장",
+    "betterAuthUserId": "Better Auth API와 세션의 user.id는 MongoDB users._id를 문자열로 변환한 값",
     "dateOnly": "YYYY-MM-DD 문자열",
     "timestamp": "MongoDB Date"
   },
@@ -22,10 +23,11 @@ const seedDataStructure = {
     "users": {
       "managedBy": "better-auth",
       "fields": {
-        "id": {
-          "type": "string",
+        "_id": {
+          "type": "ObjectId",
           "required": true,
-          "managedBy": "better-auth"
+          "managedBy": "better-auth",
+          "description": "Better Auth API와 세션에서는 id 문자열로 변환"
         },
         "name": {
           "type": "string",
@@ -95,7 +97,8 @@ const seedDataStructure = {
         }
       },
       "rules": [
-        "비밀번호는 users가 아니라 Better Auth의 account 데이터에서 관리한다.",
+        "MongoDB에는 _id ObjectId로 저장하고 Better Auth API와 세션에서는 id 문자열로 제공한다.",
+        "비밀번호는 users가 아니라 Better Auth에서 관리한다.",
         "Better Auth가 관리하는 기본 필드는 애플리케이션에서 직접 생성하지 않는다."
       ]
     },
@@ -110,7 +113,7 @@ const seedDataStructure = {
         "userId": {
           "type": "string",
           "required": true,
-          "references": "users.id",
+          "references": "users._id",
           "description": "모임을 생성한 사용자"
         },
         "inviteToken": {
@@ -183,7 +186,7 @@ const seedDataStructure = {
         "userId": {
           "type": "string",
           "required": true,
-          "references": "users.id"
+          "references": "users._id"
         },
         "joinDate": {
           "type": "Date",
@@ -217,7 +220,7 @@ const seedDataStructure = {
         "userId": {
           "type": "string",
           "required": true,
-          "references": "users.id",
+          "references": "users._id",
           "description": "챌린지 작성자"
         },
         "title": {
@@ -274,7 +277,7 @@ const seedDataStructure = {
         "userId": {
           "type": "string",
           "required": true,
-          "references": "users.id",
+          "references": "users._id",
           "description": "챌린지 인증 작성자"
         },
         "doneDate": {
@@ -330,7 +333,7 @@ const seedDataStructure = {
         "userId": {
           "type": "string",
           "required": true,
-          "references": "users.id",
+          "references": "users._id",
           "description": "일정 작성자"
         },
         "title": {
@@ -388,7 +391,7 @@ const seedDataStructure = {
         "userId": {
           "type": "string",
           "required": true,
-          "references": "users.id"
+          "references": "users._id"
         }
       },
       "rules": [
@@ -412,7 +415,7 @@ const seedDataStructure = {
         "userId": {
           "type": "string",
           "required": true,
-          "references": "users.id",
+          "references": "users._id",
           "description": "가계부 내역 작성자"
         },
         "amount": {
@@ -492,7 +495,7 @@ const seedDataStructure = {
         "userId": {
           "type": "string",
           "required": true,
-          "references": "users.id",
+          "references": "users._id",
           "description": "메시지 작성자"
         },
         "content": {
@@ -519,13 +522,13 @@ const seedDataStructure = {
         "userId": {
           "type": "string",
           "required": true,
-          "references": "users.id",
+          "references": "users._id",
           "description": "알림 수신자"
         },
         "actorUserId": {
           "type": "string",
           "required": true,
-          "references": "users.id",
+          "references": "users._id",
           "description": "알림을 발생시킨 사용자"
         },
         "gatheringId": {
