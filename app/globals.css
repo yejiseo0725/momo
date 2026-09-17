@@ -187,10 +187,11 @@ body > footer {
 
 .challenge-feed-image {
   display: block;
-  width: min(100%, 40rem);
-  height: auto;
+  width: 100%;
+  max-width: 300px;
+  height: 300px;
   margin-top: 0.75rem;
-  object-fit: contain;
+  object-fit: cover;
 }
 
 .visually-hidden {
