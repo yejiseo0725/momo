@@ -111,6 +111,8 @@ function CalendarEvent({
   );
   const eventClassName = [
     styles.event,
+    event.variant === "spending" ? styles.spendingEvent : "",
+    event.variant === "income" ? styles.incomeEvent : "",
     showTitle ? styles.eventHasTitle : "",
     continuesFromPreviousDay ? styles.eventContinuesFromPreviousDay : "",
     continuesToNextDay ? styles.eventContinuesToNextDay : "",

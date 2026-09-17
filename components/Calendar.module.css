@@ -128,6 +128,23 @@
   z-index: 2;
 }
 
+.spendingEvent,
+.incomeEvent {
+  padding-right: 0;
+  padding-left: 0;
+  background-color: transparent;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.spendingEvent {
+  color: #b91c1c;
+}
+
+.incomeEvent {
+  color: #1d4ed8;
+}
+
 .eventContinuesFromPreviousDay {
   margin-left: calc(-0.4rem - var(--border-width));
   padding-left: calc(0.7rem + var(--border-width));
@@ -161,6 +178,16 @@
 
 a.eventTitle {
   pointer-events: auto;
+}
+
+@media (prefers-color-scheme: dark) {
+  .spendingEvent {
+    color: #ff8a8a;
+  }
+
+  .incomeEvent {
+    color: #8ab4ff;
+  }
 }
 
 @media (max-width: 720px) {
