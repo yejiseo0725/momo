@@ -6,6 +6,7 @@ const assert = require("node:assert/strict");
 const {
   buildCollectionJsonSchema,
   collectionIndexes,
+  hasSameIndexKeys,
   sampleIds,
   sampleUsers,
   seedDataStructure,
@@ -32,6 +33,23 @@ test("gatheringMembers는 모임과 사용자 조합을 유일하게 제한한�
 
   assert.deepEqual(uniqueIndex.keys, { gatheringId: 1, userId: 1 });
   assert.equal(uniqueIndex.options.unique, true);
+});
+
+test("인덱스 이름과 관계없이 필드와 정렬 순서가 같으면 기존 인덱스로 판단한다", () => {
+  assert.equal(
+    hasSameIndexKeys(
+      { isPublic: 1, createdAt: -1 },
+      { isPublic: 1, createdAt: -1 },
+    ),
+    true,
+  );
+  assert.equal(
+    hasSameIndexKeys(
+      { createdAt: -1, isPublic: 1 },
+      { isPublic: 1, createdAt: -1 },
+    ),
+    false,
+  );
 });
 
 test("날짜 전용 필드는 YYYY-MM-DD 패턴을 사용한다", () => {

@@ -2,23 +2,26 @@ import Link from "next/link";
 import { connection } from "next/server";
 
 import { createScheduleAction } from "@/app/gatherings/[id]/schedules/actions";
-import EmptyState from "@/components/EmptyState";
+import ScheduleCalendar from "@/app/gatherings/[id]/schedules/ScheduleCalendar";
 import Message from "@/components/Message";
 import { getSchedules } from "@/lib/schedules";
 import { requireSession } from "@/lib/session";
-import { buildMonthCalendar, normalizeMonth } from "@/lib/utils/calendar";
+import { normalizeMonth } from "@/lib/utils/calendar";
 import { getSingleSearchParam } from "@/lib/utils/validation";
-
-const weekdays = ["일", "월", "화", "수", "목", "금", "토"];
 
 export default async function SchedulesPage({ params, searchParams }) {
   await connection();
   const session = await requireSession();
   const { id } = await params;
   const query = await searchParams;
-  const schedules = await getSchedules(id, session.user.id);
   const selectedMonth = normalizeMonth(getSingleSearchParam(query.month));
-  const calendar = buildMonthCalendar(selectedMonth, schedules);
+  const schedules = await getSchedules(id, session.user.id);
+  const selectedDate = getSingleSearchParam(query.date);
+  const selectedDateSchedules = selectedDate.startsWith(`${selectedMonth}-`)
+    ? schedules.filter((schedule) => (
+        schedule.startDate <= selectedDate && schedule.endDate >= selectedDate
+      ))
+    : [];
 
   return (
     <>
@@ -29,12 +32,6 @@ export default async function SchedulesPage({ params, searchParams }) {
           error={getSingleSearchParam(query.error)}
           message={getSingleSearchParam(query.message)}
         />
-
-        <form method="get" className="compact-form">
-          <label htmlFor="month">조회할 달</label>
-          <input id="month" name="month" type="month" defaultValue={calendar.month} />
-          <button type="submit">달력 보기</button>
-        </form>
 
         <details>
           <summary>새 일정 만들기</summary>
@@ -51,45 +48,20 @@ export default async function SchedulesPage({ params, searchParams }) {
       </section>
 
       <section>
-        <h2>{calendar.month} 달력</h2>
-        <div role="region" aria-label={`${calendar.month} 일정 달력`} tabIndex="0">
-          <table className="calendar">
-            <thead>
-              <tr>{weekdays.map((weekday) => <th key={weekday} scope="col">{weekday}</th>)}</tr>
-            </thead>
-            <tbody>
-              {calendar.weeks.map((week, weekIndex) => (
-                <tr key={`${calendar.month}-week-${weekIndex}`}>
-                  {week.map((day, dayIndex) => (
-                    <td key={`${weekIndex}-${dayIndex}`}>
-                      {day ? (
-                        <>
-                          <strong>{day.day}</strong>
-                          {day.schedules.length > 0 ? (
-                            <ol>
-                              {day.schedules.map((schedule) => (
-                                <li key={schedule.id}>
-                                  <Link href={`/gatherings/${id}/schedules/${schedule.id}`}>{schedule.title}</Link>
-                                </li>
-                              ))}
-                            </ol>
-                          ) : null}
-                        </>
-                      ) : null}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <h2 className="visually-hidden">일정 달력</h2>
+        <ScheduleCalendar
+          gatheringId={id}
+          schedules={schedules}
+          selectedMonth={selectedMonth}
+          selectedDate={selectedDate}
+        />
       </section>
 
-      <section>
-        <h2>전체 일정</h2>
-        {schedules.length === 0 ? <EmptyState>등록된 일정이 없습니다.</EmptyState> : (
+      {selectedDateSchedules.length > 0 ? (
+        <section>
+          <h2>{selectedDate} 일정</h2>
           <div className="stack">
-            {schedules.map((schedule) => (
+            {selectedDateSchedules.map((schedule) => (
               <article key={schedule.id}>
                 <h3><Link href={`/gatherings/${id}/schedules/${schedule.id}`}>{schedule.title}</Link></h3>
                 <p>{schedule.startDate} – {schedule.endDate} · {schedule.region}</p>
@@ -97,8 +69,8 @@ export default async function SchedulesPage({ params, searchParams }) {
               </article>
             ))}
           </div>
-        )}
-      </section>
+        </section>
+      ) : null}
     </>
   );
 }

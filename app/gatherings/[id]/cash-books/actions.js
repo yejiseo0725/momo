@@ -28,11 +28,21 @@ function readIds(formData) {
   };
 }
 
+function readAmount(formData) {
+  const amount = formData.get("amount");
+
+  if (typeof amount !== "string" || !/^[0-9]+$/.test(amount)) {
+    throw new ValidationError("금액은 숫자만 입력해 주세요.");
+  }
+
+  return readInteger(formData, "amount", "금액", 1, 1000000000000);
+}
+
 function readInput(formData) {
   return {
     type: readEnum(formData, "type", "타입", CASH_BOOK_TYPES),
     title: readRequiredText(formData, "title", "내역", 120),
-    amount: readInteger(formData, "amount", "금액", 1, 1000000000000),
+    amount: readAmount(formData),
     date: readDateOnly(formData, "date", "날짜"),
     memo: readOptionalText(formData, "memo", 500),
   };
