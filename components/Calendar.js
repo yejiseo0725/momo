@@ -76,28 +76,66 @@ function getDateHref(path, date) {
   return `${path}?month=${encodeURIComponent(month)}&date=${encodeURIComponent(date)}`;
 }
 
+function getEventTitlePosition(event, week, weekdayIndex) {
+  const endDate = event.end || event.start;
+  const weekStartDate = week[0].dateValue;
+  const weekEndDate = week[week.length - 1].dateValue;
+  const segmentStartDate = event.start > weekStartDate ? event.start : weekStartDate;
+  const segmentEndDate = endDate < weekEndDate ? endDate : weekEndDate;
+  const segmentStartIndex = week.findIndex((day) => day.dateValue === segmentStartDate);
+  const segmentEndIndex = week.findIndex((day) => day.dateValue === segmentEndDate);
+  const segmentDayCount = segmentEndIndex - segmentStartIndex + 1;
+  const titleDayIndex = Math.floor((segmentStartIndex + segmentEndIndex) / 2);
+
+  return {
+    showTitle: weekdayIndex === titleDayIndex,
+    titleAnchor: segmentDayCount % 2 === 0 ? "100%" : "50%",
+    titleSpan: segmentDayCount,
+  };
+}
+
 function CalendarEvent({
   event,
   dateValue,
-  isFirstDayOfWeek,
-  isLastDayOfWeek,
+  week,
+  weekdayIndex,
   showEventLink,
 }) {
   const endDate = event.end || event.start;
-  const continuesFromPreviousDay = event.start < dateValue && !isFirstDayOfWeek;
-  const continuesToNextDay = endDate > dateValue && !isLastDayOfWeek;
+  const continuesFromPreviousDay = event.start < dateValue && weekdayIndex > 0;
+  const continuesToNextDay = endDate > dateValue && weekdayIndex < 6;
+  const { showTitle, titleAnchor, titleSpan } = getEventTitlePosition(
+    event,
+    week,
+    weekdayIndex,
+  );
   const eventClassName = [
     styles.event,
+    showTitle ? styles.eventHasTitle : "",
     continuesFromPreviousDay ? styles.eventContinuesFromPreviousDay : "",
     continuesToNextDay ? styles.eventContinuesToNextDay : "",
   ].filter(Boolean).join(" ");
-  const content = showEventLink && event.url ? (
-    <Link href={event.url} title={event.title}>{event.title}</Link>
-  ) : (
-    <span title={event.title}>{event.title}</span>
-  );
+  const titleStyle = {
+    "--event-title-anchor": titleAnchor,
+    "--event-title-span": titleSpan,
+  };
+  let content = null;
 
-  return <li className={eventClassName}>{content}</li>;
+  if (showTitle && showEventLink && event.url) {
+    content = (
+      <Link className={styles.eventTitle} href={event.url} style={titleStyle} title={event.title}>
+        {event.title}
+      </Link>
+    );
+  } else if (showTitle) {
+    content = (
+      <span className={styles.eventTitle} style={titleStyle} title={event.title}>
+        {event.title}
+      </span>
+    );
+  }
+
+  return <li aria-hidden={!showTitle} className={eventClassName}>{content}</li>;
 }
 
 export default function Calendar({
@@ -189,8 +227,8 @@ export default function Calendar({
                             <CalendarEvent
                               event={event}
                               dateValue={day.dateValue}
-                              isFirstDayOfWeek={weekdayIndex === 0}
-                              isLastDayOfWeek={weekdayIndex === 6}
+                              week={week}
+                              weekdayIndex={weekdayIndex}
                               key={event.id}
                               showEventLink={!dateNavigationPath}
                             />
