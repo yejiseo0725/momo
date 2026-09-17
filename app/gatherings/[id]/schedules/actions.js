@@ -1,8 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
+import { redirectWithError, redirectWithSuccess } from "@/lib/redirects";
 import { requireSession } from "@/lib/session";
 import {
   ScheduleError,
@@ -41,10 +41,6 @@ function readScheduleInput(formData) {
   };
 }
 
-function fail(pathname, message) {
-  redirect(`${pathname}?error=${encodeURIComponent(message)}`);
-}
-
 export async function createScheduleAction(_previousState, formData) {
   const session = await requireSession();
   let gatheringId = "";
@@ -69,7 +65,10 @@ export async function createScheduleAction(_previousState, formData) {
       message: "",
     };
   }
-  redirect(`/gatherings/${gatheringId}/schedules/${scheduleId}`);
+  redirectWithSuccess(
+    `/gatherings/${gatheringId}/schedules/${scheduleId}`,
+    "일정을 만들었습니다.",
+  );
 }
 
 export async function updateScheduleAction(_previousState, formData) {
@@ -105,9 +104,15 @@ export async function deleteScheduleAction(formData) {
   try {
     await deleteSchedule(ids.scheduleId, ids.gatheringId, session.user.id);
   } catch (error) {
-    fail(`/gatherings/${ids.gatheringId}/schedules/${ids.scheduleId}`, error instanceof ScheduleError ? error.message : "일정을 삭제하지 못했습니다.");
+    redirectWithError(
+      `/gatherings/${ids.gatheringId}/schedules/${ids.scheduleId}`,
+      error instanceof ScheduleError ? error.message : "일정을 삭제하지 못했습니다.",
+    );
   }
-  redirect(`/gatherings/${ids.gatheringId}/schedules?message=${encodeURIComponent("일정을 삭제했습니다.")}`);
+  redirectWithSuccess(
+    `/gatherings/${ids.gatheringId}/schedules`,
+    "일정을 삭제했습니다.",
+  );
 }
 
 export async function joinScheduleAction(_previousState, formData) {

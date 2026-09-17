@@ -2,9 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 
 import { auth } from "@/lib/auth";
+import { redirectWithSuccess } from "@/lib/redirects";
 import { requireSession } from "@/lib/session";
 import {
   GENDERS,
@@ -47,7 +47,7 @@ export async function signupAction(_previousState, formData) {
     };
   }
 
-  redirect("/");
+  redirectWithSuccess("/", "회원가입이 완료되었습니다.");
 }
 
 export async function loginAction(_previousState, formData) {
@@ -74,14 +74,14 @@ export async function loginAction(_previousState, formData) {
     return { error: "이메일 또는 비밀번호를 확인해 주세요.", message: "" };
   }
 
-  redirect(nextPath);
+  redirectWithSuccess(nextPath, "로그인했습니다.");
 }
 
 export async function logoutAction() {
   await auth.api.signOut({
     headers: await headers(),
   });
-  redirect("/");
+  redirectWithSuccess("/", "로그아웃했습니다.");
 }
 
 export async function updateProfileAction(_previousState, formData) {

@@ -3,7 +3,7 @@ import { connection } from "next/server";
 
 import ScheduleCalendar from "@/app/gatherings/[id]/schedules/ScheduleCalendar";
 import ScheduleForm from "@/app/gatherings/[id]/schedules/ScheduleForm";
-import Message from "@/components/Message";
+import ToastMessage from "@/components/ToastMessage";
 import { getSchedules } from "@/lib/schedules";
 import { requireSession } from "@/lib/session";
 import { normalizeMonth } from "@/lib/utils/calendar";
@@ -28,7 +28,7 @@ export default async function SchedulesPage({ params, searchParams }) {
       <section>
         <h1>일정</h1>
         <p>모임 일정을 달력에서 확인하고 참여 여부를 남기세요.</p>
-        <Message
+        <ToastMessage
           error={getSingleSearchParam(query.error)}
           message={getSingleSearchParam(query.message)}
         />

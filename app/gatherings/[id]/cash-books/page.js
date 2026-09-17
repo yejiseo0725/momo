@@ -6,6 +6,7 @@ import {
 import CashBookCalendar from "@/app/gatherings/[id]/cash-books/CashBookCalendar";
 import CashBookEntryForm from "@/app/gatherings/[id]/cash-books/CashBookEntryForm";
 import ActionButtonForm from "@/components/ActionButtonForm";
+import ToastMessage from "@/components/ToastMessage";
 import { getCashBookEntries } from "@/lib/cash-books";
 import { requireSession } from "@/lib/session";
 import { normalizeMonth } from "@/lib/utils/calendar";
@@ -31,6 +32,10 @@ export default async function CashBooksPage({ params, searchParams }) {
 
   return (
     <>
+      <ToastMessage
+        error={getSingleSearchParam(query.error)}
+        message={getSingleSearchParam(query.message)}
+      />
       <section>
         <h1>가계부</h1>
         <p>모임의 수입과 지출을 함께 기록합니다.</p>

@@ -3,7 +3,7 @@ import { connection } from "next/server";
 
 import EmptyState from "@/components/EmptyState";
 import GatheringCard from "@/components/GatheringCard";
-import Message from "@/components/Message";
+import ToastMessage from "@/components/ToastMessage";
 import { getJoinedGatherings } from "@/lib/gatherings";
 import { requireSession } from "@/lib/session";
 import { getSingleSearchParam } from "@/lib/utils/validation";
@@ -22,7 +22,7 @@ export default async function MyGatheringsPage({ searchParams }) {
         </div>
         <Link href="/gatherings/new" className="button">새 모임 만들기</Link>
       </div>
-      <Message message={getSingleSearchParam(query.message)} />
+      <ToastMessage message={getSingleSearchParam(query.message)} />
 
       {gatherings.length > 0 ? (
         <div className="card-grid">

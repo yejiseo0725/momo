@@ -3,16 +3,26 @@ import { connection } from "next/server";
 
 import EmptyState from "@/components/EmptyState";
 import GatheringCard from "@/components/GatheringCard";
+import ToastMessage from "@/components/ToastMessage";
 import { getJoinedGatherings, getPublicGatherings } from "@/lib/gatherings";
 import { getOptionalSession } from "@/lib/session";
+import { getSingleSearchParam } from "@/lib/utils/validation";
 
-export default async function HomePage() {
+export default async function HomePage({ searchParams }) {
   await connection();
+  const query = await searchParams;
   const session = await getOptionalSession();
+  const redirectToast = (
+    <ToastMessage
+      error={getSingleSearchParam(query.error)}
+      message={getSingleSearchParam(query.message)}
+    />
+  );
 
   if (!session) {
     return (
       <>
+        {redirectToast}
         <section>
           <p><strong>함께 시작하고, 꾸준히 이어가세요.</strong></p>
           <h1>우리의 모임을 한곳에서 관리하는 momo</h1>
@@ -62,6 +72,7 @@ export default async function HomePage() {
 
   return (
     <>
+      {redirectToast}
       <section>
         <h1>{session.user.nickname || session.user.name}님, 반가워요.</h1>
         <p>오늘도 함께할 모임의 소식을 확인해 보세요.</p>

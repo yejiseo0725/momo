@@ -4,6 +4,7 @@ import { connection } from "next/server";
 
 import EmptyState from "@/components/EmptyState";
 import GatheringCard from "@/components/GatheringCard";
+import ToastMessage from "@/components/ToastMessage";
 import { getPublicGatherings } from "@/lib/gatherings";
 import { requireSession } from "@/lib/session";
 import { CATEGORIES, getSingleSearchParam } from "@/lib/utils/validation";
@@ -22,6 +23,10 @@ export default async function GatheringsPage({ searchParams }) {
 
   return (
     <>
+      <ToastMessage
+        error={getSingleSearchParam(query.error)}
+        message={getSingleSearchParam(query.message)}
+      />
       <section>
         <div className="section-heading">
           <div>

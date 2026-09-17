@@ -1,18 +1,24 @@
 import { connection } from "next/server";
 
 import ProfileForm from "@/app/profile/ProfileForm";
+import ToastMessage from "@/components/ToastMessage";
 import UserAvatar from "@/components/UserAvatar";
 import { requireSession } from "@/lib/session";
-import { CATEGORIES, GENDERS } from "@/lib/utils/validation";
+import { CATEGORIES, GENDERS, getSingleSearchParam } from "@/lib/utils/validation";
 
-export default async function ProfilePage() {
+export default async function ProfilePage({ searchParams }) {
   await connection();
   const session = await requireSession();
+  const query = await searchParams;
   const selectedCategories = Array.isArray(session.user.category) ? session.user.category : [];
   const displayName = session.user.nickname || session.user.name;
 
   return (
     <section>
+      <ToastMessage
+        error={getSingleSearchParam(query.error)}
+        message={getSingleSearchParam(query.message)}
+      />
       <header className="profile-heading">
         <UserAvatar image={session.user.image} name={displayName} size="large" />
         <div>

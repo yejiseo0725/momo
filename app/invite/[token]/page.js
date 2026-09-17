@@ -2,7 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { connection } from "next/server";
 
 import { joinGatheringByInvitationAction } from "@/app/gatherings/actions";
-import Message from "@/components/Message";
+import ToastMessage from "@/components/ToastMessage";
 import { getGatheringInvitation } from "@/lib/gatherings";
 import { requireSession } from "@/lib/session";
 import { getSingleSearchParam } from "@/lib/utils/validation";
@@ -36,7 +36,7 @@ export default async function GatheringInvitationPage({ params, searchParams }) 
         <span>{gathering.region}</span>
         <span>{gathering.memberCount} / {gathering.maxMemCount}명</span>
       </p>
-      <Message error={getSingleSearchParam(query.error)} />
+      <ToastMessage error={getSingleSearchParam(query.error)} />
 
       <form action={joinGatheringByInvitationAction}>
         <input type="hidden" name="inviteToken" value={token} />

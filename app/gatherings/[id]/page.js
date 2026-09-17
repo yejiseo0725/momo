@@ -8,7 +8,7 @@ import {
 } from "@/app/gatherings/actions";
 import InviteButton from "@/app/gatherings/[id]/InviteButton";
 import ActionButtonForm from "@/components/ActionButtonForm";
-import Message from "@/components/Message";
+import ToastMessage from "@/components/ToastMessage";
 import { getGatheringDetails } from "@/lib/gatherings";
 import { requireSession } from "@/lib/session";
 import { formatDate } from "@/lib/utils/documents";
@@ -39,7 +39,7 @@ export default async function GatheringHomePage({ params, searchParams }) {
           <span>{gathering.isPublic ? "공개 모임" : "비공개 모임"}</span>
           <span>{formatDate(gathering.createdAt)} 개설</span>
         </p>
-        <Message
+        <ToastMessage
           error={getSingleSearchParam(query.error)}
           message={getSingleSearchParam(query.message)}
         />

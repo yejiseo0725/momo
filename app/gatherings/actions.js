@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 import {
   GatheringError,
@@ -11,6 +10,7 @@ import {
   leaveGathering,
   updateGathering,
 } from "@/lib/gatherings";
+import { redirectWithError, redirectWithSuccess } from "@/lib/redirects";
 import { requireSession } from "@/lib/session";
 import {
   CATEGORIES,
@@ -33,10 +33,6 @@ function readGatheringInput(formData) {
 
 function getGatheringId(formData) {
   return readRequiredText(formData, "gatheringId", "모임", 100);
-}
-
-function redirectWithError(pathname, message) {
-  redirect(`${pathname}?error=${encodeURIComponent(message)}`);
 }
 
 export async function createGatheringAction(_previousState, formData) {
@@ -62,7 +58,7 @@ export async function createGatheringAction(_previousState, formData) {
     };
   }
 
-  redirect(`/gatherings/${gatheringId}?message=${encodeURIComponent("모임을 만들었습니다.")}`);
+  redirectWithSuccess(`/gatherings/${gatheringId}`, "모임을 만들었습니다.");
 }
 
 export async function updateGatheringAction(_previousState, formData) {
@@ -90,7 +86,7 @@ export async function updateGatheringAction(_previousState, formData) {
   }
 
   revalidatePath(`/gatherings/${gatheringId}`, "layout");
-  redirect(`/gatherings/${gatheringId}?message=${encodeURIComponent("모임 정보를 수정했습니다.")}`);
+  redirectWithSuccess(`/gatherings/${gatheringId}`, "모임 정보를 수정했습니다.");
 }
 
 export async function joinGatheringAction(_previousState, formData) {
@@ -134,7 +130,7 @@ export async function joinGatheringByInvitationAction(formData) {
   }
 
   revalidatePath(`/gatherings/${gatheringId}`, "layout");
-  redirect(`/gatherings/${gatheringId}?message=${encodeURIComponent("모임에 가입했습니다.")}`);
+  redirectWithSuccess(`/gatherings/${gatheringId}`, "모임에 가입했습니다.");
 }
 
 export async function leaveGatheringAction(formData) {
@@ -151,5 +147,5 @@ export async function leaveGatheringAction(formData) {
   }
 
   revalidatePath(`/gatherings/${gatheringId}`, "layout");
-  redirect(`/my-gatherings?message=${encodeURIComponent("모임에서 탈퇴했습니다.")}`);
+  redirectWithSuccess("/my-gatherings", "모임에서 탈퇴했습니다.");
 }

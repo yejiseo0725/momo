@@ -1,28 +1,35 @@
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { connection } from "next/server";
 
 import GatheringForm from "@/app/gatherings/GatheringForm";
+import ToastMessage from "@/components/ToastMessage";
 import { getGatheringDetails } from "@/lib/gatherings";
+import { redirectWithError } from "@/lib/redirects";
 import { requireSession } from "@/lib/session";
-import { CATEGORIES } from "@/lib/utils/validation";
+import { CATEGORIES, getSingleSearchParam } from "@/lib/utils/validation";
 
-export default async function EditGatheringPage({ params }) {
+export default async function EditGatheringPage({ params, searchParams }) {
   await connection();
   const session = await requireSession();
   const { id } = await params;
+  const query = await searchParams;
   const details = await getGatheringDetails(id, session.user.id);
 
   if (!details) {
     notFound();
   }
   if (details.membership?.role !== "LEADER") {
-    redirect(`/gatherings/${id}?error=${encodeURIComponent("모임장만 수정할 수 있습니다.")}`);
+    redirectWithError(`/gatherings/${id}`, "모임장만 수정할 수 있습니다.");
   }
 
   const { gathering } = details;
 
   return (
     <section>
+      <ToastMessage
+        error={getSingleSearchParam(query.error)}
+        message={getSingleSearchParam(query.message)}
+      />
       <h1>모임 수정</h1>
       <GatheringForm
         categories={CATEGORIES}

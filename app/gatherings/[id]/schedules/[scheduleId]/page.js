@@ -9,7 +9,7 @@ import {
 } from "@/app/gatherings/[id]/schedules/actions";
 import ScheduleForm from "@/app/gatherings/[id]/schedules/ScheduleForm";
 import ActionButtonForm from "@/components/ActionButtonForm";
-import Message from "@/components/Message";
+import ToastMessage from "@/components/ToastMessage";
 import { getScheduleDetails } from "@/lib/schedules";
 import { requireSession } from "@/lib/session";
 import { getSingleSearchParam } from "@/lib/utils/validation";
@@ -39,7 +39,7 @@ export default async function ScheduleDetailsPage({ params, searchParams }) {
           <dt>장소</dt><dd>{schedule.region}</dd>
           <dt>작성자</dt><dd>{schedule.authorName}</dd>
         </dl>
-        <Message
+        <ToastMessage
           error={getSingleSearchParam(query.error)}
           message={getSingleSearchParam(query.message)}
         />
