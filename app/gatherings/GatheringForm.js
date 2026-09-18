@@ -21,6 +21,7 @@ import CategoryTagGroup from '@/components/CategoryTagGroup';
 import HeroToast from '@/components/HeroToast';
 import ImageFileField from '@/components/ImageFileField';
 import RegionAutocomplete from '@/components/RegionAutocomplete';
+import Link from 'next/link';
 
 const initialActionState = {
   error: '',
@@ -28,6 +29,7 @@ const initialActionState = {
 };
 
 export default function GatheringForm({
+  cancelHref,
   categories,
   gatheringId,
   initialValues,
@@ -137,15 +139,30 @@ export default function GatheringForm({
         <input type="hidden" name="visibility" value={visibility} />
       </div>
 
-      <Button className="w-full" type="submit" isDisabled={pending} isPending={pending}>
-        {pending
-          ? mode === 'create'
-            ? '만드는 중...'
-            : '저장하는 중...'
-          : mode === 'create'
-            ? '모임 만들기'
-            : '수정 완료'}
-      </Button>
+      <div className="flex gap-2">
+        {cancelHref ? (
+          <Link
+            href={cancelHref}
+            className="button button--outline flex-1"
+          >
+            취소
+          </Link>
+        ) : null}
+        <Button
+          className={cancelHref ? 'flex-1' : 'w-full'}
+          type="submit"
+          isDisabled={pending}
+          isPending={pending}
+        >
+          {pending
+            ? mode === 'create'
+              ? '만드는 중...'
+              : '저장하는 중...'
+            : mode === 'create'
+              ? '모임 만들기'
+              : '수정 완료'}
+        </Button>
+      </div>
       <HeroToast error={state.error} message={state.message} trigger={state} />
     </Form>
   );

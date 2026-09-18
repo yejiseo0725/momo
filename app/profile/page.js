@@ -33,24 +33,26 @@ export default async function ProfilePage({ searchParams }) {
       />
 
       <section className="flex flex-col gap-4">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <header className="flex flex-col gap-1">
-            <Typography type="h1">마이페이지</Typography>
-            <UserInfo
-              image={session.user.image}
-              name={displayName}
-              size="lg"
-            />
-          </header>
-          <div className="flex flex-wrap gap-2">
-            <Link href="/profile/edit" className="button button--primary">
-              내 정보 수정
-            </Link>
-            <form action={logoutAction}>
-              <Button type="submit" variant="outline">
-                로그아웃
-              </Button>
-            </form>
+        <div className="flex flex-col gap-4 rounded-[28px] border border-border bg-surface p-6">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <header className="flex flex-col gap-1">
+              <Typography type="h1">마이페이지</Typography>
+              <UserInfo
+                image={session.user.image}
+                name={displayName}
+                size="lg"
+              />
+            </header>
+            <div className="flex flex-wrap gap-2">
+              <Link href="/profile/edit" className="button button--primary">
+                내 정보 수정
+              </Link>
+              <form action={logoutAction}>
+                <Button type="submit" variant="outline">
+                  로그아웃
+                </Button>
+              </form>
+            </div>
           </div>
         </div>
 

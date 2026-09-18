@@ -33,6 +33,7 @@ export default async function EditGatheringPage({ params, searchParams }) {
       />
       <Typography type="h1">모임 수정</Typography>
       <GatheringForm
+        cancelHref={`/gatherings/${id}`}
         categories={CATEGORIES}
         gatheringId={id}
         initialValues={{

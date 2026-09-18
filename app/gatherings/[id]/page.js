@@ -50,6 +50,9 @@ export default async function GatheringHomePage({ params, searchParams }) {
           <Chip className="bg-accent-sky text-primary font-medium">
             {gathering.category}
           </Chip>
+        </div>
+        <Typography type="h1">{gathering.name}</Typography>
+        <div className="flex flex-wrap gap-2">
           <Chip>{gathering.isPublic ? '공개 모임' : '비공개 모임'}</Chip>
           <Chip
             className={

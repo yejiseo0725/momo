@@ -17,13 +17,13 @@ export default async function MyGatheringsPage({ searchParams }) {
 
   return (
     <section className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
+      <div className="flex flex-col gap-4 rounded-[28px] border border-border bg-surface p-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
           <Typography type="h1">내 모임</Typography>
+          <Link href="/gatherings/new" className="button button--primary">
+            <PlusIcon />모임 만들기
+          </Link>
         </div>
-        <Link href="/gatherings/new" className="button button--primary">
-          <PlusIcon />모임 만들기
-        </Link>
       </div>
       <HeroToast message={getSingleSearchParam(query.message)} />
 
