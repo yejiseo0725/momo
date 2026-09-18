@@ -5,7 +5,7 @@ import LeaveGatheringButton from '@/app/gatherings/[id]/LeaveGatheringButton';
 import { joinGatheringAction } from '@/app/gatherings/actions';
 import ActionButtonForm from '@/components/ActionButtonForm';
 import HeroToast from '@/components/HeroToast';
-import UserAvatar from '@/components/UserAvatar';
+import UserInfo from '@/components/UserInfo';
 import { getGatheringDetails } from '@/lib/gatherings';
 import { requireSession } from '@/lib/session';
 import { formatDate } from '@/lib/utils/documents';
@@ -94,21 +94,21 @@ export default async function GatheringHomePage({ params, searchParams }) {
         <div className="flex flex-col gap-2">
           {members.map((member) => (
             <div key={member.id} className="flex items-center gap-2">
-              <UserAvatar
+              <UserInfo
                 image={member.image}
                 name={member.displayName}
-              />
-              <span className="font-medium text-foreground">{member.displayName}</span>
-              <Chip
-                size="md"
-                className={
-                  member.role === 'LEADER'
-                    ? 'bg-accent-pink text-white font-semibold'
-                    : 'bg-accent-sky text-primary font-medium'
-                }
               >
-                {member.role === 'LEADER' ? '모임장' : '멤버'}
-              </Chip>
+                <Chip
+                  size="md"
+                  className={
+                    member.role === 'LEADER'
+                      ? 'bg-accent-pink text-white font-semibold'
+                      : 'bg-accent-sky text-primary font-medium'
+                  }
+                >
+                  {member.role === 'LEADER' ? '모임장' : '멤버'}
+                </Chip>
+              </UserInfo>
             </div>
           ))}
         </div>

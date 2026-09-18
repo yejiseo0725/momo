@@ -5,7 +5,7 @@ import EmptyState from '@/components/EmptyState';
 import GatheringCard from '@/components/GatheringCard';
 import HeroToast from '@/components/HeroToast';
 import PlusIcon from '@/components/PlusIcon';
-import UserAvatar from '@/components/UserAvatar';
+import UserInfo from '@/components/UserInfo';
 import { getJoinedGatherings } from '@/lib/gatherings';
 import { getRegionName } from '@/lib/regions';
 import { requireSession } from '@/lib/session';
@@ -34,16 +34,13 @@ export default async function ProfilePage({ searchParams }) {
 
       <section className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <header className="flex items-center gap-3">
-            <UserAvatar
+          <header className="flex flex-col gap-1">
+            <Typography type="h1">마이페이지</Typography>
+            <UserInfo
               image={session.user.image}
               name={displayName}
-              size="large"
+              size="lg"
             />
-            <div>
-              <Typography type="h1">마이페이지</Typography>
-              <p>{displayName}</p>
-            </div>
           </header>
           <div className="flex flex-wrap gap-2">
             <Link href="/profile/edit" className="button button--primary">

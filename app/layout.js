@@ -3,13 +3,14 @@ import './globals.css';
 import { Toast, Typography } from '@heroui/react';
 
 import NotificationLink from '@/app/NotificationLink';
-import UserAvatar from '@/components/UserAvatar';
+import UserInfo from '@/components/UserInfo';
 import { getUnreadNotificationCount } from '@/lib/notifications';
 import { getOptionalSession } from '@/lib/session';
+import Image from 'next/image';
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'momo',
+  title: '모모 - 모두의 모임, 모임을 관리해보세요',
   description: '함께 시작하고 꾸준히 이어가는 모임 서비스',
 };
 
@@ -30,8 +31,15 @@ async function SiteNavigation() {
       className="flex flex-wrap items-center justify-between gap-3"
       aria-label="주요 메뉴"
     >
-      <Link className="link" href="/">
-        <Typography type="h4">MoMo</Typography>
+      <Link className="flex items-center" href="/" aria-label="MoMo 홈으로 이동">
+        <Image
+          src="/symbol.png"
+          alt="MoMo"
+          width={36}
+          height={36}
+          className="h-9 w-9 object-contain"
+          priority
+        />
       </Link>
 
       {session ? (
@@ -47,13 +55,10 @@ async function SiteNavigation() {
           </Link>
           <NotificationLink hasUnreadNotifications={unreadCount > 0} />
           <Link className="button button--ghost button--sm" href="/profile">
-            <span className="flex items-center gap-2">
-              <UserAvatar
-                image={session.user.image}
-                name={session.user.nickname || session.user.name}
-              />
-              <span>{session.user.nickname || session.user.name}</span>
-            </span>
+            <UserInfo
+              image={session.user.image}
+              name={session.user.nickname || session.user.name}
+            />
           </Link>
         </div>
       ) : (

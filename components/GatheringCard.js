@@ -1,6 +1,6 @@
 import { Card, Chip } from '@heroui/react';
 
-import UserAvatar from '@/components/UserAvatar';
+import UserInfo from '@/components/UserInfo';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -84,12 +84,7 @@ export default function GatheringCard({ gathering, loading = 'eager' }) {
         <p className="line-clamp-2 text-muted">{gathering.description}</p>
 
         <div className="mt-auto -mx-4 flex items-center justify-start gap-4 border-t border-border px-4 pt-3">
-          <div className="flex min-w-0 items-center gap-2">
-            <UserAvatar name={gathering.creatorName} />
-            <span className="line-clamp-1 font-medium text-foreground/80">
-              {gathering.creatorName}
-            </span>
-          </div>
+          <UserInfo name={gathering.creatorName} />
         </div>
       </div>
     </Card>

@@ -4,7 +4,7 @@ import { connection } from 'next/server';
 
 import ProfileForm from '@/app/profile/ProfileForm';
 import HeroToast from '@/components/HeroToast';
-import UserAvatar from '@/components/UserAvatar';
+import UserInfo from '@/components/UserInfo';
 import { getRegionName } from '@/lib/regions';
 import { requireSession } from '@/lib/session';
 import { getUserRegion } from '@/lib/users';
@@ -31,15 +31,13 @@ export default async function EditProfilePage({ searchParams }) {
         message={getSingleSearchParam(query.message)}
       />
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <header className="flex items-center gap-3">
-          <UserAvatar
+        <header className="flex flex-col gap-1">
+          <Typography type="h1">내 정보 수정</Typography>
+          <UserInfo
             image={session.user.image}
             name={displayName}
-            size="large"
+            size="lg"
           />
-          <div>
-            <Typography type="h1">내 정보 수정</Typography>
-          </div>
         </header>
         <Link className="link" href="/profile">
           마이페이지로 돌아가기
