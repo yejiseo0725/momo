@@ -74,7 +74,7 @@ export async function createScheduleAction(_previousState, formData) {
     };
   }
   redirectWithSuccess(
-    `/gatherings/${gatheringId}/schedules/${scheduleId}`,
+    `/gatherings/${gatheringId}/schedules`,
     "일정을 만들었습니다.",
   );
 }
