@@ -19,16 +19,16 @@ export default function ScheduleCreateModal({ gatheringId }) {
   return (
     <>
       <Button type="button" onPress={() => setIsOpen(true)}>
-        <PlusIcon />새 일정 만들기
+        <PlusIcon />일정 만들기
       </Button>
       <Modal isOpen={isOpen} onOpenChange={setIsOpen}>
         <Modal.Backdrop>
           <Modal.Container>
             <Modal.Dialog>
               <Modal.Header>
-                <Modal.Heading>새 일정 만들기</Modal.Heading>
+                <Modal.Heading>일정 만들기</Modal.Heading>
                 <Modal.CloseTrigger
-                  aria-label="새 일정 만들기 닫기"
+                  aria-label="일정 만들기 닫기"
                   onPress={() => setIsOpen(false)}
                   onClick={() => setIsOpen(false)}
                 />

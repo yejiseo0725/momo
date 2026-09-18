@@ -93,7 +93,7 @@ export default async function ProfilePage({ searchParams }) {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <Typography type="h2">내 모임</Typography>
           <Link href="/gatherings/new" className="button button--primary">
-            <PlusIcon />새 모임 만들기
+            <PlusIcon />모임 만들기
           </Link>
         </div>
 

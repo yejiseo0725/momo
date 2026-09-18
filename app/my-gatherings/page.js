@@ -22,7 +22,7 @@ export default async function MyGatheringsPage({ searchParams }) {
           <Typography type="h1">내 모임</Typography>
         </div>
         <Link href="/gatherings/new" className="button button--primary">
-          <PlusIcon />새 모임 만들기
+          <PlusIcon />모임 만들기
         </Link>
       </div>
       <HeroToast message={getSingleSearchParam(query.message)} />
