@@ -1,11 +1,24 @@
 "use client";
 
+import {
+  Button,
+  Form,
+  Input,
+  Label,
+  ListBox,
+  Radio,
+  RadioGroup,
+  Select,
+  TextArea,
+  TextField,
+} from "@heroui/react";
 import { useActionState, useState } from "react";
 
 import {
   createGatheringAction,
   updateGatheringAction,
 } from "@/app/gatherings/actions";
+import ImageFileField from "@/components/ImageFileField";
 import RegionAutocomplete from "@/components/RegionAutocomplete";
 import ToastMessage from "@/components/ToastMessage";
 
@@ -30,19 +43,17 @@ export default function GatheringForm({
   const [visibility, setVisibility] = useState(initialValues.visibility);
 
   return (
-    <form action={formAction}>
+    <Form className="flex w-full max-w-xl flex-col gap-4" action={formAction}>
       {gatheringId ? <input type="hidden" name="gatheringId" value={gatheringId} /> : null}
 
-      <label htmlFor="name">모임명</label>
-      <input
-        id="name"
-        name="name"
-        type="text"
-        value={name}
-        onChange={(event) => setName(event.target.value)}
-        maxLength="80"
-        required
-      />
+      <TextField fullWidth isRequired name="name">
+        <Label>모임명</Label>
+        <Input
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+          maxLength="80"
+        />
+      </TextField>
 
       <RegionAutocomplete
         helpText="읍면동 또는 온라인을 입력하고 자동완성 목록에서 선택해 주세요."
@@ -50,71 +61,90 @@ export default function GatheringForm({
         initialRegionName={initialValues.regionName}
       />
 
-      <label htmlFor="description">소개</label>
-      <textarea
-        id="description"
-        name="description"
-        rows="6"
-        value={description}
-        onChange={(event) => setDescription(event.target.value)}
-        maxLength="1000"
-        required
+      <TextField fullWidth isRequired name="description">
+        <Label>소개</Label>
+        <TextArea
+          rows="6"
+          value={description}
+          onChange={(event) => setDescription(event.target.value)}
+          maxLength="1000"
+        />
+      </TextField>
+
+      <ImageFileField
+        emptyText={initialValues.imageUrl
+          ? "새 이미지를 선택하지 않으면 현재 이미지를 유지합니다."
+          : "선택된 파일 없음"}
+        helpText="선택 사항입니다. JPG, PNG, WebP 형식의 5MB 이하 이미지를 선택해 주세요."
+        id={`gathering-image-${gatheringId || "new"}`}
+        label="모임 이미지"
+        name="image"
       />
 
-      <label htmlFor="maxMemCount">최대 인원</label>
-      <input
-        id="maxMemCount"
-        name="maxMemCount"
-        type="number"
-        min={minimumMemberCount}
-        max="300"
-        value={maxMemCount}
-        onChange={(event) => setMaxMemCount(event.target.value)}
-        required
-      />
+      <TextField fullWidth isRequired name="maxMemCount" type="number">
+        <Label>최대 인원</Label>
+        <Input
+          min={minimumMemberCount}
+          max="300"
+          value={maxMemCount}
+          onChange={(event) => setMaxMemCount(event.target.value)}
+        />
+      </TextField>
 
-      <label htmlFor="category">카테고리</label>
-      <select
-        id="category"
+      <Select
+        fullWidth
+        isRequired
         name="category"
-        value={category}
-        onChange={(event) => setCategory(event.target.value)}
-        required
+        placeholder="선택해 주세요"
+        selectedKey={category || null}
+        onSelectionChange={(key) => setCategory(key ? String(key) : "")}
       >
-        <option value="" disabled>선택해 주세요</option>
-        {categories.map((categoryOption) => (
-          <option key={categoryOption} value={categoryOption}>{categoryOption}</option>
-        ))}
-      </select>
+        <Label>카테고리</Label>
+        <Select.Trigger>
+          <Select.Value />
+          <Select.Indicator />
+        </Select.Trigger>
+        <Select.Popover>
+          <ListBox>
+            {categories.map((categoryOption) => (
+              <ListBox.Item
+                id={categoryOption}
+                key={categoryOption}
+                textValue={categoryOption}
+              >
+                {categoryOption}
+              </ListBox.Item>
+            ))}
+          </ListBox>
+        </Select.Popover>
+      </Select>
 
-      <fieldset>
-        <legend>공개 여부</legend>
-        <label>
-          <input
-            type="radio"
-            name="visibility"
-            value="public"
-            checked={visibility === "public"}
-            onChange={(event) => setVisibility(event.target.value)}
-          /> 공개 모임
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="visibility"
-            value="private"
-            checked={visibility === "private"}
-            onChange={(event) => setVisibility(event.target.value)}
-          /> 비공개 모임
-        </label>
-      </fieldset>
+      <RadioGroup
+        name="visibility"
+        value={visibility}
+        onChange={setVisibility}
+      >
+        <Label>공개 여부</Label>
+        <Radio value="public">
+          <Radio.Content>
+            <Radio.Control><Radio.Indicator /></Radio.Control>
+            공개 모임
+          </Radio.Content>
+        </Radio>
+        <Radio value="private">
+          <Radio.Content>
+            <Radio.Control><Radio.Indicator /></Radio.Control>
+            비공개 모임
+          </Radio.Content>
+        </Radio>
+      </RadioGroup>
 
-      <button type="submit" disabled={pending}>
+      <Button type="submit" isDisabled={pending} isPending={pending}>
         {pending
           ? (mode === "create" ? "만드는 중..." : "저장하는 중...")
           : (mode === "create" ? "모임 만들기" : "수정 내용 저장")}
-      </button>
+      </Button>
       <ToastMessage error={state.error} message={state.message} trigger={state} />
-    </form>
+    </Form>
   );
 }

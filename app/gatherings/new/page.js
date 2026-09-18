@@ -1,3 +1,4 @@
+import { Typography } from "@heroui/react";
 import { connection } from "next/server";
 
 import GatheringForm from "@/app/gatherings/GatheringForm";
@@ -11,12 +12,12 @@ export default async function NewGatheringPage({ searchParams }) {
   const query = await searchParams;
 
   return (
-    <section>
+    <section className="flex flex-col gap-4">
       <ToastMessage
         error={getSingleSearchParam(query.error)}
         message={getSingleSearchParam(query.message)}
       />
-      <h1>새 모임 만들기</h1>
+      <Typography type="h1">새 모임 만들기</Typography>
       <GatheringForm
         categories={CATEGORIES}
         initialValues={{
@@ -24,6 +25,7 @@ export default async function NewGatheringPage({ searchParams }) {
           region: "",
           regionName: "",
           description: "",
+          imageUrl: null,
           maxMemCount: "",
           category: "",
           visibility: "public",

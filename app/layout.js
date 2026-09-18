@@ -1,8 +1,7 @@
-import "simpledotcss/simple.css";
 import "./globals.css";
 
+import { Button, Toast, Typography } from "@heroui/react";
 import Link from "next/link";
-import { Toaster } from "sonner";
 
 import NotificationLink from "@/app/NotificationLink";
 import UserAvatar from "@/components/UserAvatar";
@@ -28,42 +27,34 @@ async function SiteNavigation() {
   }
 
   return (
-    <nav className="site-nav" aria-label="주요 메뉴">
-      <ul>
-        <li>
-          <Link href="/">
-            <strong>momo</strong>
-          </Link>
-        </li>
-      </ul>
+    <nav className="flex flex-wrap items-center justify-between gap-3" aria-label="주요 메뉴">
+      <Link className="link" href="/">
+        <Typography type="h4">momo</Typography>
+      </Link>
 
       {session ? (
-        <ul>
-          <li><Link href="/gatherings">모임 찾기</Link></li>
-          <li><Link href="/my-gatherings">내 모임</Link></li>
-          <li>
-            <NotificationLink hasUnreadNotifications={unreadCount > 0} />
-          </li>
-          <li>
-            <Link href="/profile" className="user-profile-link">
+        <div className="flex flex-wrap items-center justify-end gap-1">
+          <Link className="button button--ghost button--sm" href="/gatherings">모임 찾기</Link>
+          <Link className="button button--ghost button--sm" href="/my-gatherings">내 모임</Link>
+          <NotificationLink hasUnreadNotifications={unreadCount > 0} />
+          <Link className="button button--ghost button--sm" href="/profile">
+            <span className="flex items-center gap-2">
               <UserAvatar
                 image={session.user.image}
                 name={session.user.nickname || session.user.name}
               />
               <span>{session.user.nickname || session.user.name}</span>
-            </Link>
-          </li>
-          <li>
-            <form action={logoutAction} className="inline-form">
-              <button type="submit">로그아웃</button>
-            </form>
-          </li>
-        </ul>
+            </span>
+          </Link>
+          <form action={logoutAction}>
+            <Button type="submit" size="sm" variant="ghost">로그아웃</Button>
+          </form>
+        </div>
       ) : (
-        <ul>
-          <li><Link href="/login">로그인</Link></li>
-          <li><Link href="/signup">회원가입</Link></li>
-        </ul>
+        <div className="flex items-center gap-1">
+          <Link className="button button--ghost button--sm" href="/login">로그인</Link>
+          <Link className="button button--primary button--sm" href="/signup">회원가입</Link>
+        </div>
       )}
     </nav>
   );
@@ -71,15 +62,23 @@ async function SiteNavigation() {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="ko" data-scroll-behavior="smooth">
-      <body>
-        <Toaster position="top-right" containerAriaLabel="토스트 알림" richColors />
-        <header>
-          <SiteNavigation />
+    <html className="light" data-theme="light" lang="ko" data-scroll-behavior="smooth">
+      <body className="flex min-h-screen flex-col bg-background text-foreground">
+        <Toast.Provider placement="top end" />
+        <header className="border-b border-border bg-surface">
+          <div className="mx-auto w-full max-w-6xl px-4 py-3">
+            <SiteNavigation />
+          </div>
         </header>
-        <main>{children}</main>
-        <footer>
-          <p>momo · 함께할 사람과 오래 이어지는 모임</p>
+        <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-4 py-8">
+          {children}
+        </main>
+        <footer className="border-t border-border">
+          <div className="mx-auto w-full max-w-6xl px-4 py-6">
+            <Typography color="muted" type="body-sm">
+              momo · 함께할 사람과 오래 이어지는 모임
+            </Typography>
+          </div>
         </footer>
       </body>
     </html>

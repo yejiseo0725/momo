@@ -1,3 +1,4 @@
+import { Typography } from "@heroui/react";
 import Link from "next/link";
 import { connection } from "next/server";
 
@@ -18,19 +19,19 @@ export default async function EditProfilePage({ searchParams }) {
   const displayName = session.user.nickname || session.user.name;
 
   return (
-    <section>
+    <section className="flex flex-col gap-4">
       <ToastMessage
         error={getSingleSearchParam(query.error)}
         message={getSingleSearchParam(query.message)}
       />
-      <div className="section-heading">
-        <header className="profile-heading">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <header className="flex items-center gap-3">
           <UserAvatar image={session.user.image} name={displayName} size="large" />
           <div>
-            <h1>내 정보 수정</h1>
+            <Typography type="h1">내 정보 수정</Typography>
           </div>
         </header>
-        <Link href="/profile">마이페이지로 돌아가기</Link>
+        <Link className="link" href="/profile">마이페이지로 돌아가기</Link>
       </div>
       <ProfileForm
         categories={CATEGORIES}

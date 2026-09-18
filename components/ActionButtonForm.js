@@ -1,5 +1,6 @@
 "use client";
 
+import { Button, Form } from "@heroui/react";
 import { useActionState } from "react";
 
 import ToastMessage from "@/components/ToastMessage";
@@ -15,18 +16,24 @@ export default function ActionButtonForm({
   fields,
   label,
   pendingLabel,
+  variant = "primary",
 }) {
   const [state, formAction, pending] = useActionState(action, initialActionState);
 
   return (
-    <form action={formAction}>
+    <Form action={formAction}>
       {Object.entries(fields).map(([name, value]) => (
         <input key={name} type="hidden" name={name} value={value} />
       ))}
-      <button type="submit" disabled={disabled || pending}>
+      <Button
+        type="submit"
+        isDisabled={disabled || pending}
+        isPending={pending}
+        variant={variant}
+      >
         {pending ? pendingLabel : label}
-      </button>
+      </Button>
       <ToastMessage error={state.error} message={state.message} trigger={state} />
-    </form>
+    </Form>
   );
 }

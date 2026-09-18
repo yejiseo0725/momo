@@ -1,5 +1,13 @@
 "use client";
 
+import {
+  Button,
+  Form,
+  Input,
+  Label,
+  TextArea,
+  TextField,
+} from "@heroui/react";
 import { useActionState, useState } from "react";
 
 import {
@@ -24,66 +32,64 @@ export default function ScheduleForm({ gatheringId, initialValues, mode, schedul
   const idPrefix = mode === "create" ? "new-schedule" : `schedule-${scheduleId}`;
 
   return (
-    <form action={formAction}>
+    <Form className="flex w-full flex-col gap-4" action={formAction}>
       <input type="hidden" name="gatheringId" value={gatheringId} />
       {scheduleId ? <input type="hidden" name="scheduleId" value={scheduleId} /> : null}
 
-      <label htmlFor={`${idPrefix}-title`}>제목</label>
-      <input
-        id={`${idPrefix}-title`}
-        name="title"
-        value={title}
-        onChange={(event) => setTitle(event.target.value)}
-        maxLength="100"
-        required
-      />
+      <TextField fullWidth isRequired name="title">
+        <Label>제목</Label>
+        <Input
+          id={`${idPrefix}-title`}
+          value={title}
+          onChange={(event) => setTitle(event.target.value)}
+          maxLength="100"
+        />
+      </TextField>
 
-      <label htmlFor={`${idPrefix}-description`}>설명</label>
-      <textarea
-        id={`${idPrefix}-description`}
-        name="description"
-        value={description}
-        onChange={(event) => setDescription(event.target.value)}
-        maxLength="1000"
-        required
-      />
+      <TextField fullWidth isRequired name="description">
+        <Label>설명</Label>
+        <TextArea
+          id={`${idPrefix}-description`}
+          value={description}
+          onChange={(event) => setDescription(event.target.value)}
+          maxLength="1000"
+        />
+      </TextField>
 
-      <label htmlFor={`${idPrefix}-start`}>시작일</label>
-      <input
-        id={`${idPrefix}-start`}
-        name="startDate"
-        type="date"
-        value={startDate}
-        onChange={(event) => setStartDate(event.target.value)}
-        required
-      />
+      <TextField fullWidth isRequired name="startDate" type="date">
+        <Label>시작일</Label>
+        <Input
+          id={`${idPrefix}-start`}
+          value={startDate}
+          onChange={(event) => setStartDate(event.target.value)}
+        />
+      </TextField>
 
-      <label htmlFor={`${idPrefix}-end`}>종료일</label>
-      <input
-        id={`${idPrefix}-end`}
-        name="endDate"
-        type="date"
-        value={endDate}
-        onChange={(event) => setEndDate(event.target.value)}
-        required
-      />
+      <TextField fullWidth isRequired name="endDate" type="date">
+        <Label>종료일</Label>
+        <Input
+          id={`${idPrefix}-end`}
+          value={endDate}
+          onChange={(event) => setEndDate(event.target.value)}
+        />
+      </TextField>
 
-      <label htmlFor={`${idPrefix}-location`}>장소</label>
-      <input
-        id={`${idPrefix}-location`}
-        name="location"
-        value={location}
-        onChange={(event) => setLocation(event.target.value)}
-        maxLength="150"
-        required
-      />
+      <TextField fullWidth isRequired name="location">
+        <Label>장소</Label>
+        <Input
+          id={`${idPrefix}-location`}
+          value={location}
+          onChange={(event) => setLocation(event.target.value)}
+          maxLength="150"
+        />
+      </TextField>
 
-      <button type="submit" disabled={pending}>
+      <Button type="submit" isDisabled={pending} isPending={pending}>
         {pending
           ? (mode === "create" ? "만드는 중..." : "저장하는 중...")
           : (mode === "create" ? "일정 만들기" : "수정 저장")}
-      </button>
+      </Button>
       <ToastMessage error={state.error} message={state.message} trigger={state} />
-    </form>
+    </Form>
   );
 }

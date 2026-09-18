@@ -1,5 +1,16 @@
 "use client";
 
+import {
+  Button,
+  Checkbox,
+  CheckboxGroup,
+  Form,
+  Input,
+  Label,
+  Radio,
+  RadioGroup,
+  TextField,
+} from "@heroui/react";
 import { useActionState, useState } from "react";
 
 import { updateProfileAction } from "@/app/auth-actions";
@@ -21,72 +32,58 @@ export default function ProfileForm({ categories, email, genders, initialValues 
     initialValues.notificationEnabled,
   );
 
-  function updateCategory(event) {
-    const { checked, value } = event.target;
-    setSelectedCategories((currentCategories) => (
-      checked
-        ? [...currentCategories, value]
-        : currentCategories.filter((category) => category !== value)
-    ));
-  }
-
   return (
-    <form action={formAction}>
-      <label htmlFor="email">이메일</label>
-      <input id="email" type="email" value={email} disabled />
+    <Form className="flex w-full max-w-xl flex-col gap-4" action={formAction}>
+      <TextField fullWidth isDisabled type="email" value={email}>
+        <Label>이메일</Label>
+        <Input />
+      </TextField>
 
-      <label htmlFor="name">이름</label>
-      <input
-        id="name"
-        name="name"
-        type="text"
-        value={name}
-        onChange={(event) => setName(event.target.value)}
-        maxLength="50"
-        required
-      />
+      <TextField fullWidth isRequired name="name">
+        <Label>이름</Label>
+        <Input
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+          maxLength="50"
+        />
+      </TextField>
 
-      <fieldset>
-        <legend>성별</legend>
+      <RadioGroup isRequired name="gender" value={gender} onChange={setGender}>
+        <Label>성별</Label>
         {genders.map((genderOption) => (
-          <label key={genderOption}>
-            <input
-              type="radio"
-              name="gender"
-              value={genderOption}
-              checked={gender === genderOption}
-              onChange={(event) => setGender(event.target.value)}
-              required
-            /> {genderOption}
-          </label>
+          <Radio key={genderOption} value={genderOption}>
+            <Radio.Content>
+              <Radio.Control><Radio.Indicator /></Radio.Control>
+              {genderOption}
+            </Radio.Content>
+          </Radio>
         ))}
-      </fieldset>
+      </RadioGroup>
 
-      <label htmlFor="nickname">닉네임</label>
-      <input
-        id="nickname"
-        name="nickname"
-        type="text"
-        value={nickname}
-        onChange={(event) => setNickname(event.target.value)}
-        maxLength="30"
-        required
-      />
+      <TextField fullWidth isRequired name="nickname">
+        <Label>닉네임</Label>
+        <Input
+          value={nickname}
+          onChange={(event) => setNickname(event.target.value)}
+          maxLength="30"
+        />
+      </TextField>
 
-      <fieldset>
-        <legend>관심 카테고리</legend>
+      <CheckboxGroup
+        name="category"
+        value={selectedCategories}
+        onChange={setSelectedCategories}
+      >
+        <Label>관심 카테고리</Label>
         {categories.map((category) => (
-          <label key={category}>
-            <input
-              type="checkbox"
-              name="category"
-              value={category}
-              checked={selectedCategories.includes(category)}
-              onChange={updateCategory}
-            /> {category}
-          </label>
+          <Checkbox key={category} value={category}>
+            <Checkbox.Content>
+              <Checkbox.Control><Checkbox.Indicator /></Checkbox.Control>
+              {category}
+            </Checkbox.Content>
+          </Checkbox>
         ))}
-      </fieldset>
+      </CheckboxGroup>
 
       <RegionAutocomplete
         helpText="읍면동 또는 온라인을 입력하고 자동완성 목록에서 선택해 주세요."
@@ -94,22 +91,21 @@ export default function ProfileForm({ categories, email, genders, initialValues 
         initialRegionName={initialValues.regionName}
       />
 
-      <fieldset>
-        <legend>알림 설정</legend>
-        <label>
-          <input
-            type="checkbox"
-            name="notificationEnabled"
-            checked={notificationEnabled}
-            onChange={(event) => setNotificationEnabled(event.target.checked)}
-          /> 새 일정과 새 챌린지 알림 받기
-        </label>
-      </fieldset>
+      <Checkbox
+        name="notificationEnabled"
+        isSelected={notificationEnabled}
+        onChange={setNotificationEnabled}
+      >
+        <Checkbox.Content>
+          <Checkbox.Control><Checkbox.Indicator /></Checkbox.Control>
+          새 일정과 새 챌린지 알림 받기
+        </Checkbox.Content>
+      </Checkbox>
 
-      <button type="submit" disabled={pending}>
+      <Button type="submit" isDisabled={pending} isPending={pending}>
         {pending ? "저장하는 중..." : "프로필 저장"}
-      </button>
+      </Button>
       <ToastMessage error={state.error} message={state.message} trigger={state} />
-    </form>
+    </Form>
   );
 }

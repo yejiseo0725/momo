@@ -1,3 +1,4 @@
+import { Card, Chip, Disclosure, Typography } from "@heroui/react";
 import { connection } from "next/server";
 import Image from "next/image";
 
@@ -32,82 +33,111 @@ export default async function ChallengesPage({ params, searchParams }) {
         error={getSingleSearchParam(query.error)}
         message={getSingleSearchParam(query.message)}
       />
-      <section>
-        <h1>챌린지</h1>
+      <section className="flex flex-col gap-4">
+        <Typography type="h1">챌린지</Typography>
         <p>모임 멤버와 함께할 목표를 만들고 실천을 인증하세요.</p>
-        <details>
-          <summary>새 챌린지 만들기</summary>
-          <ChallengeForm
-            gatheringId={id}
-            initialValues={{
-              title: "",
-              description: "",
-              useImage: false,
-              startDate: "",
-              endDate: "",
-            }}
-            mode="create"
-          />
-        </details>
+        <Disclosure>
+          <Disclosure.Heading>
+            <Disclosure.Trigger>
+              새 챌린지 만들기
+              <Disclosure.Indicator />
+            </Disclosure.Trigger>
+          </Disclosure.Heading>
+          <Disclosure.Content>
+            <ChallengeForm
+              gatheringId={id}
+              initialValues={{
+                title: "",
+                description: "",
+                useImage: false,
+                startDate: "",
+                endDate: "",
+              }}
+              mode="create"
+            />
+          </Disclosure.Content>
+        </Disclosure>
       </section>
 
-      <section className="stack">
+      <section className="grid gap-4">
         {challenges.length === 0 ? <EmptyState>등록된 챌린지가 없습니다.</EmptyState> : null}
         {challenges.map((challenge) => (
-          <article key={challenge.id}>
-            <header>
-              <p><small>{challenge.startDate} – {challenge.endDate}</small></p>
-              <h2>{challenge.title}</h2>
-              <p>작성자 {challenge.authorName} · 이미지 {challenge.useImage ? "필수" : "선택"}</p>
-            </header>
-            <p>{challenge.description}</p>
+          <Card key={challenge.id}>
+            <Card.Header>
+              <Card.Description>{challenge.startDate} – {challenge.endDate}</Card.Description>
+              <Card.Title>{challenge.title}</Card.Title>
+              <div className="flex flex-wrap gap-2">
+                <Chip size="sm">작성자 {challenge.authorName}</Chip>
+                <Chip size="sm">이미지 {challenge.useImage ? "필수" : "선택"}</Chip>
+              </div>
+            </Card.Header>
+            <Card.Content className="flex flex-col gap-4">
+              <p>{challenge.description}</p>
 
-            <details>
-              <summary>실천 인증하기</summary>
-              <ChallengeFeedForm
-                challengeId={challenge.id}
-                defaultDate={getLatestDoneDate(challenge.endDate, today)}
-                gatheringId={id}
-                imageRequired={challenge.useImage}
-                maximumDate={getLatestDoneDate(challenge.endDate, today)}
-                minimumDate={challenge.startDate}
-              />
-            </details>
+              <Disclosure>
+                <Disclosure.Heading>
+                  <Disclosure.Trigger>
+                    실천 인증하기
+                    <Disclosure.Indicator />
+                  </Disclosure.Trigger>
+                </Disclosure.Heading>
+                <Disclosure.Content>
+                  <ChallengeFeedForm
+                    challengeId={challenge.id}
+                    defaultDate={getLatestDoneDate(challenge.endDate, today)}
+                    gatheringId={id}
+                    imageRequired={challenge.useImage}
+                    maximumDate={getLatestDoneDate(challenge.endDate, today)}
+                    minimumDate={challenge.startDate}
+                  />
+                </Disclosure.Content>
+              </Disclosure>
 
-            {challenge.userId === session.user.id ? (
-              <details>
-                <summary>챌린지 수정</summary>
-                <ChallengeForm
-                  challengeId={challenge.id}
-                  gatheringId={id}
-                  initialValues={{
-                    title: challenge.title,
-                    description: challenge.description,
-                    useImage: challenge.useImage,
-                    startDate: challenge.startDate,
-                    endDate: challenge.endDate,
-                  }}
-                  mode="edit"
-                />
-                <ActionButtonForm
-                  action={deleteChallengeAction}
-                  fields={{ gatheringId: id, challengeId: challenge.id }}
-                  label="챌린지 삭제"
-                  pendingLabel="삭제하는 중..."
-                />
-              </details>
-            ) : null}
+              {challenge.userId === session.user.id ? (
+                <Disclosure>
+                  <Disclosure.Heading>
+                    <Disclosure.Trigger>
+                      챌린지 수정
+                      <Disclosure.Indicator />
+                    </Disclosure.Trigger>
+                  </Disclosure.Heading>
+                  <Disclosure.Content>
+                    <div className="flex flex-col gap-4">
+                      <ChallengeForm
+                        challengeId={challenge.id}
+                        gatheringId={id}
+                        initialValues={{
+                          title: challenge.title,
+                          description: challenge.description,
+                          useImage: challenge.useImage,
+                          startDate: challenge.startDate,
+                          endDate: challenge.endDate,
+                        }}
+                        mode="edit"
+                      />
+                      <ActionButtonForm
+                        action={deleteChallengeAction}
+                        fields={{ gatheringId: id, challengeId: challenge.id }}
+                        label="챌린지 삭제"
+                        pendingLabel="삭제하는 중..."
+                        variant="danger"
+                      />
+                    </div>
+                  </Disclosure.Content>
+                </Disclosure>
+              ) : null}
+            </Card.Content>
 
-            <footer>
-              <h3>인증 {challenge.feeds.length}개</h3>
+            <Card.Footer className="flex flex-col items-stretch gap-3">
+              <Typography type="h3">인증 {challenge.feeds.length}개</Typography>
               {challenge.feeds.length === 0 ? <p>아직 인증이 없습니다.</p> : (
-                <ul>
+                <ul className="grid gap-4">
                   {challenge.feeds.map((feed) => (
-                    <li key={feed.id}>
+                    <li className="flex flex-col gap-2" key={feed.id}>
                       <strong>{feed.doneDate} · {feed.authorName}</strong> — {feed.description}
                       {feed.imageId ? (
                         <Image
-                          className="challenge-feed-image"
+                          className="h-auto w-full max-w-lg"
                           src={`/api/challenge-feed-images/${feed.imageId}`}
                           alt={`${feed.authorName}님의 챌린지 인증 이미지`}
                           width={640}
@@ -116,14 +146,16 @@ export default async function ChallengesPage({ params, searchParams }) {
                         />
                       ) : null}
                       {!feed.imageId && feed.imageUrl ? (
-                        <> · <a href={feed.imageUrl} target="_blank" rel="noreferrer">기존 이미지 링크</a></>
+                        <a className="link" href={feed.imageUrl} target="_blank" rel="noreferrer">
+                          기존 이미지 링크
+                        </a>
                       ) : null}
                     </li>
                   ))}
                 </ul>
               )}
-            </footer>
-          </article>
+            </Card.Footer>
+          </Card>
         ))}
       </section>
     </>

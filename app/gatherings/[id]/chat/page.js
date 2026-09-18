@@ -1,3 +1,4 @@
+import { Typography } from "@heroui/react";
 import { connection } from "next/server";
 
 import ChatRoom from "@/app/gatherings/[id]/chat/ChatRoom";
@@ -14,12 +15,12 @@ export default async function ChatPage({ params, searchParams }) {
   const messages = await getChatMessages(id, session.user.id);
 
   return (
-    <section>
+    <section className="flex flex-col gap-4">
       <ToastMessage
         error={getSingleSearchParam(query.error)}
         message={getSingleSearchParam(query.message)}
       />
-      <h1>채팅</h1>
+      <Typography type="h1">채팅</Typography>
       <p>최근 메시지 100개를 표시합니다. 새 메시지는 실시간으로 갱신됩니다.</p>
       <ChatRoom
         gatheringId={id}

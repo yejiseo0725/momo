@@ -1,5 +1,17 @@
 "use client";
 
+import {
+  Button,
+  Checkbox,
+  CheckboxGroup,
+  Description,
+  Form,
+  Input,
+  Label,
+  Radio,
+  RadioGroup,
+  TextField,
+} from "@heroui/react";
 import { useActionState, useState } from "react";
 
 import { signupAction } from "@/app/auth-actions";
@@ -20,104 +32,80 @@ export default function SignupForm({ categories }) {
   const [nickname, setNickname] = useState("");
   const [selectedCategories, setSelectedCategories] = useState([]);
 
-  function updateCategory(event) {
-    const { checked, value } = event.target;
-    setSelectedCategories((currentCategories) => (
-      checked
-        ? [...currentCategories, value]
-        : currentCategories.filter((category) => category !== value)
-    ));
-  }
-
   return (
-    <form action={formAction} onReset={(event) => event.preventDefault()}>
+    <Form
+      className="flex w-full max-w-xl flex-col gap-4"
+      action={formAction}
+      onReset={(event) => event.preventDefault()}
+    >
       <ToastMessage error={state.error} trigger={state} />
 
-      <label htmlFor="name">이름</label>
-      <input
-        id="name"
-        name="name"
-        type="text"
-        maxLength="50"
-        value={name}
-        onChange={(event) => setName(event.target.value)}
-        required
-      />
+      <TextField fullWidth isRequired name="name">
+        <Label>이름</Label>
+        <Input
+          maxLength="50"
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+        />
+      </TextField>
 
-      <fieldset>
-        <legend>성별</legend>
-        <label>
-          <input
-            type="radio"
-            name="gender"
-            value="남성"
-            checked={gender === "남성"}
-            onChange={(event) => setGender(event.target.value)}
-            required
-          /> 남성
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="gender"
-            value="여성"
-            checked={gender === "여성"}
-            onChange={(event) => setGender(event.target.value)}
-            required
-          /> 여성
-        </label>
-      </fieldset>
-
-      <label htmlFor="email">이메일</label>
-      <input
-        id="email"
-        name="email"
-        type="email"
-        autoComplete="email"
-        value={email}
-        onChange={(event) => setEmail(event.target.value)}
-        required
-      />
-
-      <label htmlFor="password">비밀번호</label>
-      <input
-        id="password"
-        name="password"
-        type="password"
-        minLength="8"
-        maxLength="128"
-        autoComplete="new-password"
-        value={password}
-        onChange={(event) => setPassword(event.target.value)}
-        required
-      />
-      <small>8자 이상 입력해 주세요.</small>
-
-      <label htmlFor="nickname">닉네임</label>
-      <input
-        id="nickname"
-        name="nickname"
-        type="text"
-        maxLength="30"
-        value={nickname}
-        onChange={(event) => setNickname(event.target.value)}
-        required
-      />
-
-      <fieldset>
-        <legend>관심 카테고리</legend>
-        {categories.map((category) => (
-          <label key={category}>
-            <input
-              type="checkbox"
-              name="category"
-              value={category}
-              checked={selectedCategories.includes(category)}
-              onChange={updateCategory}
-            /> {category}
-          </label>
+      <RadioGroup isRequired name="gender" value={gender} onChange={setGender}>
+        <Label>성별</Label>
+        {["남성", "여성"].map((genderOption) => (
+          <Radio key={genderOption} value={genderOption}>
+            <Radio.Content>
+              <Radio.Control><Radio.Indicator /></Radio.Control>
+              {genderOption}
+            </Radio.Content>
+          </Radio>
         ))}
-      </fieldset>
+      </RadioGroup>
+
+      <TextField fullWidth isRequired name="email" type="email">
+        <Label>이메일</Label>
+        <Input
+          autoComplete="email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+        />
+      </TextField>
+
+      <TextField fullWidth isRequired name="password" type="password">
+        <Label>비밀번호</Label>
+        <Input
+          minLength="8"
+          maxLength="128"
+          autoComplete="new-password"
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+        />
+        <Description>8자 이상 입력해 주세요.</Description>
+      </TextField>
+
+      <TextField fullWidth isRequired name="nickname">
+        <Label>닉네임</Label>
+        <Input
+          maxLength="30"
+          value={nickname}
+          onChange={(event) => setNickname(event.target.value)}
+        />
+      </TextField>
+
+      <CheckboxGroup
+        name="category"
+        value={selectedCategories}
+        onChange={setSelectedCategories}
+      >
+        <Label>관심 카테고리</Label>
+        {categories.map((category) => (
+          <Checkbox key={category} value={category}>
+            <Checkbox.Content>
+              <Checkbox.Control><Checkbox.Indicator /></Checkbox.Control>
+              {category}
+            </Checkbox.Content>
+          </Checkbox>
+        ))}
+      </CheckboxGroup>
 
       <RegionAutocomplete
         helpText="읍면동 또는 온라인을 입력하고 자동완성 목록에서 선택해 주세요."
@@ -126,9 +114,9 @@ export default function SignupForm({ categories }) {
         initialRegionName=""
       />
 
-      <button type="submit" disabled={pending}>
+      <Button type="submit" isDisabled={pending} isPending={pending}>
         {pending ? "가입하는 중..." : "가입하기"}
-      </button>
-    </form>
+      </Button>
+    </Form>
   );
 }

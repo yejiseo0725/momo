@@ -1,3 +1,4 @@
+import { Typography } from "@heroui/react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
@@ -14,12 +15,12 @@ export default async function SignupPage() {
   }
 
   return (
-    <section>
-      <h1>회원가입</h1>
+    <section className="flex flex-col gap-4">
+      <Typography type="h1">회원가입</Typography>
       <p>모임에서 사용할 기본 정보를 입력해 주세요.</p>
       <SignupForm categories={CATEGORIES} />
 
-      <p>이미 계정이 있나요? <Link href="/login">로그인</Link></p>
+      <p>이미 계정이 있나요? <Link className="link" href="/login">로그인</Link></p>
     </section>
   );
 }

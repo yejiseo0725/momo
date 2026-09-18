@@ -100,6 +100,14 @@ test("모임 초대 토큰은 고유하고 기존 모임도 허용한다", () =>
   assert.equal(inviteTokenIndex.options.sparse, true);
 });
 
+test("모임 이미지는 선택적인 URL로 저장한다", () => {
+  const gatheringSchema = buildCollectionJsonSchema("gatherings");
+
+  assert.equal(gatheringSchema.properties.imageUrl.bsonType.includes("string"), true);
+  assert.equal(gatheringSchema.properties.imageUrl.bsonType.includes("null"), true);
+  assert.equal(gatheringSchema.required.includes("imageUrl"), false);
+});
+
 test("챌린지 인증 이미지는 GridFS 파일 ID로 저장한다", () => {
   const challengeFeedSchema = buildCollectionJsonSchema("challengeFeeds");
 

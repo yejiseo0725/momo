@@ -1,22 +1,28 @@
 "use client";
 
-import { useEffect } from "react";
-import { toast } from "sonner";
+import { toast } from "@heroui/react";
+import { useEffect, useRef } from "react";
 
 export default function ToastMessage({ error, message, trigger }) {
+  const lastToast = useRef({ key: "", trigger: null });
+
   useEffect(() => {
     const toastType = error ? "error" : "success";
     const toastMessage = error || message;
     const toastKey = `${toastType}:${toastMessage}`;
 
-    if (!toastMessage) {
+    if (
+      !toastMessage
+      || (lastToast.current.key === toastKey && lastToast.current.trigger === trigger)
+    ) {
       return;
     }
 
+    lastToast.current = { key: toastKey, trigger };
     if (error) {
-      toast.error(error, { id: toastKey });
+      toast.danger(error);
     } else {
-      toast.success(message, { id: toastKey });
+      toast.success(message);
     }
 
     const currentUrl = new URL(window.location.href);

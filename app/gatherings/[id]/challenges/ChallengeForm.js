@@ -1,5 +1,14 @@
 "use client";
 
+import {
+  Button,
+  Checkbox,
+  Form,
+  Input,
+  Label,
+  TextArea,
+  TextField,
+} from "@heroui/react";
 import { useActionState, useState } from "react";
 
 import {
@@ -23,55 +32,50 @@ function ChallengeFields({ idPrefix, initialValues }) {
 
   return (
     <>
-      <label htmlFor={`${idPrefix}-title`}>제목</label>
-      <input
-        id={`${idPrefix}-title`}
-        name="title"
-        type="text"
-        maxLength="100"
-        value={title}
-        onChange={(event) => setTitle(event.target.value)}
-        required
-      />
+      <TextField fullWidth isRequired name="title">
+        <Label>제목</Label>
+        <Input
+          id={`${idPrefix}-title`}
+          maxLength="100"
+          value={title}
+          onChange={(event) => setTitle(event.target.value)}
+        />
+      </TextField>
 
-      <label htmlFor={`${idPrefix}-description`}>설명</label>
-      <textarea
-        id={`${idPrefix}-description`}
-        name="description"
-        maxLength="1000"
-        value={description}
-        onChange={(event) => setDescription(event.target.value)}
-        required
-      />
+      <TextField fullWidth isRequired name="description">
+        <Label>설명</Label>
+        <TextArea
+          id={`${idPrefix}-description`}
+          maxLength="1000"
+          value={description}
+          onChange={(event) => setDescription(event.target.value)}
+        />
+      </TextField>
 
-      <label>
-        <input
-          type="checkbox"
-          name="useImage"
-          checked={useImage}
-          onChange={(event) => setUseImage(event.target.checked)}
-        /> 인증할 때 이미지 파일 필수
-      </label>
+      <Checkbox name="useImage" isSelected={useImage} onChange={setUseImage}>
+        <Checkbox.Content>
+          <Checkbox.Control><Checkbox.Indicator /></Checkbox.Control>
+          인증할 때 이미지 파일 필수
+        </Checkbox.Content>
+      </Checkbox>
 
-      <label htmlFor={`${idPrefix}-start`}>시작일</label>
-      <input
-        id={`${idPrefix}-start`}
-        name="startDate"
-        type="date"
-        value={startDate}
-        onChange={(event) => setStartDate(event.target.value)}
-        required
-      />
+      <TextField fullWidth isRequired name="startDate" type="date">
+        <Label>시작일</Label>
+        <Input
+          id={`${idPrefix}-start`}
+          value={startDate}
+          onChange={(event) => setStartDate(event.target.value)}
+        />
+      </TextField>
 
-      <label htmlFor={`${idPrefix}-end`}>종료일</label>
-      <input
-        id={`${idPrefix}-end`}
-        name="endDate"
-        type="date"
-        value={endDate}
-        onChange={(event) => setEndDate(event.target.value)}
-        required
-      />
+      <TextField fullWidth isRequired name="endDate" type="date">
+        <Label>종료일</Label>
+        <Input
+          id={`${idPrefix}-end`}
+          value={endDate}
+          onChange={(event) => setEndDate(event.target.value)}
+        />
+      </TextField>
     </>
   );
 }
@@ -83,7 +87,7 @@ export default function ChallengeForm({ challengeId, gatheringId, initialValues,
   const fieldsKey = mode === "create" ? state.resetKey : challengeId;
 
   return (
-    <form action={formAction}>
+    <Form className="flex w-full flex-col gap-4" action={formAction}>
       <input type="hidden" name="gatheringId" value={gatheringId} />
       {challengeId ? <input type="hidden" name="challengeId" value={challengeId} /> : null}
 
@@ -93,12 +97,12 @@ export default function ChallengeForm({ challengeId, gatheringId, initialValues,
         initialValues={initialValues}
       />
 
-      <button type="submit" disabled={pending}>
+      <Button type="submit" isDisabled={pending} isPending={pending}>
         {pending
           ? (mode === "create" ? "생성하는 중..." : "저장하는 중...")
           : (mode === "create" ? "챌린지 만들기" : "수정 저장")}
-      </button>
+      </Button>
       <ToastMessage error={state.error} message={state.message} trigger={state} />
-    </form>
+    </Form>
   );
 }

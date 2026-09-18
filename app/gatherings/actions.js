@@ -30,6 +30,7 @@ function readGatheringInput(formData) {
     maxMemCount: readInteger(formData, "maxMemCount", "최대 인원", 1, 300),
     category: readEnum(formData, "category", "카테고리", CATEGORIES),
     isPublic: readEnum(formData, "visibility", "공개 여부", ["public", "private"]) === "public",
+    imageFile: formData.get("image"),
   };
 }
 
@@ -54,6 +55,10 @@ export async function createGatheringAction(_previousState, formData) {
   try {
     gatheringId = await createGathering(session.user.id, input);
   } catch (error) {
+    if (error instanceof GatheringError) {
+      return { error: error.message, message: "" };
+    }
+
     const failedCollection = error instanceof GatheringCreationError
       ? error.collectionName
       : "unknown";
