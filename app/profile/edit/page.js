@@ -50,6 +50,7 @@ export default async function EditProfilePage({ searchParams }) {
         email={session.user.email}
         genders={GENDERS}
         initialValues={{
+          image: session.user.image,
           name: session.user.name,
           gender: session.user.gender,
           nickname: session.user.nickname,

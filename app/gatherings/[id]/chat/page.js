@@ -15,13 +15,17 @@ export default async function ChatPage({ params, searchParams }) {
   const messages = await getChatMessages(id, session.user.id);
 
   return (
-    <section className="flex flex-col gap-4">
+    <section data-chat-page className="flex h-full min-h-0 flex-col gap-3">
       <HeroToast
         error={getSingleSearchParam(query.error)}
         message={getSingleSearchParam(query.message)}
       />
-      <Typography type="h1">채팅</Typography>
-      <p>최근 메시지 100개를 표시합니다. 새 메시지는 실시간으로 갱신됩니다.</p>
+      <div className="shrink-0">
+        <Typography type="h1">채팅</Typography>
+        <p className="text-sm text-foreground/70">
+          최근 메시지 100개를 표시합니다. 새 메시지는 실시간으로 갱신됩니다.
+        </p>
+      </div>
       <ChatRoom
         gatheringId={id}
         currentUserId={session.user.id}

@@ -1,8 +1,7 @@
 import './globals.css';
 
-import { Button, Toast, Typography } from '@heroui/react';
+import { Toast, Typography } from '@heroui/react';
 
-import { logoutAction } from '@/app/auth-actions';
 import NotificationLink from '@/app/NotificationLink';
 import UserAvatar from '@/components/UserAvatar';
 import { getUnreadNotificationCount } from '@/lib/notifications';
@@ -46,6 +45,7 @@ async function SiteNavigation() {
           >
             내 모임
           </Link>
+          <NotificationLink hasUnreadNotifications={unreadCount > 0} />
           <Link className="button button--ghost button--sm" href="/profile">
             <span className="flex items-center gap-2">
               <UserAvatar
@@ -55,12 +55,6 @@ async function SiteNavigation() {
               <span>{session.user.nickname || session.user.name}</span>
             </span>
           </Link>
-          <NotificationLink hasUnreadNotifications={unreadCount > 0} />
-          <form action={logoutAction}>
-            <Button type="submit" size="sm" variant="ghost">
-              로그아웃
-            </Button>
-          </form>
         </div>
       ) : (
         <div className="flex items-center gap-1">
@@ -94,16 +88,16 @@ export default function RootLayout({ children }) {
       </head>
       <body className="flex min-h-screen flex-col bg-background text-foreground font-sans">
         <Toast.Provider placement="top end" />
-        <header className="border-b border-border bg-surface">
-          <div className="mx-auto w-full max-w-3xl px-4 py-3">
+        <header className="sticky top-0 z-50 border-b border-border/60 bg-surface/90 backdrop-blur-md backdrop-saturate-150">
+          <div className="mx-auto w-full max-w-5xl px-4 py-3">
             <SiteNavigation />
           </div>
         </header>
-        <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-4 py-8">
+        <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-8 px-4 py-8">
           {children}
         </main>
         <footer className="border-t border-border">
-          <div className="mx-auto w-full max-w-3xl px-4 py-6">
+          <div className="mx-auto w-full max-w-5xl px-4 py-6">
             <Typography color="muted" type="body-sm">
               momo · 함께할 사람과 오래 이어지는 모임
             </Typography>

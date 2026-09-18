@@ -16,7 +16,7 @@ export default function GatheringCard({ gathering, loading = 'eager' }) {
       >
         <Image
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-          src={gathering.imageUrl || '/gathering-default.svg'}
+          src={gathering.imageUrl || '/placeholder-image.png'}
           alt={
             gathering.imageUrl
               ? `${gathering.name} 모임 이미지`
@@ -30,13 +30,13 @@ export default function GatheringCard({ gathering, loading = 'eager' }) {
 
         <div className="absolute top-4 right-4 z-10 flex flex-wrap justify-end gap-2">
           <Chip
-            size="sm"
+            size="md"
             className="rounded-full bg-white/90 text-primary shadow-sm backdrop-blur-sm"
           >
             {gathering.isPublic ? '공개 모임' : '비공개 모임'}
           </Chip>
           <Chip
-            size="sm"
+            size="md"
             className={`rounded-full shadow-sm backdrop-blur-sm ${
               isFull
                 ? 'bg-warning text-warning-foreground'
@@ -58,7 +58,7 @@ export default function GatheringCard({ gathering, loading = 'eager' }) {
       <div className="relative -mt-8 z-10 flex flex-1 flex-col gap-3 px-4 pb-4">
         <div className="flex flex-wrap items-center gap-2">
           <Chip
-            size="sm"
+            size="md"
             className="rounded-full bg-accent-sky text-primary font-medium"
           >
             {gathering.category}
@@ -71,7 +71,7 @@ export default function GatheringCard({ gathering, loading = 'eager' }) {
           </Link>
           {gathering.role === 'LEADER' ? (
             <Chip
-              size="sm"
+              size="md"
               className="bg-accent-pink text-white font-semibold shadow-xs"
             >
               모임장
@@ -83,7 +83,7 @@ export default function GatheringCard({ gathering, loading = 'eager' }) {
 
         <p className="line-clamp-2 text-muted">{gathering.description}</p>
 
-        <div className="mt-auto flex items-end justify-end gap-4 pt-1">
+        <div className="mt-auto -mx-4 flex items-center justify-start gap-4 border-t border-border px-4 pt-3">
           <div className="flex min-w-0 items-center gap-2">
             <UserAvatar name={gathering.creatorName} />
             <span className="line-clamp-1 font-medium text-foreground/80">

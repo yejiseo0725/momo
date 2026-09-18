@@ -13,7 +13,7 @@ export default function GatheringNavigation({ gatheringId }) {
   };
 
   return (
-    <div className="flex w-full flex-col gap-2" aria-label="모임 메뉴">
+    <div className="flex w-full flex-row gap-2 md:flex-col" aria-label="모임 메뉴">
       <Button
         type="button"
         variant={isActive('challenges') ? 'primary' : 'tertiary'}

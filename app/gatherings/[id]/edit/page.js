@@ -26,7 +26,7 @@ export default async function EditGatheringPage({ params, searchParams }) {
   const { gathering } = details;
 
   return (
-    <section className="flex flex-col gap-4">
+    <section className="flex w-full max-w-xl flex-col gap-4">
       <HeroToast
         error={getSingleSearchParam(query.error)}
         message={getSingleSearchParam(query.message)}

@@ -15,6 +15,7 @@ import { useActionState, useState } from 'react';
 
 import { updateProfileAction } from '@/app/auth-actions';
 import HeroToast from '@/components/HeroToast';
+import ImageFileField from '@/components/ImageFileField';
 import RegionAutocomplete from '@/components/RegionAutocomplete';
 
 const initialActionState = {
@@ -48,6 +49,18 @@ export default function ProfileForm({
         <Label>이메일</Label>
         <Input />
       </TextField>
+
+      <ImageFileField
+        emptyText={
+          initialValues.image
+            ? '새 이미지를 선택하지 않으면 현재 이미지를 유지합니다.'
+            : '선택된 파일 없음'
+        }
+        helpText="선택 사항입니다. JPG, PNG, WebP 형식의 5MB 이하 이미지를 선택해 주세요."
+        id="profile-image"
+        label="프로필 이미지"
+        name="image"
+      />
 
       <TextField fullWidth isRequired name="name">
         <Label>이름</Label>

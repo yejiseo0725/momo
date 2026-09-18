@@ -12,7 +12,7 @@ export default async function NewGatheringPage({ searchParams }) {
   const query = await searchParams;
 
   return (
-    <section className="flex flex-col gap-4">
+    <section className="mx-auto flex w-full max-w-xl flex-col gap-4">
       <HeroToast
         error={getSingleSearchParam(query.error)}
         message={getSingleSearchParam(query.message)}

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
+import { GatheringError } from "@/lib/gatherings";
 import { redirectWithError, redirectWithSuccess } from "@/lib/redirects";
 import { requireSession } from "@/lib/session";
 import {
@@ -60,8 +61,12 @@ export async function createScheduleAction(_previousState, formData) {
   try {
     scheduleId = await createSchedule(gatheringId, session.user.id, input);
   } catch (error) {
+    console.error("[createScheduleAction] 일정 생성 실패:", error);
+    const message = error instanceof ScheduleError || error instanceof GatheringError
+      ? error.message
+      : "일정을 만들지 못했습니다. 잠시 후 다시 시도해 주세요.";
     return {
-      error: error instanceof ScheduleError ? error.message : "일정을 만들지 못했습니다.",
+      error: message,
       message: "",
     };
   }
@@ -89,8 +94,12 @@ export async function updateScheduleAction(_previousState, formData) {
   try {
     await updateSchedule(ids.scheduleId, ids.gatheringId, session.user.id, input);
   } catch (error) {
+    console.error("[updateScheduleAction] 일정 수정 실패:", error);
+    const message = error instanceof ScheduleError || error instanceof GatheringError
+      ? error.message
+      : "일정을 수정하지 못했습니다. 잠시 후 다시 시도해 주세요.";
     return {
-      error: error instanceof ScheduleError ? error.message : "일정을 수정하지 못했습니다.",
+      error: message,
       message: "",
     };
   }
@@ -104,9 +113,13 @@ export async function deleteScheduleAction(formData) {
   try {
     await deleteSchedule(ids.scheduleId, ids.gatheringId, session.user.id);
   } catch (error) {
+    console.error("[deleteScheduleAction] 일정 삭제 실패:", error);
+    const message = error instanceof ScheduleError || error instanceof GatheringError
+      ? error.message
+      : "일정을 삭제하지 못했습니다. 잠시 후 다시 시도해 주세요.";
     redirectWithError(
       `/gatherings/${ids.gatheringId}/schedules/${ids.scheduleId}`,
-      error instanceof ScheduleError ? error.message : "일정을 삭제하지 못했습니다.",
+      message,
     );
   }
   redirectWithSuccess(
@@ -121,8 +134,12 @@ export async function joinScheduleAction(_previousState, formData) {
   try {
     await joinSchedule(ids.scheduleId, ids.gatheringId, session.user.id);
   } catch (error) {
+    console.error("[joinScheduleAction] 일정 참여 실패:", error);
+    const message = error instanceof ScheduleError || error instanceof GatheringError
+      ? error.message
+      : "일정 참여를 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.";
     return {
-      error: error instanceof ScheduleError ? error.message : "일정 참여를 저장하지 못했습니다.",
+      error: message,
       message: "",
     };
   }
@@ -136,8 +153,12 @@ export async function leaveScheduleAction(_previousState, formData) {
   try {
     await leaveSchedule(ids.scheduleId, ids.gatheringId, session.user.id);
   } catch (error) {
+    console.error("[leaveScheduleAction] 일정 참여 취소 실패:", error);
+    const message = error instanceof ScheduleError || error instanceof GatheringError
+      ? error.message
+      : "일정 참여를 취소하지 못했습니다. 잠시 후 다시 시도해 주세요.";
     return {
-      error: error instanceof ScheduleError ? error.message : "일정 참여를 취소하지 못했습니다.",
+      error: message,
       message: "",
     };
   }
