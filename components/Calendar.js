@@ -101,6 +101,7 @@ function CalendarEvent({
   week,
   weekdayIndex,
   showEventLink,
+  onEventClick,
 }) {
   const endDate = event.end || event.start;
   const continuesFromPreviousDay = event.start < dateValue && weekdayIndex > 0;
@@ -124,7 +125,19 @@ function CalendarEvent({
   };
   let content = null;
 
-  if (showTitle && showEventLink && event.url) {
+  if (showTitle && onEventClick) {
+    content = (
+      <button
+        type="button"
+        className={styles.eventTitle}
+        style={titleStyle}
+        title={event.title}
+        onClick={() => onEventClick(event)}
+      >
+        {event.title}
+      </button>
+    );
+  } else if (showTitle && showEventLink && event.url) {
     content = (
       <Link className={styles.eventTitle} href={event.url} style={titleStyle} title={event.title}>
         {event.title}
@@ -148,6 +161,7 @@ export default function Calendar({
   monthNavigationPath,
   dateNavigationPath,
   selectedDate,
+  onEventClick,
 }) {
   const monthValue = normalizeMonth(selectedMonth);
   const [year, month] = monthValue.split("-").map(Number);
@@ -242,6 +256,7 @@ export default function Calendar({
                                   weekdayIndex={weekdayIndex}
                                   key={event.id}
                                   showEventLink={!dateNavigationPath}
+                                  onEventClick={onEventClick}
                                 />
                               ))}
                             </ol>

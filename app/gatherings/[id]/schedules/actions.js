@@ -106,6 +106,7 @@ export async function updateScheduleAction(_previousState, formData) {
       message: "",
     };
   }
+  revalidatePath(`/gatherings/${ids.gatheringId}/schedules`);
   revalidatePath(`/gatherings/${ids.gatheringId}/schedules/${ids.scheduleId}`);
   return { error: "", message: "일정을 수정했습니다." };
 }
@@ -125,6 +126,7 @@ export async function deleteScheduleAction(formData) {
       message,
     );
   }
+  revalidatePath(`/gatherings/${ids.gatheringId}/schedules`);
   redirectWithSuccess(
     `/gatherings/${ids.gatheringId}/schedules`,
     "일정을 삭제했습니다.",

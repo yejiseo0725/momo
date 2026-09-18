@@ -83,6 +83,23 @@ body {
   border-radius: 9999px;
 }
 
+/* ───── 버튼(Button) 규격 단일 표준화 (20px radius, 20px padding) ───── */
+.button,
+[data-slot='button'] {
+  border-radius: var(--radius-medium, 20px);
+  padding-left: 1.25rem; /* 20px */
+  padding-right: 1.25rem; /* 20px */
+  height: 2.5rem; /* 40px */
+  font-size: var(--text-sm, 0.875rem);
+  font-weight: 500;
+}
+
+.button--icon-only,
+[data-slot='button'].button--icon-only {
+  padding-left: 0;
+  padding-right: 0;
+}
+
 /* ───── 채팅 페이지 레이아웃 (전체 스크롤 방지 및 내부 스크롤) ───── */
 html:has([data-chat-page]),
 body:has([data-chat-page]) {

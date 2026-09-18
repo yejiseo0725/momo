@@ -11,12 +11,18 @@ export default function ScheduleDetailModal({
   currentUserId,
   gatheringId,
   schedule,
+  isOpen: controlledIsOpen,
+  onOpenChange: controlledOnOpenChange,
+  trigger,
 }) {
   const router = useRouter();
-  const [isOpen, setIsOpen] = useState(false);
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
-  const isAuthor = currentUserId && schedule.userId === currentUserId;
+  const isControlled = typeof controlledIsOpen === 'boolean';
+  const isOpen = isControlled ? controlledIsOpen : internalIsOpen;
+
+  const isAuthor = currentUserId && schedule?.userId === currentUserId;
 
   function handleEditSuccess() {
     setIsEditing(false);
@@ -24,22 +30,41 @@ export default function ScheduleDetailModal({
   }
 
   function handleClose() {
-    setIsOpen(false);
     setIsEditing(false);
+    if (isControlled) {
+      controlledOnOpenChange?.(false);
+    } else {
+      setInternalIsOpen(false);
+    }
   }
+
+  if (!schedule) return null;
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => {
-          setIsEditing(false);
-          setIsOpen(true);
-        }}
-        className="text-left font-bold text-foreground hover:text-primary transition-colors cursor-pointer"
-      >
-        {schedule.title}
-      </button>
+      {!isControlled && (
+        trigger ? (
+          <div
+            onClick={() => {
+              setIsEditing(false);
+              setInternalIsOpen(true);
+            }}
+          >
+            {trigger}
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => {
+              setIsEditing(false);
+              setInternalIsOpen(true);
+            }}
+            className="text-left font-bold text-foreground hover:text-primary transition-colors cursor-pointer"
+          >
+            {schedule.title}
+          </button>
+        )
+      )}
 
       <Modal isOpen={isOpen} onOpenChange={handleClose}>
         <Modal.Backdrop>

@@ -112,3 +112,26 @@
 - **제목 오버랩**: 카드 본문에 `-mt-8 z-10`으로 이미지 위 자연스럽게 올라탐, `font-bold` 적용
 - **개설자 표시**: `BrightCrownIcon` (`text-warning size-4`) + 이름 (`font-medium text-foreground/80`)
 - **본문 구조**: `gap-3 px-4 pb-4`
+
+---
+
+## 8. 버튼(Button) 규격 ✳️ (단일 표준 통합)
+
+모든 버튼(HeroUI `<Button>` 컴포넌트 및 `<Link className="button ...">` 링크 버튼)은 단일 통합 규격을 따릅니다.
+
+### 8-1. 표준 규격
+- **높이**: `h-10` (40px)
+- **좌우 패딩**: `px-5` (1.25rem = 20px) — 20px 패딩으로 통일
+- **모서리 곡률 (Border Radius)**: `--radius-medium` (20px, `rounded-[20px]`)
+- **타이포그래피**: `text-sm font-medium` (14px, medium)
+- **아이콘 버튼 예외**: `isIconOnly` / `button--icon-only` 적용 시 패딩 0 (`p-0 w-10 h-10`)
+
+### 8-2. 색상 변형 (Variants)
+- **`primary`** (`button--primary` / `variant="primary"`): 주요 액션 (파란색 배경 `bg-primary text-white`)
+- **`outline`** (`button--outline` / `variant="outline"`): 보조 액션 (테두리 `border border-border text-foreground`)
+- **`ghost`** (`button--ghost` / `variant="ghost"`): 내비게이션, 헤더 링크 (`bg-transparent text-foreground hover:bg-default`)
+- **`danger`** (`button--danger` / `variant="danger"`): 삭제, 나가기 등 위험 액션 (`bg-warning text-white`)
+- **`danger-soft`** (`button--danger-soft` / `variant="danger-soft"`): 부드러운 위험 액션 (`bg-warning/10 text-warning`)
+
+### 8-3. 카드 및 목록 내 액션 버튼 배치
+- 카드 푸터(`Card.Footer`) 내의 "자세히 보기" 등 단독 액션 버튼은 `flex justify-end`를 사용하여 우측 정렬하고, 불필요하게 어긋나지 않도록 표준 버튼 규격(`px-5`, `h-10`, `rounded-medium`)을 적용합니다.

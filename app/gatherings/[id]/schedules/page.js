@@ -43,6 +43,7 @@ export default async function SchedulesPage({ params, searchParams }) {
       <section>
         <h2 className="sr-only">일정 달력</h2>
         <ScheduleCalendar
+          currentUserId={session.user.id}
           gatheringId={id}
           schedules={schedules}
           selectedMonth={selectedMonth}
