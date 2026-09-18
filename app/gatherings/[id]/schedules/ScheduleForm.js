@@ -1,40 +1,52 @@
-"use client";
-
-import {
-  Button,
-  Form,
-  Input,
-  Label,
-  TextArea,
-  TextField,
-} from "@heroui/react";
-import { useActionState, useState } from "react";
+'use client';
 
 import {
   createScheduleAction,
   updateScheduleAction,
-} from "@/app/gatherings/[id]/schedules/actions";
-import ToastMessage from "@/components/ToastMessage";
+} from '@/app/gatherings/[id]/schedules/actions';
+import { Button, Form, Input, Label, TextArea, TextField } from '@heroui/react';
+import { useActionState, useEffect, useState } from 'react';
+
+import DateRangeField from '@/components/DateRangeField';
+import HeroToast from '@/components/HeroToast';
+import PlusIcon from '@/components/PlusIcon';
 
 const initialActionState = {
-  error: "",
-  message: "",
+  error: '',
+  message: '',
 };
 
-export default function ScheduleForm({ gatheringId, initialValues, mode, scheduleId }) {
-  const action = mode === "create" ? createScheduleAction : updateScheduleAction;
-  const [state, formAction, pending] = useActionState(action, initialActionState);
+export default function ScheduleForm({
+  gatheringId,
+  initialValues,
+  mode,
+  onSuccess,
+  scheduleId,
+}) {
+  const action =
+    mode === 'create' ? createScheduleAction : updateScheduleAction;
+  const [state, formAction, pending] = useActionState(
+    action,
+    initialActionState,
+  );
   const [title, setTitle] = useState(initialValues.title);
   const [description, setDescription] = useState(initialValues.description);
-  const [startDate, setStartDate] = useState(initialValues.startDate);
-  const [endDate, setEndDate] = useState(initialValues.endDate);
   const [location, setLocation] = useState(initialValues.location);
-  const idPrefix = mode === "create" ? "new-schedule" : `schedule-${scheduleId}`;
+  const idPrefix =
+    mode === 'create' ? 'new-schedule' : `schedule-${scheduleId}`;
+
+  useEffect(() => {
+    if (state.message) {
+      onSuccess?.();
+    }
+  }, [onSuccess, state.message]);
 
   return (
     <Form className="flex w-full flex-col gap-4" action={formAction}>
       <input type="hidden" name="gatheringId" value={gatheringId} />
-      {scheduleId ? <input type="hidden" name="scheduleId" value={scheduleId} /> : null}
+      {scheduleId ? (
+        <input type="hidden" name="scheduleId" value={scheduleId} />
+      ) : null}
 
       <TextField fullWidth isRequired name="title">
         <Label>제목</Label>
@@ -56,23 +68,10 @@ export default function ScheduleForm({ gatheringId, initialValues, mode, schedul
         />
       </TextField>
 
-      <TextField fullWidth isRequired name="startDate" type="date">
-        <Label>시작일</Label>
-        <Input
-          id={`${idPrefix}-start`}
-          value={startDate}
-          onChange={(event) => setStartDate(event.target.value)}
-        />
-      </TextField>
-
-      <TextField fullWidth isRequired name="endDate" type="date">
-        <Label>종료일</Label>
-        <Input
-          id={`${idPrefix}-end`}
-          value={endDate}
-          onChange={(event) => setEndDate(event.target.value)}
-        />
-      </TextField>
+      <DateRangeField
+        endDate={initialValues.endDate}
+        startDate={initialValues.startDate}
+      />
 
       <TextField fullWidth isRequired name="location">
         <Label>장소</Label>
@@ -85,11 +84,16 @@ export default function ScheduleForm({ gatheringId, initialValues, mode, schedul
       </TextField>
 
       <Button type="submit" isDisabled={pending} isPending={pending}>
+        {mode === 'create' ? <PlusIcon /> : null}
         {pending
-          ? (mode === "create" ? "만드는 중..." : "저장하는 중...")
-          : (mode === "create" ? "일정 만들기" : "수정 저장")}
+          ? mode === 'create'
+            ? '만드는 중...'
+            : '저장하는 중...'
+          : mode === 'create'
+            ? '일정 만들기'
+            : '수정 저장'}
       </Button>
-      <ToastMessage error={state.error} message={state.message} trigger={state} />
+      <HeroToast error={state.error} message={state.message} trigger={state} />
     </Form>
   );
 }

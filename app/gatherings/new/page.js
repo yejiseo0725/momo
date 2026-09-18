@@ -1,10 +1,10 @@
-import { Typography } from "@heroui/react";
-import { connection } from "next/server";
+import { Typography } from '@heroui/react';
+import { connection } from 'next/server';
 
-import GatheringForm from "@/app/gatherings/GatheringForm";
-import ToastMessage from "@/components/ToastMessage";
-import { requireSession } from "@/lib/session";
-import { CATEGORIES, getSingleSearchParam } from "@/lib/utils/validation";
+import GatheringForm from '@/app/gatherings/GatheringForm';
+import HeroToast from '@/components/HeroToast';
+import { requireSession } from '@/lib/session';
+import { CATEGORIES, getSingleSearchParam } from '@/lib/utils/validation';
 
 export default async function NewGatheringPage({ searchParams }) {
   await connection();
@@ -13,7 +13,7 @@ export default async function NewGatheringPage({ searchParams }) {
 
   return (
     <section className="flex flex-col gap-4">
-      <ToastMessage
+      <HeroToast
         error={getSingleSearchParam(query.error)}
         message={getSingleSearchParam(query.message)}
       />
@@ -21,14 +21,14 @@ export default async function NewGatheringPage({ searchParams }) {
       <GatheringForm
         categories={CATEGORIES}
         initialValues={{
-          name: "",
-          region: "",
-          regionName: "",
-          description: "",
+          name: '',
+          region: '',
+          regionName: '',
+          description: '',
           imageUrl: null,
-          maxMemCount: "",
-          category: "",
-          visibility: "public",
+          maxMemCount: '',
+          category: '',
+          visibility: 'public',
         }}
         mode="create"
       />

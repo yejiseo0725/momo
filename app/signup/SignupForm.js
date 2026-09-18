@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Button,
@@ -11,25 +11,28 @@ import {
   Radio,
   RadioGroup,
   TextField,
-} from "@heroui/react";
-import { useActionState, useState } from "react";
+} from '@heroui/react';
+import { useActionState, useState } from 'react';
 
-import { signupAction } from "@/app/auth-actions";
-import RegionAutocomplete from "@/components/RegionAutocomplete";
-import ToastMessage from "@/components/ToastMessage";
+import { signupAction } from '@/app/auth-actions';
+import HeroToast from '@/components/HeroToast';
+import RegionAutocomplete from '@/components/RegionAutocomplete';
 
 const initialActionState = {
-  error: "",
-  message: "",
+  error: '',
+  message: '',
 };
 
 export default function SignupForm({ categories }) {
-  const [state, formAction, pending] = useActionState(signupAction, initialActionState);
-  const [name, setName] = useState("");
-  const [gender, setGender] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [nickname, setNickname] = useState("");
+  const [state, formAction, pending] = useActionState(
+    signupAction,
+    initialActionState,
+  );
+  const [name, setName] = useState('');
+  const [gender, setGender] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [nickname, setNickname] = useState('');
   const [selectedCategories, setSelectedCategories] = useState([]);
 
   return (
@@ -38,7 +41,7 @@ export default function SignupForm({ categories }) {
       action={formAction}
       onReset={(event) => event.preventDefault()}
     >
-      <ToastMessage error={state.error} trigger={state} />
+      <HeroToast error={state.error} trigger={state} />
 
       <TextField fullWidth isRequired name="name">
         <Label>이름</Label>
@@ -51,10 +54,12 @@ export default function SignupForm({ categories }) {
 
       <RadioGroup isRequired name="gender" value={gender} onChange={setGender}>
         <Label>성별</Label>
-        {["남성", "여성"].map((genderOption) => (
+        {['남성', '여성'].map((genderOption) => (
           <Radio key={genderOption} value={genderOption}>
             <Radio.Content>
-              <Radio.Control><Radio.Indicator /></Radio.Control>
+              <Radio.Control>
+                <Radio.Indicator />
+              </Radio.Control>
               {genderOption}
             </Radio.Content>
           </Radio>
@@ -100,7 +105,9 @@ export default function SignupForm({ categories }) {
         {categories.map((category) => (
           <Checkbox key={category} value={category}>
             <Checkbox.Content>
-              <Checkbox.Control><Checkbox.Indicator /></Checkbox.Control>
+              <Checkbox.Control>
+                <Checkbox.Indicator />
+              </Checkbox.Control>
               {category}
             </Checkbox.Content>
           </Checkbox>
@@ -115,7 +122,7 @@ export default function SignupForm({ categories }) {
       />
 
       <Button type="submit" isDisabled={pending} isPending={pending}>
-        {pending ? "가입하는 중..." : "가입하기"}
+        {pending ? '가입하는 중...' : '가입하기'}
       </Button>
     </Form>
   );

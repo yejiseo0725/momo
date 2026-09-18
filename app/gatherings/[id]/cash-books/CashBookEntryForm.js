@@ -1,5 +1,9 @@
-"use client";
+'use client';
 
+import {
+  createCashBookEntryAction,
+  updateCashBookEntryAction,
+} from '@/app/gatherings/[id]/cash-books/actions';
 import {
   Button,
   Form,
@@ -9,30 +13,42 @@ import {
   Select,
   TextArea,
   TextField,
-} from "@heroui/react";
-import { useActionState, useState } from "react";
+} from '@heroui/react';
+import { useActionState, useEffect, useState } from 'react';
 
-import {
-  createCashBookEntryAction,
-  updateCashBookEntryAction,
-} from "@/app/gatherings/[id]/cash-books/actions";
-import CashBookAmountInput from "@/app/gatherings/[id]/cash-books/CashBookAmountInput";
-import ToastMessage from "@/components/ToastMessage";
+import CashBookAmountInput from '@/app/gatherings/[id]/cash-books/CashBookAmountInput';
+import HeroToast from '@/components/HeroToast';
 
 const initialActionState = {
-  error: "",
-  message: "",
+  error: '',
+  message: '',
 };
 
-export default function CashBookEntryForm({ entryId, gatheringId, initialValues, mode }) {
-  const action = mode === "create" ? createCashBookEntryAction : updateCashBookEntryAction;
-  const [state, formAction, pending] = useActionState(action, initialActionState);
+export default function CashBookEntryForm({
+  entryId,
+  gatheringId,
+  initialValues,
+  mode,
+  onSuccess,
+}) {
+  const action =
+    mode === 'create' ? createCashBookEntryAction : updateCashBookEntryAction;
+  const [state, formAction, pending] = useActionState(
+    action,
+    initialActionState,
+  );
   const [type, setType] = useState(initialValues.type);
   const [title, setTitle] = useState(initialValues.title);
   const [amount, setAmount] = useState(String(initialValues.amount));
   const [date, setDate] = useState(initialValues.date);
   const [memo, setMemo] = useState(initialValues.memo);
-  const idPrefix = mode === "create" ? "new-cash-book" : `cash-book-${entryId}`;
+  const idPrefix = mode === 'create' ? 'new-cash-book' : `cash-book-${entryId}`;
+
+  useEffect(() => {
+    if (state.message) {
+      onSuccess?.();
+    }
+  }, [onSuccess, state.message]);
 
   return (
     <Form className="flex w-full flex-col gap-4" action={formAction}>
@@ -53,8 +69,12 @@ export default function CashBookEntryForm({ entryId, gatheringId, initialValues,
         </Select.Trigger>
         <Select.Popover>
           <ListBox>
-            <ListBox.Item id="INCOME" textValue="수입">수입</ListBox.Item>
-            <ListBox.Item id="SPENDING" textValue="지출">지출</ListBox.Item>
+            <ListBox.Item id="INCOME" textValue="수입">
+              수입
+            </ListBox.Item>
+            <ListBox.Item id="SPENDING" textValue="지출">
+              지출
+            </ListBox.Item>
           </ListBox>
         </Select.Popover>
       </Select>
@@ -99,10 +119,14 @@ export default function CashBookEntryForm({ entryId, gatheringId, initialValues,
 
       <Button type="submit" isDisabled={pending} isPending={pending}>
         {pending
-          ? (mode === "create" ? "저장하는 중..." : "수정하는 중...")
-          : (mode === "create" ? "내역 저장" : "저장")}
+          ? mode === 'create'
+            ? '저장하는 중...'
+            : '수정하는 중...'
+          : mode === 'create'
+            ? '내역 저장'
+            : '저장'}
       </Button>
-      <ToastMessage error={state.error} message={state.message} trigger={state} />
+      <HeroToast error={state.error} message={state.message} trigger={state} />
     </Form>
   );
 }

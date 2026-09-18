@@ -3,7 +3,7 @@
 import { toast } from "@heroui/react";
 import { useEffect, useRef } from "react";
 
-export default function ToastMessage({ error, message, trigger }) {
+export default function HeroToast({ error, message, trigger }) {
   const lastToast = useRef({ key: "", trigger: null });
 
   useEffect(() => {

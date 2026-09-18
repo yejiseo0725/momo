@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { Button, Form } from "@heroui/react";
-import { useActionState } from "react";
+import { Button, Form } from '@heroui/react';
+import { useActionState } from 'react';
 
-import ToastMessage from "@/components/ToastMessage";
+import HeroToast from '@/components/HeroToast';
 
 const initialActionState = {
-  error: "",
-  message: "",
+  error: '',
+  message: '',
 };
 
 export default function ActionButtonForm({
@@ -16,9 +16,12 @@ export default function ActionButtonForm({
   fields,
   label,
   pendingLabel,
-  variant = "primary",
+  variant = 'primary',
 }) {
-  const [state, formAction, pending] = useActionState(action, initialActionState);
+  const [state, formAction, pending] = useActionState(
+    action,
+    initialActionState,
+  );
 
   return (
     <Form action={formAction}>
@@ -33,7 +36,7 @@ export default function ActionButtonForm({
       >
         {pending ? pendingLabel : label}
       </Button>
-      <ToastMessage error={state.error} message={state.message} trigger={state} />
+      <HeroToast error={state.error} message={state.message} trigger={state} />
     </Form>
   );
 }

@@ -1,19 +1,19 @@
-import { Button, Card, Disclosure, Typography } from "@heroui/react";
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import { connection } from "next/server";
+import { Button, Card, Disclosure, Typography } from '@heroui/react';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { connection } from 'next/server';
 
 import {
   deleteScheduleAction,
   joinScheduleAction,
   leaveScheduleAction,
-} from "@/app/gatherings/[id]/schedules/actions";
-import ScheduleForm from "@/app/gatherings/[id]/schedules/ScheduleForm";
-import ActionButtonForm from "@/components/ActionButtonForm";
-import ToastMessage from "@/components/ToastMessage";
-import { getScheduleDetails } from "@/lib/schedules";
-import { requireSession } from "@/lib/session";
-import { getSingleSearchParam } from "@/lib/utils/validation";
+} from '@/app/gatherings/[id]/schedules/actions';
+import ScheduleForm from '@/app/gatherings/[id]/schedules/ScheduleForm';
+import ActionButtonForm from '@/components/ActionButtonForm';
+import HeroToast from '@/components/HeroToast';
+import { getScheduleDetails } from '@/lib/schedules';
+import { requireSession } from '@/lib/session';
+import { getSingleSearchParam } from '@/lib/utils/validation';
 
 export default async function ScheduleDetailsPage({ params, searchParams }) {
   await connection();
@@ -32,19 +32,28 @@ export default async function ScheduleDetailsPage({ params, searchParams }) {
   return (
     <>
       <section className="flex flex-col gap-4">
-        <p><Link className="link" href={`/gatherings/${id}/schedules`}>← 일정 달력</Link></p>
+        <p>
+          <Link className="link" href={`/gatherings/${id}/schedules`}>
+            ← 일정 달력
+          </Link>
+        </p>
         <Typography type="h1">{schedule.title}</Typography>
         <p>{schedule.description}</p>
         <Card>
           <Card.Content>
             <dl className="grid gap-3 sm:grid-cols-[6rem_1fr]">
-              <dt className="font-medium">기간</dt><dd>{schedule.startDate} – {schedule.endDate}</dd>
-              <dt className="font-medium">장소</dt><dd>{schedule.location}</dd>
-              <dt className="font-medium">작성자</dt><dd>{schedule.authorName}</dd>
+              <dt className="font-medium">기간</dt>
+              <dd>
+                {schedule.startDate} – {schedule.endDate}
+              </dd>
+              <dt className="font-medium">장소</dt>
+              <dd>{schedule.location}</dd>
+              <dt className="font-medium">작성자</dt>
+              <dd>{schedule.authorName}</dd>
             </dl>
           </Card.Content>
         </Card>
-        <ToastMessage
+        <HeroToast
           error={getSingleSearchParam(query.error)}
           message={getSingleSearchParam(query.message)}
         />
@@ -71,7 +80,11 @@ export default async function ScheduleDetailsPage({ params, searchParams }) {
 
       <section className="flex flex-col gap-4">
         <Typography type="h2">참여 멤버 {participants.length}명</Typography>
-        <ul>{participants.map((participant) => <li key={participant.id}>{participant.displayName}</li>)}</ul>
+        <ul>
+          {participants.map((participant) => (
+            <li key={participant.id}>{participant.displayName}</li>
+          ))}
+        </ul>
       </section>
 
       {isAuthor ? (
@@ -101,7 +114,9 @@ export default async function ScheduleDetailsPage({ params, searchParams }) {
           <form action={deleteScheduleAction}>
             <input type="hidden" name="gatheringId" value={id} />
             <input type="hidden" name="scheduleId" value={scheduleId} />
-            <Button type="submit" variant="danger">일정 삭제</Button>
+            <Button type="submit" variant="danger">
+              일정 삭제
+            </Button>
           </form>
         </section>
       ) : null}

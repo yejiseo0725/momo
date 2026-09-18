@@ -1,20 +1,23 @@
-"use client";
+'use client';
 
-import { Button, Form, Input, Label, TextField } from "@heroui/react";
-import { useActionState, useState } from "react";
+import { Button, Form, Input, Label, TextField } from '@heroui/react';
+import { useActionState, useState } from 'react';
 
-import { loginAction } from "@/app/auth-actions";
-import ToastMessage from "@/components/ToastMessage";
+import { loginAction } from '@/app/auth-actions';
+import HeroToast from '@/components/HeroToast';
 
 const initialActionState = {
-  error: "",
-  message: "",
+  error: '',
+  message: '',
 };
 
 export default function LoginForm({ nextPath }) {
-  const [state, formAction, pending] = useActionState(loginAction, initialActionState);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [state, formAction, pending] = useActionState(
+    loginAction,
+    initialActionState,
+  );
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   return (
     <Form className="flex w-full max-w-xl flex-col gap-4" action={formAction}>
@@ -41,9 +44,9 @@ export default function LoginForm({ nextPath }) {
       </TextField>
 
       <Button type="submit" isDisabled={pending} isPending={pending}>
-        {pending ? "로그인 중..." : "로그인"}
+        {pending ? '로그인 중...' : '로그인'}
       </Button>
-      <ToastMessage error={state.error} message={state.message} trigger={state} />
+      <HeroToast error={state.error} message={state.message} trigger={state} />
     </Form>
   );
 }

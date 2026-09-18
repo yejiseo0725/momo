@@ -1,22 +1,15 @@
-"use client";
+'use client';
 
-import {
-  Button,
-  Form,
-  Input,
-  Label,
-  TextArea,
-  TextField,
-} from "@heroui/react";
-import { useActionState, useEffect, useRef, useState } from "react";
+import { Button, Form, Input, Label, TextArea, TextField } from '@heroui/react';
+import { useActionState, useEffect, useRef, useState } from 'react';
 
-import { createChallengeFeedAction } from "@/app/gatherings/[id]/challenges/actions";
-import ImageFileField from "@/components/ImageFileField";
-import ToastMessage from "@/components/ToastMessage";
+import { createChallengeFeedAction } from '@/app/gatherings/[id]/challenges/actions';
+import HeroToast from '@/components/HeroToast';
+import ImageFileField from '@/components/ImageFileField';
 
 const initialActionState = {
-  error: "",
-  message: "",
+  error: '',
+  message: '',
   resetKey: 0,
 };
 
@@ -26,9 +19,10 @@ function ChallengeFeedFields({
   imageRequired,
   maximumDate,
   minimumDate,
+  onSuccess,
 }) {
   const [doneDate, setDoneDate] = useState(defaultDate);
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState('');
 
   return (
     <>
@@ -73,6 +67,7 @@ export default function ChallengeFeedForm({
   imageRequired,
   maximumDate,
   minimumDate,
+  onSuccess,
 }) {
   const [state, formAction, pending] = useActionState(
     createChallengeFeedAction,
@@ -85,18 +80,15 @@ export default function ChallengeFeedForm({
       return;
     }
 
-    const disclosureElement = formRef.current?.closest('[data-slot="disclosure"]');
-    const disclosureTrigger = disclosureElement?.querySelector(
-      '[data-slot="disclosure-trigger"]',
-    );
-
-    if (disclosureTrigger?.getAttribute("aria-expanded") === "true") {
-      disclosureTrigger.click();
-    }
-  }, [state.resetKey]);
+    onSuccess?.();
+  }, [onSuccess, state.resetKey]);
 
   return (
-    <Form ref={formRef} className="flex w-full flex-col gap-4" action={formAction}>
+    <Form
+      ref={formRef}
+      className="flex w-full flex-col gap-4"
+      action={formAction}
+    >
       <input type="hidden" name="gatheringId" value={gatheringId} />
       <input type="hidden" name="challengeId" value={challengeId} />
 
@@ -110,9 +102,9 @@ export default function ChallengeFeedForm({
       />
 
       <Button type="submit" isDisabled={pending} isPending={pending}>
-        {pending ? "등록하는 중..." : "인증 남기기"}
+        {pending ? '등록하는 중...' : '인증 남기기'}
       </Button>
-      <ToastMessage error={state.error} message={state.message} trigger={state} />
+      <HeroToast error={state.error} message={state.message} trigger={state} />
     </Form>
   );
 }

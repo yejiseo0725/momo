@@ -1,13 +1,13 @@
-import { Typography } from "@heroui/react";
-import { notFound } from "next/navigation";
-import { connection } from "next/server";
+import { Typography } from '@heroui/react';
+import { notFound } from 'next/navigation';
+import { connection } from 'next/server';
 
-import GatheringForm from "@/app/gatherings/GatheringForm";
-import ToastMessage from "@/components/ToastMessage";
-import { getGatheringDetails } from "@/lib/gatherings";
-import { redirectWithError } from "@/lib/redirects";
-import { requireSession } from "@/lib/session";
-import { CATEGORIES, getSingleSearchParam } from "@/lib/utils/validation";
+import GatheringForm from '@/app/gatherings/GatheringForm';
+import HeroToast from '@/components/HeroToast';
+import { getGatheringDetails } from '@/lib/gatherings';
+import { redirectWithError } from '@/lib/redirects';
+import { requireSession } from '@/lib/session';
+import { CATEGORIES, getSingleSearchParam } from '@/lib/utils/validation';
 
 export default async function EditGatheringPage({ params, searchParams }) {
   await connection();
@@ -19,15 +19,15 @@ export default async function EditGatheringPage({ params, searchParams }) {
   if (!details) {
     notFound();
   }
-  if (details.membership?.role !== "LEADER") {
-    redirectWithError(`/gatherings/${id}`, "모임장만 수정할 수 있습니다.");
+  if (details.membership?.role !== 'LEADER') {
+    redirectWithError(`/gatherings/${id}`, '모임장만 수정할 수 있습니다.');
   }
 
   const { gathering } = details;
 
   return (
     <section className="flex flex-col gap-4">
-      <ToastMessage
+      <HeroToast
         error={getSingleSearchParam(query.error)}
         message={getSingleSearchParam(query.message)}
       />
@@ -43,7 +43,7 @@ export default async function EditGatheringPage({ params, searchParams }) {
           imageUrl: gathering.imageUrl || null,
           maxMemCount: gathering.maxMemCount,
           category: gathering.category,
-          visibility: gathering.isPublic ? "public" : "private",
+          visibility: gathering.isPublic ? 'public' : 'private',
         }}
         minimumMemberCount={Math.max(1, gathering.memberCount)}
         mode="edit"
