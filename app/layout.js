@@ -31,15 +31,25 @@ async function SiteNavigation() {
       className="flex flex-wrap items-center justify-between gap-3"
       aria-label="주요 메뉴"
     >
-      <Link className="flex items-center" href="/" aria-label="MoMo 홈으로 이동">
+      <Link
+        className="flex items-center gap-2"
+        href="/"
+        aria-label="MoMo 홈으로 이동"
+      >
         <Image
           src="/symbol.png"
           alt="MoMo"
           width={36}
           height={36}
-          className="h-9 w-9 object-contain"
+          className="h-9 w-9 shrink-0 object-contain"
           priority
         />
+        <div className="flex flex-wrap items-baseline gap-1.5">
+          <span className="font-bold text-foreground">모모 - 모두의 모임</span>
+          <span className="text-sm font-normal text-foreground/60">
+            모임을 관리해보세요
+          </span>
+        </div>
       </Link>
 
       {session ? (

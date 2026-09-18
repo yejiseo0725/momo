@@ -14,6 +14,7 @@ import { useEffect, useRef, useState } from 'react';
 import { sendChatMessageAction } from '@/app/gatherings/[id]/chat/actions';
 import EmptyState from '@/components/EmptyState';
 import HeroToast from '@/components/HeroToast';
+import UserInfo from '@/components/UserInfo';
 import { io } from 'socket.io-client';
 
 const dateTimeFormatter = new Intl.DateTimeFormat('ko-KR', {
@@ -298,9 +299,13 @@ export default function ChatRoom({
                   className={isMine ? 'bg-primary text-white' : 'bg-white'}
                 >
                   <Card.Header>
-                    <div className="flex flex-wrap items-center gap-3">
-                      <strong>{message.authorName}</strong>
-                      <small className={isMine ? 'text-white/70' : ''}>
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <UserInfo
+                        name={message.authorName}
+                        image={message.authorImage}
+                        className={isMine ? 'text-white' : ''}
+                      />
+                      <small className={isMine ? 'text-white/70' : 'text-muted'}>
                         {dateTimeFormatter.format(new Date(message.createdAt))}
                       </small>
                     </div>

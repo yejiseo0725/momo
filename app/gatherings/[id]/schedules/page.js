@@ -4,6 +4,7 @@ import ScheduleCalendar from '@/app/gatherings/[id]/schedules/ScheduleCalendar';
 import ScheduleCreateModal from '@/app/gatherings/[id]/schedules/ScheduleCreateModal';
 import ScheduleDetailModal from '@/app/gatherings/[id]/schedules/ScheduleDetailModal';
 import HeroToast from '@/components/HeroToast';
+import UserInfo from '@/components/UserInfo';
 import { getSchedules } from '@/lib/schedules';
 import { requireSession } from '@/lib/session';
 import { normalizeMonth } from '@/lib/utils/calendar';
@@ -66,7 +67,7 @@ export default async function SchedulesPage({ params, searchParams }) {
                     />
                   </Card.Title>
                   <Card.Description>
-                    작성자 {schedule.authorName}
+                    <UserInfo label="작성자" name={schedule.authorName} image={schedule.authorImage} />
                   </Card.Description>
                 </Card.Header>
                 <Card.Content>

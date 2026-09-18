@@ -6,6 +6,7 @@ import { useState } from 'react';
 
 import ScheduleForm from '@/app/gatherings/[id]/schedules/ScheduleForm';
 import { deleteScheduleAction } from '@/app/gatherings/[id]/schedules/actions';
+import UserInfo from '@/components/UserInfo';
 
 export default function ScheduleDetailModal({
   currentUserId,
@@ -129,7 +130,7 @@ export default function ScheduleDetailModal({
                         <Typography color="muted" type="body-sm" weight="medium">
                           작성자
                         </Typography>
-                        <p>{schedule.authorName}</p>
+                        <UserInfo name={schedule.authorName} image={schedule.authorImage} />
                       </div>
                     ) : null}
 
@@ -142,28 +143,22 @@ export default function ScheduleDetailModal({
                   </div>
                 )}
               </Modal.Body>
-              <Modal.Footer>
-                {isEditing ? (
-                  <Button variant="outline" onPress={() => setIsEditing(false)}>
-                    취소
-                  </Button>
-                ) : (
-                  <div className="flex w-full items-center justify-between gap-2">
-                    {isAuthor ? (
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        onPress={() => setIsEditing(true)}
-                      >
-                        일정 수정
-                      </Button>
-                    ) : <span />}
-                    <Button variant="outline" onPress={handleClose}>
-                      닫기
+              {isAuthor || isEditing ? (
+                <Modal.Footer>
+                  {isEditing ? (
+                    <Button variant="outline" onPress={() => setIsEditing(false)}>
+                      취소
                     </Button>
-                  </div>
-                )}
-              </Modal.Footer>
+                  ) : (
+                    <Button
+                      type="button"
+                      onPress={() => setIsEditing(true)}
+                    >
+                      일정 수정
+                    </Button>
+                  )}
+                </Modal.Footer>
+              ) : null}
             </Modal.Dialog>
           </Modal.Container>
         </Modal.Backdrop>

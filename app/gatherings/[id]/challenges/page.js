@@ -5,6 +5,7 @@ import { connection } from 'next/server';
 import ChallengeCreateModal from '@/app/gatherings/[id]/challenges/ChallengeCreateModal';
 import EmptyState from '@/components/EmptyState';
 import HeroToast from '@/components/HeroToast';
+import UserInfo from '@/components/UserInfo';
 import { getChallenges } from '@/lib/challenges';
 import { requireSession } from '@/lib/session';
 import { getSingleSearchParam } from '@/lib/utils/validation';
@@ -48,8 +49,8 @@ export default async function ChallengesPage({ params, searchParams }) {
                   {challenge.title}
                 </Link>
               </Card.Title>
-              <div className="flex flex-wrap gap-2">
-                <Chip size="md">작성자 {challenge.authorName}</Chip>
+              <div className="flex flex-wrap items-center gap-2">
+                <UserInfo label="작성자" name={challenge.authorName} image={challenge.authorImage} />
                 <Chip size="md">
                   이미지 {challenge.useImage ? '필수' : '선택'}
                 </Chip>

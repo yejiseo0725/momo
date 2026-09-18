@@ -3,6 +3,7 @@ import { Card, Chip, Surface, Typography } from '@heroui/react';
 import CashBookCalendar from '@/app/gatherings/[id]/cash-books/CashBookCalendar';
 import CashBookEntryModal from '@/app/gatherings/[id]/cash-books/CashBookEntryModal';
 import HeroToast from '@/components/HeroToast';
+import UserInfo from '@/components/UserInfo';
 import { getCashBookEntries } from '@/lib/cash-books';
 import { requireSession } from '@/lib/session';
 import { normalizeMonth } from '@/lib/utils/calendar';
@@ -99,7 +100,9 @@ export default async function CashBooksPage({ params, searchParams }) {
               <Card key={entry.id}>
                 <Card.Header>
                   <Card.Title>{entry.title}</Card.Title>
-                  <Card.Description>작성자 {entry.authorName}</Card.Description>
+                  <Card.Description>
+                    <UserInfo label="작성자" name={entry.authorName} image={entry.authorImage} />
+                  </Card.Description>
                 </Card.Header>
                 <Card.Content className="flex flex-col gap-3">
                   <Chip color={entry.type === 'INCOME' ? 'success' : 'danger'}>

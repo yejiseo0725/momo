@@ -7,6 +7,7 @@ import { connection } from 'next/server';
 import ChallengeEditModal from '@/app/gatherings/[id]/challenges/ChallengeEditModal';
 import ChallengeFeedModal from '@/app/gatherings/[id]/challenges/ChallengeFeedModal';
 import HeroToast from '@/components/HeroToast';
+import UserInfo from '@/components/UserInfo';
 import { getChallengeDetails } from '@/lib/challenges';
 import { requireSession } from '@/lib/session';
 import { getTodayDateOnly } from '@/lib/utils/documents';
@@ -77,7 +78,9 @@ export default async function ChallengeDetailsPage({ params, searchParams }) {
                 </Chip>
               </dd>
               <dt className="font-medium">작성자</dt>
-              <dd>{challenge.authorName}</dd>
+              <dd>
+                <UserInfo name={challenge.authorName} image={challenge.authorImage} />
+              </dd>
               <dt className="font-medium">인증 현황</dt>
               <dd>총 {feeds.length}회 인증됨</dd>
             </dl>
@@ -99,9 +102,7 @@ export default async function ChallengeDetailsPage({ params, searchParams }) {
                 className="flex flex-col gap-2 rounded-large border border-border bg-surface p-4"
               >
                 <div className="flex items-center justify-between text-sm text-foreground/80">
-                  <strong className="font-medium text-foreground">
-                    {feed.authorName}
-                  </strong>
+                  <UserInfo name={feed.authorName} image={feed.authorImage} />
                   <time dateTime={feed.doneDate}>{feed.doneDate}</time>
                 </div>
                 <p>{feed.description}</p>
