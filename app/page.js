@@ -94,11 +94,13 @@ export default async function HomePage({ searchParams }) {
   return (
     <>
       {redirectToast}
-      <section className="flex flex-col gap-2">
+      <section className="flex flex-col gap-2 rounded-[28px] border border-border bg-surface p-6">
         <Typography type="h1">
           {session.user.nickname || session.user.name}님, 반가워요.
         </Typography>
-        <p>오늘도 함께할 모임의 소식을 확인해 보세요.</p>
+        <p className="text-sm text-foreground/70">
+          오늘도 함께할 모임의 소식을 확인해 보세요.
+        </p>
       </section>
 
       {databaseError ? (

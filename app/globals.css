@@ -83,6 +83,14 @@ body {
   border-radius: 9999px;
 }
 
+/* ───── 폼 라벨(Label) 규격: 모든 label은 text-sm font-medium으로 통일 ───── */
+label,
+.label,
+[data-slot='label'] {
+  font-size: var(--text-sm, 0.875rem);
+  font-weight: 500;
+}
+
 /* ───── 버튼(Button) 규격 단일 표준화 (20px radius, 20px padding) ───── */
 .button,
 [data-slot='button'] {
