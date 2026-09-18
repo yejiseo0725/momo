@@ -24,6 +24,7 @@ export default function LeaveGatheringButton({ gatheringId }) {
                 aria-label="모임 탈퇴 확인 닫기"
                 className="absolute top-4 right-4"
                 onPress={() => setIsOpen(false)}
+                onClick={() => setIsOpen(false)}
               />
             </AlertDialog.Header>
             <AlertDialog.Body>

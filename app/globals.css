@@ -168,7 +168,7 @@ body:has([data-chat-page]) main {
   flex: 1 1 0%;
   min-height: 0;
   overflow: hidden;
-  padding-top: 1rem;
+  padding-top: 2rem;
   padding-bottom: 0;
   gap: 0;
 }

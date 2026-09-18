@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, CloseButton, Modal } from '@heroui/react';
+import { Button, Modal } from '@heroui/react';
 
 import CashBookEntryForm from '@/app/gatherings/[id]/cash-books/CashBookEntryForm';
 import PlusIcon from '@/components/PlusIcon';
@@ -36,10 +36,10 @@ export default function CashBookEntryModal({
                 <Modal.Heading>
                   {isCreate ? '새 가계부 내역' : '가계부 내역 수정'}
                 </Modal.Heading>
-                <CloseButton
+                <Modal.CloseTrigger
                   aria-label="가계부 모달 닫기"
-                  className="absolute top-4 right-4"
                   onPress={() => setIsOpen(false)}
+                  onClick={() => setIsOpen(false)}
                 />
               </Modal.Header>
               <Modal.Body>

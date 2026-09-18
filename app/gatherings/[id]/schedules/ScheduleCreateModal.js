@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, CloseButton, Modal } from '@heroui/react';
+import { Button, Modal } from '@heroui/react';
 
 import ScheduleForm from '@/app/gatherings/[id]/schedules/ScheduleForm';
 import PlusIcon from '@/components/PlusIcon';
@@ -27,10 +27,10 @@ export default function ScheduleCreateModal({ gatheringId }) {
             <Modal.Dialog>
               <Modal.Header>
                 <Modal.Heading>새 일정 만들기</Modal.Heading>
-                <CloseButton
+                <Modal.CloseTrigger
                   aria-label="새 일정 만들기 닫기"
-                  className="absolute top-4 right-4"
                   onPress={() => setIsOpen(false)}
+                  onClick={() => setIsOpen(false)}
                 />
               </Modal.Header>
               <Modal.Body>
