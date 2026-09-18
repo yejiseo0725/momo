@@ -15,7 +15,7 @@ export default async function SignupPage() {
   }
 
   return (
-    <section className="flex flex-col gap-4">
+    <section className="mx-auto flex w-full max-w-md flex-col gap-4">
       <Typography type="h1">회원가입</Typography>
       <p>모임에서 사용할 기본 정보를 입력해 주세요.</p>
       <SignupForm categories={CATEGORIES} />

@@ -61,11 +61,13 @@
 
 ## 3. 레이아웃 & 컨테이너 (Layout)
 
-- **전역 최대 너비**: `max-w-3xl` (768px)
-  - 헤더: `<div className="mx-auto w-full max-w-3xl px-4 py-3">`
-  - 본문: `<main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-4 py-8">`
-  - 푸터: `<div className="mx-auto w-full max-w-3xl px-4 py-6">`
-- **폼 최대 너비**: `max-w-xl` (576px)
+- **전역 최대 너비**: `max-w-5xl` 또는 `max-w-3xl`
+  - 헤더: `<div className="mx-auto w-full max-w-5xl px-4 py-3">`
+  - 본문: `<main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-8 px-4 py-8">`
+  - 푸터: `<div className="mx-auto w-full max-w-5xl px-4 py-6">`
+- **폼 전용 페이지 및 폼 최대 너비 (중요)**:
+  - 로그인, 회원가입, 모임 생성·수정 등 **전체적으로 폼(Form) 위주로 구성된 페이지**는 콘텐츠가 지나치게 넓어지지 않도록 반드시 `mx-auto w-full max-w-md` (448px, md) 크기로 가운데 정렬합니다.
+  - 내부 `<Form>` 요소 역시 `w-full max-w-md`을 유지합니다.
 
 ---
 

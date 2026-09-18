@@ -37,34 +37,11 @@ export default function SignupForm({ categories }) {
 
   return (
     <Form
-      className="flex w-full max-w-xl flex-col gap-4"
+      className="flex w-full max-w-md flex-col gap-4"
       action={formAction}
       onReset={(event) => event.preventDefault()}
     >
       <HeroToast error={state.error} trigger={state} />
-
-      <TextField fullWidth isRequired name="name">
-        <Label>이름</Label>
-        <Input
-          maxLength="50"
-          value={name}
-          onChange={(event) => setName(event.target.value)}
-        />
-      </TextField>
-
-      <RadioGroup isRequired name="gender" value={gender} onChange={setGender}>
-        <Label>성별</Label>
-        {['남성', '여성'].map((genderOption) => (
-          <Radio key={genderOption} value={genderOption}>
-            <Radio.Content>
-              <Radio.Control>
-                <Radio.Indicator />
-              </Radio.Control>
-              {genderOption}
-            </Radio.Content>
-          </Radio>
-        ))}
-      </RadioGroup>
 
       <TextField fullWidth isRequired name="email" type="email">
         <Label>이메일</Label>
@@ -87,6 +64,15 @@ export default function SignupForm({ categories }) {
         <Description>8자 이상 입력해 주세요.</Description>
       </TextField>
 
+      <TextField fullWidth isRequired name="name">
+        <Label>이름</Label>
+        <Input
+          maxLength="50"
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+        />
+      </TextField>
+
       <TextField fullWidth isRequired name="nickname">
         <Label>닉네임</Label>
         <Input
@@ -95,6 +81,27 @@ export default function SignupForm({ categories }) {
           onChange={(event) => setNickname(event.target.value)}
         />
       </TextField>
+
+      <RadioGroup isRequired name="gender" value={gender} onChange={setGender}>
+        <Label>성별</Label>
+        {['남성', '여성'].map((genderOption) => (
+          <Radio key={genderOption} value={genderOption}>
+            <Radio.Content>
+              <Radio.Control>
+                <Radio.Indicator />
+              </Radio.Control>
+              {genderOption}
+            </Radio.Content>
+          </Radio>
+        ))}
+      </RadioGroup>
+
+      <RegionAutocomplete
+        helpText="읍면동 또는 온라인을 입력하고 자동완성 목록에서 선택해 주세요."
+        id="signup-region"
+        initialRegionCode=""
+        initialRegionName=""
+      />
 
       <CheckboxGroup
         name="category"
@@ -113,13 +120,6 @@ export default function SignupForm({ categories }) {
           </Checkbox>
         ))}
       </CheckboxGroup>
-
-      <RegionAutocomplete
-        helpText="읍면동 또는 온라인을 입력하고 자동완성 목록에서 선택해 주세요."
-        id="signup-region"
-        initialRegionCode=""
-        initialRegionName=""
-      />
 
       <Button type="submit" isDisabled={pending} isPending={pending}>
         {pending ? '가입하는 중...' : '가입하기'}

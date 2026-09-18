@@ -20,7 +20,7 @@ export default function LoginForm({ nextPath }) {
   const [password, setPassword] = useState('');
 
   return (
-    <Form className="flex w-full max-w-xl flex-col gap-4" action={formAction}>
+    <Form className="flex w-full max-w-md flex-col gap-4" action={formAction}>
       <input type="hidden" name="next" value={nextPath} />
 
       <TextField fullWidth isRequired name="email" type="email">
