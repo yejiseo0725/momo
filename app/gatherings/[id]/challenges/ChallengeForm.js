@@ -6,12 +6,13 @@ import {
 } from '@/app/gatherings/[id]/challenges/actions';
 import {
   Button,
-  Checkbox,
   Form,
   Input,
   Label,
   TextArea,
   TextField,
+  ToggleButton,
+  ToggleButtonGroup,
 } from '@heroui/react';
 import { useActionState, useEffect, useState } from 'react';
 
@@ -28,10 +29,50 @@ const initialActionState = {
 function ChallengeFields({ idPrefix, initialValues }) {
   const [title, setTitle] = useState(initialValues.title);
   const [description, setDescription] = useState(initialValues.description);
-  const [useImage, setUseImage] = useState(initialValues.useImage);
+  const [authType, setAuthType] = useState(
+    initialValues.useImage ? 'image' : 'text',
+  );
+
+  function handleAuthTypeChange(keys) {
+    const nextKey = Array.from(keys)[0];
+    if (nextKey) {
+      setAuthType(nextKey);
+    }
+  }
 
   return (
     <>
+      <div className="flex flex-col gap-1.5">
+        <Label>인증 방식</Label>
+        <ToggleButtonGroup
+          className="w-full flex"
+          disallowEmptySelection
+          fullWidth
+          selectedKeys={new Set([authType])}
+          selectionMode="single"
+          onSelectionChange={handleAuthTypeChange}
+        >
+          <ToggleButton
+            className="flex-1 data-[selected=true]:bg-primary data-[selected=true]:text-white data-[selected=true]:font-semibold"
+            id="image"
+          >
+            이미지 인증
+          </ToggleButton>
+          <ToggleButtonGroup.Separator />
+          <ToggleButton
+            className="flex-1 data-[selected=true]:bg-tertiary data-[selected=true]:text-tertiary-foreground data-[selected=true]:font-semibold"
+            id="text"
+          >
+            텍스트 인증
+          </ToggleButton>
+        </ToggleButtonGroup>
+        <input
+          type="hidden"
+          name="useImage"
+          value={authType === 'image' ? 'on' : ''}
+        />
+      </div>
+
       <TextField fullWidth isRequired name="title">
         <Label>제목</Label>
         <Input
@@ -51,15 +92,6 @@ function ChallengeFields({ idPrefix, initialValues }) {
           onChange={(event) => setDescription(event.target.value)}
         />
       </TextField>
-
-      <Checkbox name="useImage" isSelected={useImage} onChange={setUseImage}>
-        <Checkbox.Content>
-          <Checkbox.Control>
-            <Checkbox.Indicator />
-          </Checkbox.Control>
-          인증할 때 이미지 파일 필수
-        </Checkbox.Content>
-      </Checkbox>
 
       <DateRangeField
         endDate={initialValues.endDate}

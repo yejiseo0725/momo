@@ -34,7 +34,7 @@ export default async function SchedulesPage({ params, searchParams }) {
           <div>
             <Typography type="h1">일정</Typography>
             <p className="text-sm text-foreground/70">
-              모임 일정을 달력에서 확인하고 참여 여부를 남기세요.
+              모임 일정을 달력에서 확인하세요.
             </p>
           </div>
           <ScheduleCreateModal gatheringId={id} />

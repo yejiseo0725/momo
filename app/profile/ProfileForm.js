@@ -7,9 +7,9 @@ import {
   Form,
   Input,
   Label,
-  Radio,
-  RadioGroup,
   TextField,
+  ToggleButton,
+  ToggleButtonGroup,
 } from '@heroui/react';
 import { useActionState, useState } from 'react';
 
@@ -71,19 +71,36 @@ export default function ProfileForm({
         />
       </TextField>
 
-      <RadioGroup isRequired name="gender" value={gender} onChange={setGender}>
+      <div className="flex flex-col gap-1.5">
         <Label>성별</Label>
-        {genders.map((genderOption) => (
-          <Radio key={genderOption} value={genderOption}>
-            <Radio.Content>
-              <Radio.Control>
-                <Radio.Indicator />
-              </Radio.Control>
+        <ToggleButtonGroup
+          className="w-full flex"
+          disallowEmptySelection
+          fullWidth
+          selectedKeys={gender ? new Set([gender]) : new Set()}
+          selectionMode="single"
+          onSelectionChange={(keys) => {
+            const nextKey = Array.from(keys)[0];
+            if (nextKey) {
+              setGender(nextKey);
+            }
+          }}
+        >
+          {genders.map((genderOption, index) => [
+            index > 0 ? (
+              <ToggleButtonGroup.Separator key={`sep-${genderOption}`} />
+            ) : null,
+            <ToggleButton
+              key={genderOption}
+              className="flex-1"
+              id={genderOption}
+            >
               {genderOption}
-            </Radio.Content>
-          </Radio>
-        ))}
-      </RadioGroup>
+            </ToggleButton>,
+          ])}
+        </ToggleButtonGroup>
+        <input type="hidden" name="gender" value={gender} />
+      </div>
 
       <TextField fullWidth isRequired name="nickname">
         <Label>닉네임</Label>
