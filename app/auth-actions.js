@@ -32,7 +32,7 @@ export async function signupAction(_previousState, formData) {
       gender: readEnum(formData, "gender", "성별", GENDERS),
       email: readEmail(formData),
       password: readPassword(formData),
-      nickname: readRequiredText(formData, "nickname", "닉네임", 30),
+      nickname: readRequiredText(formData, "nickname", "닉네임", 10),
       region: readRegionCode(formData),
       category: readCategories(formData),
       notificationEnabled: true,
@@ -99,7 +99,7 @@ export async function updateProfileAction(_previousState, formData) {
     profile = {
       name: readRequiredText(formData, "name", "이름", 50),
       gender: readEnum(formData, "gender", "성별", GENDERS),
-      nickname: readRequiredText(formData, "nickname", "닉네임", 30),
+      nickname: readRequiredText(formData, "nickname", "닉네임", 10),
       region: readRegionCode(formData),
       category: readCategories(formData),
       notificationEnabled: formData.get("notificationEnabled") === "on",

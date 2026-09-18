@@ -106,41 +106,45 @@ export default function ScheduleDetailModal({
                     </form>
                   </div>
                 ) : (
-                  <div className="flex flex-col gap-4">
+                  <dl className="grid gap-4">
                     <div className="flex flex-col gap-1">
-                      <Typography color="muted" type="body-sm" weight="medium">
+                      <dt className="text-sm font-medium text-muted">
                         일정 날짜
-                      </Typography>
-                      <p className="font-medium">
+                      </dt>
+                      <dd className="font-medium">
                         {schedule.startDate} – {schedule.endDate}
-                      </p>
+                      </dd>
                     </div>
 
                     {schedule.location ? (
                       <div className="flex flex-col gap-1">
-                        <Typography color="muted" type="body-sm" weight="medium">
+                        <dt className="text-sm font-medium text-muted">
                           장소
-                        </Typography>
-                        <p>{schedule.location}</p>
+                        </dt>
+                        <dd>{schedule.location}</dd>
                       </div>
                     ) : null}
 
                     {schedule.authorName ? (
                       <div className="flex flex-col gap-1">
-                        <Typography color="muted" type="body-sm" weight="medium">
+                        <dt className="text-sm font-medium text-muted">
                           작성자
-                        </Typography>
-                        <UserInfo name={schedule.authorName} image={schedule.authorImage} />
+                        </dt>
+                        <dd>
+                          <UserInfo name={schedule.authorName} image={schedule.authorImage} />
+                        </dd>
                       </div>
                     ) : null}
 
-                    <div className="flex flex-col gap-1">
-                      <Typography color="muted" type="body-sm" weight="medium">
-                        설명
-                      </Typography>
-                      <p className="whitespace-pre-wrap">{schedule.description}</p>
-                    </div>
-                  </div>
+                    {schedule.description ? (
+                      <div className="flex flex-col gap-1">
+                        <dt className="text-sm font-medium text-muted">
+                          설명
+                        </dt>
+                        <dd className="whitespace-pre-wrap">{schedule.description}</dd>
+                      </div>
+                    ) : null}
+                  </dl>
                 )}
               </Modal.Body>
               {isAuthor || isEditing ? (

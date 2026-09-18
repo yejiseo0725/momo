@@ -39,11 +39,11 @@ export default function GatheringCard({ gathering, loading = 'eager' }) {
             size="md"
             className={`rounded-full shadow-sm backdrop-blur-sm ${
               isFull
-                ? 'bg-warning text-warning-foreground'
+                ? 'bg-warning text-warning-foreground font-semibold'
                 : 'bg-white/90 text-foreground'
             }`}
           >
-            최대 {gathering.maxMemCount}명
+            {gathering.memberCount} / {gathering.maxMemCount}명
           </Chip>
         </div>
 

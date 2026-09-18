@@ -90,7 +90,7 @@ export default function ProfileForm({
         <Input
           value={nickname}
           onChange={(event) => setNickname(event.target.value)}
-          maxLength="30"
+          maxLength="10"
         />
       </TextField>
 

@@ -100,9 +100,9 @@ export default async function CashBooksPage({ params, searchParams }) {
               <Card key={entry.id}>
                 <Card.Header>
                   <Card.Title>{entry.title}</Card.Title>
-                  <Card.Description>
+                  <div className="pt-1">
                     <UserInfo label="작성자" name={entry.authorName} image={entry.authorImage} />
-                  </Card.Description>
+                  </div>
                 </Card.Header>
                 <Card.Content className="flex flex-col gap-3">
                   <Chip color={entry.type === 'INCOME' ? 'success' : 'danger'}>

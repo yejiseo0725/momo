@@ -76,7 +76,7 @@ export default function SignupForm({ categories }) {
       <TextField fullWidth isRequired name="nickname">
         <Label>닉네임</Label>
         <Input
-          maxLength="30"
+          maxLength="10"
           value={nickname}
           onChange={(event) => setNickname(event.target.value)}
         />

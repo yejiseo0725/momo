@@ -66,9 +66,9 @@ export default async function SchedulesPage({ params, searchParams }) {
                       schedule={schedule}
                     />
                   </Card.Title>
-                  <Card.Description>
+                  <div className="pt-1">
                     <UserInfo label="작성자" name={schedule.authorName} image={schedule.authorImage} />
-                  </Card.Description>
+                  </div>
                 </Card.Header>
                 <Card.Content>
                   <p>
