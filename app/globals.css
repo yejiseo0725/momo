@@ -93,20 +93,38 @@ body {
   border-radius: 9999px;
 }
 
-/* ───── 폼 라벨(Label) 규격: 모든 label은 text-sm font-semibold(600), 차분한 톤으로 통일 ───── */
+/* ───── 폼 라벨(Label) 규격: 모든 label은 0.8rem font-semibold(600), 차분한 톤으로 통일 ───── */
 label,
 .label,
 [data-slot='label'] {
-  font-size: var(--text-sm, 0.875rem);
+  font-size: 0.8rem;
   font-weight: 600;
   color: color-mix(in srgb, var(--foreground) 60%, transparent);
 }
 
-/* ───── 캡션/설명(Description / Caption) 규격: 0.75rem(12px) font-normal(400) 일반 글자 ───── */
+/* disabled 상태의 폼 필드 내부 라벨도 다른 라벨과 동일한 색상/불투명도 유지 */
+[data-disabled='true'] label,
+[data-disabled='true'] .label,
+[data-disabled='true'] [data-slot='label'],
+.label--disabled {
+  opacity: 1;
+}
+
+/* disabled 상태의 입력 필드(예: 이메일): 흐릿한 반투명 대신 눌린(sunken) 회색 배경으로 명확히 표시 */
+.input:disabled,
+.input[data-disabled='true'],
+.input[aria-disabled='true'] {
+  opacity: 1;
+  background-color: var(--default);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+/* ───── 캡션/설명(Description / Caption) 규격: 0.8rem font-normal(400) 일반 글자 ───── */
 .description,
 [data-slot='description'],
 caption {
-  font-size: 0.75rem; /* 12px */
+  font-size: 0.8rem;
   font-weight: 400;
   line-height: 1.4;
   color: color-mix(in srgb, var(--foreground) 60%, transparent);

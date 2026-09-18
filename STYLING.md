@@ -141,25 +141,26 @@
 
 ## 9. 라벨(Label) 규격 ✳️ (전역 규칙)
 
-프로젝트 내 사용되는 **모든 라벨(`Label`, `<label>`, `[data-slot="label"]`)**은 일관되게 `sm` 사이즈 규격을 따릅니다.
+프로젝트 내 사용되는 **모든 라벨(`Label`, `<label>`, `[data-slot="label"]`)**은 일관되게 `0.8rem` 사이즈 규격을 따릅니다.
 
-- **크기**: `text-sm` (14px, `var(--text-sm)`)
+- **크기**: `0.8rem` (약 12.8px)
 - **굵기**: `font-semibold` (600)
 - **색상**: 차분하게 살짝 눌러준 톤 (`color-mix(in srgb, var(--foreground) 60%, transparent)`)
+- **비활성화 필드 예외 방지**: `isDisabled` 필드(예: 이메일) 내 라벨도 다른 라벨과 일관된 색상/불투명도(`opacity: 1`)를 유지합니다.
+- **비활성화 필드 배경**: `isDisabled` 입력 필드 자체는 흐릿한 반투명(`opacity: 0.5`) 대신 `var(--default)` 회색 배경으로 눌린(sunken) 느낌을 줍니다(`globals.css`의 `.input:disabled` 오버라이드).
 - **적용 방식**:
   - `globals.css`의 전역 스타일 오버라이드(`label, .label, [data-slot='label']`)로 자동 적용됩니다.
-  - 컴포넌트나 필드 내부에서 라벨을 별도로 작성할 때도 `text-sm font-semibold text-foreground/60` 규격을 유지합니다.
 
 ---
 
 ## 10. 캡션 및 설명(Caption / Description) 규격 ✳️ (전역 규칙)
 
-폼 안내 문구, 도움말(`helpText`), 필드 부가 설명, 테이블 캡션 등 **모든 캡션성 멘트(`Description`, `[data-slot="description"]`, `caption`, `.description`)**는 0.75rem(12px) 크기에 일반 글자 굵기를 따릅니다.
+폼 안내 문구, 도움말(`helpText`), 필드 부가 설명, 테이블 캡션 등 **모든 캡션성 멘트(`Description`, `[data-slot="description"]`, `caption`, `.description`)**는 라벨과 동일한 `0.8rem` 크기에 일반 글자 굵기(`font-normal`)를 따릅니다.
 
-- **크기**: `text-xs` (12px, `0.75rem`)
+- **크기**: `0.8rem` (약 12.8px)
 - **굵기**: `font-normal` (400, 일반 글자)
 - **색상**: 차분하게 살짝 눌러준 톤 (`color-mix(in srgb, var(--foreground) 60%, transparent)`)
 - **적용 방식**:
-  - `globals.css`의 전역 스타일 오버라이드(`.description, [data-slot='description'], caption`) 및 `Typography body-xs` 크기 정의로 자동 적용됩니다.
-  - 폼 도움말이나 안내 멘트를 작성할 때는 HeroUI의 `<Description>` 컴포넌트 또는 `text-xs font-normal text-foreground/60` 클래스를 사용합니다.
+  - `globals.css`의 전역 스타일 오버라이드(`.description, [data-slot='description'], caption`)로 자동 적용됩니다.
+  - 폼 도움말이나 안내 멘트를 작성할 때는 HeroUI의 `<Description>` 컴포넌트를 우선 사용합니다.
 
