@@ -101,7 +101,7 @@ export default function ChallengeFeedForm({
         minimumDate={minimumDate}
       />
 
-      <Button type="submit" isDisabled={pending} isPending={pending}>
+      <Button className="w-full" type="submit" isDisabled={pending} isPending={pending}>
         {pending ? '등록하는 중...' : '인증 남기기'}
       </Button>
       <HeroToast error={state.error} message={state.message} trigger={state} />

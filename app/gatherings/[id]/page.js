@@ -47,11 +47,10 @@ export default async function GatheringHomePage({ params, searchParams }) {
           />
         </div>
         <div className="flex flex-wrap gap-2">
-          <Chip>{gathering.category}</Chip>
-          <Chip>{gathering.region}</Chip>
-        </div>
-        <p>{gathering.description}</p>
-        <div className="flex flex-wrap gap-2">
+          <Chip className="bg-accent-sky text-primary font-medium">
+            {gathering.category}
+          </Chip>
+          <Chip>{gathering.isPublic ? '공개 모임' : '비공개 모임'}</Chip>
           <Chip
             className={
               isFull ? 'bg-warning text-warning-foreground font-semibold' : ''
@@ -61,9 +60,12 @@ export default async function GatheringHomePage({ params, searchParams }) {
               ? '정원 마감'
               : `${gathering.memberCount} / ${gathering.maxMemCount}명`}
           </Chip>
-          <Chip>{gathering.isPublic ? '공개 모임' : '비공개 모임'}</Chip>
-          <Chip>{formatDate(gathering.createdAt)} 개설</Chip>
         </div>
+        <p className="text-sm text-foreground/60">{gathering.region}</p>
+        <p className="text-sm text-foreground/60">
+          {formatDate(gathering.createdAt)} 개설
+        </p>
+        <p>{gathering.description}</p>
         <HeroToast
           error={getSingleSearchParam(query.error)}
           message={getSingleSearchParam(query.message)}

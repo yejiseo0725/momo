@@ -34,30 +34,48 @@ export default function ChallengeEditModal({ challenge, gatheringId }) {
                 />
               </Modal.Header>
               <Modal.Body>
-                <div className="flex flex-col gap-4">
-                  <ChallengeForm
-                    challengeId={challenge.id}
-                    gatheringId={gatheringId}
-                    initialValues={challenge}
-                    mode="edit"
-                    onSuccess={handleSuccess}
-                  />
-                  <form action={deleteChallengeAction}>
-                    <input
-                      type="hidden"
-                      name="gatheringId"
-                      value={gatheringId}
-                    />
-                    <input
-                      type="hidden"
-                      name="challengeId"
-                      value={challenge.id}
-                    />
-                    <Button type="submit" variant="danger">
-                      챌린지 삭제
-                    </Button>
-                  </form>
-                </div>
+                <ChallengeForm
+                  challengeId={challenge.id}
+                  gatheringId={gatheringId}
+                  initialValues={challenge}
+                  mode="edit"
+                  onSuccess={handleSuccess}
+                  actionButtons={({ pending }) => (
+                    <div className="flex items-center justify-between gap-2 pt-2">
+                      <form action={deleteChallengeAction}>
+                        <input
+                          type="hidden"
+                          name="gatheringId"
+                          value={gatheringId}
+                        />
+                        <input
+                          type="hidden"
+                          name="challengeId"
+                          value={challenge.id}
+                        />
+                        <Button type="submit" variant="danger">
+                          챌린지 삭제
+                        </Button>
+                      </form>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onPress={() => setIsOpen(false)}
+                        >
+                          취소
+                        </Button>
+                        <Button
+                          type="submit"
+                          isDisabled={pending}
+                          isPending={pending}
+                        >
+                          {pending ? '저장하는 중...' : '수정 완료'}
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                />
               </Modal.Body>
             </Modal.Dialog>
           </Modal.Container>

@@ -9,7 +9,6 @@ import { useActionState, useEffect, useState } from 'react';
 
 import DateRangeField from '@/components/DateRangeField';
 import HeroToast from '@/components/HeroToast';
-import PlusIcon from '@/components/PlusIcon';
 
 const initialActionState = {
   error: '',
@@ -87,15 +86,19 @@ export default function ScheduleForm({
       {actionButtons ? (
         typeof actionButtons === 'function' ? actionButtons({ pending }) : actionButtons
       ) : (
-        <Button type="submit" isDisabled={pending} isPending={pending}>
-          {mode === 'create' ? <PlusIcon /> : null}
+        <Button
+          className="w-full"
+          type="submit"
+          isDisabled={pending}
+          isPending={pending}
+        >
           {pending
             ? mode === 'create'
               ? '만드는 중...'
               : '저장하는 중...'
             : mode === 'create'
               ? '일정 만들기'
-              : '수정 저장'}
+              : '수정 완료'}
         </Button>
       )}
       <HeroToast error={state.error} message={state.message} trigger={state} />

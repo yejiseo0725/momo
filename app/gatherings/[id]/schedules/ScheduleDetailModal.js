@@ -96,14 +96,7 @@ export default function ScheduleDetailModal({
                     onSuccess={handleEditSuccess}
                     scheduleId={schedule.id}
                     actionButtons={({ pending }) => (
-                      <div className="flex items-center justify-end gap-2 pt-2">
-                        <Button
-                          type="submit"
-                          isDisabled={pending}
-                          isPending={pending}
-                        >
-                          {pending ? '저장하는 중...' : '저장'}
-                        </Button>
+                      <div className="flex items-center justify-between gap-2 pt-2">
                         <form action={deleteScheduleAction}>
                           <input
                             type="hidden"
@@ -119,13 +112,22 @@ export default function ScheduleDetailModal({
                             일정 삭제
                           </Button>
                         </form>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onPress={() => setIsEditing(false)}
-                        >
-                          취소
-                        </Button>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onPress={() => setIsEditing(false)}
+                          >
+                            취소
+                          </Button>
+                          <Button
+                            type="submit"
+                            isDisabled={pending}
+                            isPending={pending}
+                          >
+                            {pending ? '저장하는 중...' : '수정 완료'}
+                          </Button>
+                        </div>
                       </div>
                     )}
                   />

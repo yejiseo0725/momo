@@ -5,6 +5,7 @@ import { connection } from 'next/server';
 import EmptyState from '@/components/EmptyState';
 import GatheringCard from '@/components/GatheringCard';
 import HeroToast from '@/components/HeroToast';
+import UserAvatar from '@/components/UserAvatar';
 import { getJoinedGatherings, getPublicGatherings } from '@/lib/gatherings';
 import { getOptionalSession } from '@/lib/session';
 import { getSingleSearchParam } from '@/lib/utils/validation';
@@ -94,13 +95,20 @@ export default async function HomePage({ searchParams }) {
   return (
     <>
       {redirectToast}
-      <section className="flex flex-col gap-2 rounded-[28px] border border-border bg-surface p-6">
-        <Typography type="h1">
-          {session.user.nickname || session.user.name}님, 반가워요.
-        </Typography>
-        <p className="text-sm text-foreground/70">
-          오늘도 함께할 모임의 소식을 확인해 보세요.
-        </p>
+      <section className="flex items-center gap-4 rounded-[28px] border border-border bg-surface p-6">
+        <UserAvatar
+          image={session.user.image}
+          name={session.user.nickname || session.user.name}
+          size="lg"
+        />
+        <div className="flex flex-col gap-2">
+          <Typography type="h1">
+            {session.user.nickname || session.user.name}님, 반가워요.
+          </Typography>
+          <p className="text-sm text-foreground/70">
+            오늘도 함께할 모임의 소식을 확인해 보세요.
+          </p>
+        </div>
       </section>
 
       {databaseError ? (

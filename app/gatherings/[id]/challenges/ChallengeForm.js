@@ -18,7 +18,6 @@ import { useActionState, useEffect, useState } from 'react';
 
 import DateRangeField from '@/components/DateRangeField';
 import HeroToast from '@/components/HeroToast';
-import PlusIcon from '@/components/PlusIcon';
 
 const initialActionState = {
   error: '',
@@ -53,17 +52,17 @@ function ChallengeFields({ idPrefix, initialValues }) {
           onSelectionChange={handleAuthTypeChange}
         >
           <ToggleButton
-            className="flex-1 data-[selected=true]:bg-primary data-[selected=true]:text-white data-[selected=true]:font-semibold"
-            id="image"
-          >
-            이미지 인증
-          </ToggleButton>
-          <ToggleButtonGroup.Separator />
-          <ToggleButton
             className="flex-1 data-[selected=true]:bg-tertiary data-[selected=true]:text-tertiary-foreground data-[selected=true]:font-semibold"
             id="text"
           >
             텍스트 인증
+          </ToggleButton>
+          <ToggleButtonGroup.Separator />
+          <ToggleButton
+            className="flex-1 data-[selected=true]:bg-primary data-[selected=true]:text-white data-[selected=true]:font-semibold"
+            id="image"
+          >
+            이미지 인증
           </ToggleButton>
         </ToggleButtonGroup>
         <input
@@ -102,6 +101,7 @@ function ChallengeFields({ idPrefix, initialValues }) {
 }
 
 export default function ChallengeForm({
+  actionButtons,
   challengeId,
   gatheringId,
   initialValues,
@@ -137,16 +137,26 @@ export default function ChallengeForm({
         initialValues={initialValues}
       />
 
-      <Button type="submit" isDisabled={pending} isPending={pending}>
-        {mode === 'create' ? <PlusIcon /> : null}
-        {pending
-          ? mode === 'create'
-            ? '생성하는 중...'
-            : '저장하는 중...'
-          : mode === 'create'
-            ? '챌린지 만들기'
-            : '수정 저장'}
-      </Button>
+      {actionButtons ? (
+        typeof actionButtons === 'function'
+          ? actionButtons({ pending })
+          : actionButtons
+      ) : (
+        <Button
+          className="w-full"
+          type="submit"
+          isDisabled={pending}
+          isPending={pending}
+        >
+          {pending
+            ? mode === 'create'
+              ? '생성하는 중...'
+              : '저장하는 중...'
+            : mode === 'create'
+              ? '챌린지 만들기'
+              : '수정 완료'}
+        </Button>
+      )}
       <HeroToast error={state.error} message={state.message} trigger={state} />
     </Form>
   );

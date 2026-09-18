@@ -25,6 +25,7 @@ const initialActionState = {
 };
 
 export default function CashBookEntryForm({
+  actionButtons,
   entryId,
   gatheringId,
   initialValues,
@@ -71,17 +72,17 @@ export default function CashBookEntryForm({
           }}
         >
           <ToggleButton
-            className="flex-1 data-[selected=true]:bg-tertiary data-[selected=true]:text-tertiary-foreground data-[selected=true]:font-semibold"
-            id="INCOME"
-          >
-            수입
-          </ToggleButton>
-          <ToggleButtonGroup.Separator />
-          <ToggleButton
             className="flex-1 data-[selected=true]:bg-secondary data-[selected=true]:text-secondary-foreground data-[selected=true]:font-semibold"
             id="SPENDING"
           >
             지출
+          </ToggleButton>
+          <ToggleButtonGroup.Separator />
+          <ToggleButton
+            className="flex-1 data-[selected=true]:bg-tertiary data-[selected=true]:text-tertiary-foreground data-[selected=true]:font-semibold"
+            id="INCOME"
+          >
+            수입
           </ToggleButton>
         </ToggleButtonGroup>
         <input type="hidden" name="type" value={type} />
@@ -125,15 +126,26 @@ export default function CashBookEntryForm({
         />
       </TextField>
 
-      <Button type="submit" isDisabled={pending} isPending={pending}>
-        {pending
-          ? mode === 'create'
-            ? '저장하는 중...'
-            : '수정하는 중...'
-          : mode === 'create'
-            ? '내역 저장'
-            : '저장'}
-      </Button>
+      {actionButtons ? (
+        typeof actionButtons === 'function'
+          ? actionButtons({ pending })
+          : actionButtons
+      ) : (
+        <Button
+          className="w-full"
+          type="submit"
+          isDisabled={pending}
+          isPending={pending}
+        >
+          {pending
+            ? mode === 'create'
+              ? '저장하는 중...'
+              : '수정하는 중...'
+            : mode === 'create'
+              ? '내역 저장'
+              : '수정 완료'}
+        </Button>
+      )}
       <HeroToast error={state.error} message={state.message} trigger={state} />
     </Form>
   );

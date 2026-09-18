@@ -20,7 +20,6 @@ import { useActionState, useState } from 'react';
 import CategoryTagGroup from '@/components/CategoryTagGroup';
 import HeroToast from '@/components/HeroToast';
 import ImageFileField from '@/components/ImageFileField';
-import PlusIcon from '@/components/PlusIcon';
 import RegionAutocomplete from '@/components/RegionAutocomplete';
 
 const initialActionState = {
@@ -138,15 +137,14 @@ export default function GatheringForm({
         <input type="hidden" name="visibility" value={visibility} />
       </div>
 
-      <Button type="submit" isDisabled={pending} isPending={pending}>
-        {mode === 'create' ? <PlusIcon /> : null}
+      <Button className="w-full" type="submit" isDisabled={pending} isPending={pending}>
         {pending
           ? mode === 'create'
             ? '만드는 중...'
             : '저장하는 중...'
           : mode === 'create'
             ? '모임 만들기'
-            : '수정 내용 저장'}
+            : '수정 완료'}
       </Button>
       <HeroToast error={state.error} message={state.message} trigger={state} />
     </Form>
