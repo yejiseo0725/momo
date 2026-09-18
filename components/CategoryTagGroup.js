@@ -94,6 +94,7 @@ export default function CategoryTagGroup({
   return (
     <TagGroup
       aria-label="카테고리"
+      size="md"
       selectionMode="single"
       selectedKeys={selectedKey ? new Set([selectedKey]) : new Set()}
       onSelectionChange={(keys) => {
@@ -110,7 +111,7 @@ export default function CategoryTagGroup({
             <Tag
               id={option}
               key={option}
-              className={isSelected ? 'bg-primary text-white' : undefined}
+              className={isSelected ? 'bg-primary text-white font-medium' : undefined}
             >
               {option}
             </Tag>

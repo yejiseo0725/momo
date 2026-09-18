@@ -17,6 +17,7 @@ const initialActionState = {
 };
 
 export default function ScheduleForm({
+  actionButtons,
   gatheringId,
   initialValues,
   mode,
@@ -83,16 +84,20 @@ export default function ScheduleForm({
         />
       </TextField>
 
-      <Button type="submit" isDisabled={pending} isPending={pending}>
-        {mode === 'create' ? <PlusIcon /> : null}
-        {pending
-          ? mode === 'create'
-            ? '만드는 중...'
-            : '저장하는 중...'
-          : mode === 'create'
-            ? '일정 만들기'
-            : '수정 저장'}
-      </Button>
+      {actionButtons ? (
+        typeof actionButtons === 'function' ? actionButtons({ pending }) : actionButtons
+      ) : (
+        <Button type="submit" isDisabled={pending} isPending={pending}>
+          {mode === 'create' ? <PlusIcon /> : null}
+          {pending
+            ? mode === 'create'
+              ? '만드는 중...'
+              : '저장하는 중...'
+            : mode === 'create'
+              ? '일정 만들기'
+              : '수정 저장'}
+        </Button>
+      )}
       <HeroToast error={state.error} message={state.message} trigger={state} />
     </Form>
   );

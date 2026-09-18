@@ -83,28 +83,52 @@ export default function ScheduleDetailModal({
               </Modal.Header>
               <Modal.Body>
                 {isEditing ? (
-                  <div className="flex flex-col gap-4">
-                    <ScheduleForm
-                      gatheringId={gatheringId}
-                      initialValues={{
-                        title: schedule.title,
-                        description: schedule.description,
-                        startDate: schedule.startDate,
-                        endDate: schedule.endDate,
-                        location: schedule.location,
-                      }}
-                      mode="edit"
-                      onSuccess={handleEditSuccess}
-                      scheduleId={schedule.id}
-                    />
-                    <form action={deleteScheduleAction}>
-                      <input type="hidden" name="gatheringId" value={gatheringId} />
-                      <input type="hidden" name="scheduleId" value={schedule.id} />
-                      <Button type="submit" variant="danger">
-                        일정 삭제
-                      </Button>
-                    </form>
-                  </div>
+                  <ScheduleForm
+                    gatheringId={gatheringId}
+                    initialValues={{
+                      title: schedule.title,
+                      description: schedule.description,
+                      startDate: schedule.startDate,
+                      endDate: schedule.endDate,
+                      location: schedule.location,
+                    }}
+                    mode="edit"
+                    onSuccess={handleEditSuccess}
+                    scheduleId={schedule.id}
+                    actionButtons={({ pending }) => (
+                      <div className="flex items-center justify-end gap-2 pt-2">
+                        <Button
+                          type="submit"
+                          isDisabled={pending}
+                          isPending={pending}
+                        >
+                          {pending ? '저장하는 중...' : '저장'}
+                        </Button>
+                        <form action={deleteScheduleAction}>
+                          <input
+                            type="hidden"
+                            name="gatheringId"
+                            value={gatheringId}
+                          />
+                          <input
+                            type="hidden"
+                            name="scheduleId"
+                            value={schedule.id}
+                          />
+                          <Button type="submit" variant="danger">
+                            일정 삭제
+                          </Button>
+                        </form>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onPress={() => setIsEditing(false)}
+                        >
+                          취소
+                        </Button>
+                      </div>
+                    )}
+                  />
                 ) : (
                   <dl className="grid gap-4">
                     <div className="flex flex-col gap-1">
@@ -147,20 +171,14 @@ export default function ScheduleDetailModal({
                   </dl>
                 )}
               </Modal.Body>
-              {isAuthor || isEditing ? (
+              {isAuthor && !isEditing ? (
                 <Modal.Footer>
-                  {isEditing ? (
-                    <Button variant="outline" onPress={() => setIsEditing(false)}>
-                      취소
-                    </Button>
-                  ) : (
-                    <Button
-                      type="button"
-                      onPress={() => setIsEditing(true)}
-                    >
-                      일정 수정
-                    </Button>
-                  )}
+                  <Button
+                    type="button"
+                    onPress={() => setIsEditing(true)}
+                  >
+                    일정 수정
+                  </Button>
                 </Modal.Footer>
               ) : null}
             </Modal.Dialog>

@@ -2,12 +2,12 @@
 
 import {
   Button,
-  Checkbox,
-  CheckboxGroup,
   Description,
   Form,
   Input,
   Label,
+  Tag,
+  TagGroup,
   TextField,
   ToggleButton,
   ToggleButtonGroup,
@@ -120,23 +120,40 @@ export default function SignupForm({ categories }) {
         initialRegionName=""
       />
 
-      <CheckboxGroup
-        name="category"
-        value={selectedCategories}
-        onChange={setSelectedCategories}
-      >
-        <Label>관심 카테고리</Label>
-        {categories.map((category) => (
-          <Checkbox key={category} value={category}>
-            <Checkbox.Content>
-              <Checkbox.Control>
-                <Checkbox.Indicator />
-              </Checkbox.Control>
-              {category}
-            </Checkbox.Content>
-          </Checkbox>
+      <div className="flex flex-col gap-1.5">
+        <TagGroup
+          aria-label="관심 카테고리"
+          size="md"
+          selectionMode="multiple"
+          selectedKeys={new Set(selectedCategories)}
+          onSelectionChange={(keys) => {
+            setSelectedCategories(Array.from(keys).map(String));
+          }}
+        >
+          <Label>관심 카테고리</Label>
+          <TagGroup.List className="flex flex-wrap gap-2">
+            {categories.map((category) => {
+              const isSelected = selectedCategories.includes(category);
+              return (
+                <Tag
+                  id={category}
+                  key={category}
+                  className={
+                    isSelected
+                      ? 'bg-primary text-white font-medium'
+                      : undefined
+                  }
+                >
+                  {category}
+                </Tag>
+              );
+            })}
+          </TagGroup.List>
+        </TagGroup>
+        {selectedCategories.map((category) => (
+          <input key={category} type="hidden" name="category" value={category} />
         ))}
-      </CheckboxGroup>
+      </div>
 
       <Button type="submit" isDisabled={pending} isPending={pending}>
         {pending ? '가입하는 중...' : '가입하기'}
