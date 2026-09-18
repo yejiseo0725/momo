@@ -44,7 +44,7 @@ export default function ProfileForm({
   );
 
   return (
-    <Form className="flex w-full max-w-xl flex-col gap-4" action={formAction}>
+    <Form className="flex w-full max-w-lg flex-col gap-4" action={formAction}>
       <TextField fullWidth isDisabled type="email" value={email}>
         <Label>이메일</Label>
         <Input />

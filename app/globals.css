@@ -70,12 +70,22 @@ body {
   letter-spacing: -0.01em;
 }
 
-.typography--body,
-.typography--body-sm,
-.typography--body-xs {
+.typography--body {
   font-size: 1rem; /* base: 16px */
   font-weight: 400;
   line-height: 1.6;
+}
+
+.typography--body-sm {
+  font-size: var(--text-sm, 0.875rem); /* sm: 14px */
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.typography--body-xs {
+  font-size: 0.75rem; /* xs: 12px */
+  font-weight: 400;
+  line-height: 1.4;
 }
 
 /* HeroUI Chip은 프로젝트 규칙에 따라 항상 pill 형태로 표시합니다. */
@@ -83,12 +93,23 @@ body {
   border-radius: 9999px;
 }
 
-/* ───── 폼 라벨(Label) 규격: 모든 label은 text-sm font-medium으로 통일 ───── */
+/* ───── 폼 라벨(Label) 규격: 모든 label은 text-sm font-semibold(600), 차분한 톤으로 통일 ───── */
 label,
 .label,
 [data-slot='label'] {
   font-size: var(--text-sm, 0.875rem);
-  font-weight: 500;
+  font-weight: 600;
+  color: color-mix(in srgb, var(--foreground) 60%, transparent);
+}
+
+/* ───── 캡션/설명(Description / Caption) 규격: 0.75rem(12px) font-normal(400) 일반 글자 ───── */
+.description,
+[data-slot='description'],
+caption {
+  font-size: 0.75rem; /* 12px */
+  font-weight: 400;
+  line-height: 1.4;
+  color: color-mix(in srgb, var(--foreground) 60%, transparent);
 }
 
 /* ───── 버튼(Button) 규격 단일 표준화 (20px radius, 20px padding) ───── */

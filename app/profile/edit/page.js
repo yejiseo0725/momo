@@ -25,7 +25,7 @@ export default async function EditProfilePage({ searchParams }) {
   const displayName = session.user.nickname || session.user.name;
 
   return (
-    <section className="flex flex-col gap-4">
+    <section className="mx-auto flex w-full max-w-lg flex-col gap-4">
       <HeroToast
         error={getSingleSearchParam(query.error)}
         message={getSingleSearchParam(query.message)}

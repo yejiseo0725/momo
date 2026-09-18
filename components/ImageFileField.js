@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Label, Typography } from "@heroui/react";
+import { Button, Description, Label, Typography } from "@heroui/react";
 import { useRef, useState } from "react";
 
 export default function ImageFileField({
@@ -50,9 +50,9 @@ export default function ImageFileField({
           {selectedFileName || emptyText}
         </Typography>
       </div>
-      <Typography id={descriptionId} color="muted" type="body-sm">
+      <Description id={descriptionId}>
         {helpText}
-      </Typography>
+      </Description>
     </div>
   );
 }

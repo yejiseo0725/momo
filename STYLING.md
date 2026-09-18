@@ -16,10 +16,10 @@
 임의의 `text-xs`, `text-2xl`, `text-3xl`, `text-4xl` 등 **아래 3단계 이외의 크기는 사용 금지**합니다.
 
 | 단계 | Tailwind 클래스 | 실제 크기 | 사용 위치 |
-| :--- | :--- | :--- | :--- |
-| **sm** | `text-sm` | 14px | **모든 라벨(`Label`, `<label>`)**, 칩·태그 내부, 보조 설명, muted 텍스트, 버튼 |
-| **base** (기본) | (명시 불필요) | 16px | 본문, 폼 필드 입력값, 일반 텍스트 |
-| **lg** | `text-lg` | 20px | 페이지 제목(h1~h3), 카드 제목, 강조 제목 |
+| **xs** | `text-xs` | 12px (0.75rem) | **모든 캡션/설명(`Description`)**, 부가 안내 문구 |
+| **sm** | `text-sm` | 14px (0.875rem) | **모든 라벨(`Label`)**, 칩·태그 내부, muted 텍스트, 버튼 |
+| **base** (기본) | (명시 불필요) | 16px (1rem) | 본문, 폼 필드 입력값, 일반 텍스트 |
+| **lg** | `text-lg` | 20px (1.25rem) | 페이지 제목(h1~h3), 카드 제목, 강조 제목 |
 
 > `Typography type="h1/h2/h3"` 컴포넌트는 `globals.css`에서 이미 `text-lg`(20px)로 고정되어 있습니다.
 > 별도의 크기 클래스를 다시 지정하지 마세요.
@@ -67,7 +67,8 @@
   - 푸터: `<div className="mx-auto w-full max-w-5xl px-4 py-6">`
 - **폼 전용 페이지 및 폼 최대 너비 (중요)**:
   - 로그인, 회원가입, 모임 생성·수정 등 **전체적으로 폼(Form) 위주로 구성된 페이지**는 콘텐츠가 지나치게 넓어지지 않도록 반드시 `mx-auto w-full max-w-md` (448px, md) 크기로 가운데 정렬합니다.
-  - 내부 `<Form>` 요소 역시 `w-full max-w-md`을 유지합니다.
+  - 내 정보 수정(`/profile/edit`) 페이지는 `mx-auto w-full max-w-lg` (512px, lg) 크기로 가운데 정렬하며 내부 `<Form>`도 `max-w-lg`를 유지합니다.
+  - 내부 `<Form>` 요소 역시 부모 컨테이너의 최대 너비 규격(`max-w-md` 또는 `max-w-lg`)을 유지합니다.
 
 ---
 
@@ -143,8 +144,22 @@
 프로젝트 내 사용되는 **모든 라벨(`Label`, `<label>`, `[data-slot="label"]`)**은 일관되게 `sm` 사이즈 규격을 따릅니다.
 
 - **크기**: `text-sm` (14px, `var(--text-sm)`)
-- **굵기**: `font-medium` (500)
+- **굵기**: `font-semibold` (600)
+- **색상**: 차분하게 살짝 눌러준 톤 (`color-mix(in srgb, var(--foreground) 60%, transparent)`)
 - **적용 방식**:
   - `globals.css`의 전역 스타일 오버라이드(`label, .label, [data-slot='label']`)로 자동 적용됩니다.
-  - 컴포넌트나 필드 내부에서 라벨을 별도로 작성할 때도 `text-sm font-medium` 규격을 엄격히 유지합니다.
+  - 컴포넌트나 필드 내부에서 라벨을 별도로 작성할 때도 `text-sm font-semibold text-foreground/60` 규격을 유지합니다.
+
+---
+
+## 10. 캡션 및 설명(Caption / Description) 규격 ✳️ (전역 규칙)
+
+폼 안내 문구, 도움말(`helpText`), 필드 부가 설명, 테이블 캡션 등 **모든 캡션성 멘트(`Description`, `[data-slot="description"]`, `caption`, `.description`)**는 0.75rem(12px) 크기에 일반 글자 굵기를 따릅니다.
+
+- **크기**: `text-xs` (12px, `0.75rem`)
+- **굵기**: `font-normal` (400, 일반 글자)
+- **색상**: 차분하게 살짝 눌러준 톤 (`color-mix(in srgb, var(--foreground) 60%, transparent)`)
+- **적용 방식**:
+  - `globals.css`의 전역 스타일 오버라이드(`.description, [data-slot='description'], caption`) 및 `Typography body-xs` 크기 정의로 자동 적용됩니다.
+  - 폼 도움말이나 안내 멘트를 작성할 때는 HeroUI의 `<Description>` 컴포넌트 또는 `text-xs font-normal text-foreground/60` 클래스를 사용합니다.
 
