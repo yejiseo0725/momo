@@ -128,11 +128,17 @@ export default function GatheringForm({
             }
           }}
         >
-          <ToggleButton className="flex-1" id="public">
+          <ToggleButton
+            className="flex-1 data-[selected=true]:bg-primary data-[selected=true]:text-white data-[selected=true]:font-semibold"
+            id="public"
+          >
             공개 모임
           </ToggleButton>
           <ToggleButtonGroup.Separator />
-          <ToggleButton className="flex-1" id="private">
+          <ToggleButton
+            className="flex-1 data-[selected=true]:bg-secondary data-[selected=true]:text-secondary-foreground data-[selected=true]:font-semibold"
+            id="private"
+          >
             비공개 모임
           </ToggleButton>
         </ToggleButtonGroup>
