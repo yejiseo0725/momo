@@ -84,7 +84,7 @@ export default function GatheringCard({ gathering, loading = 'eager' }) {
         <p className="line-clamp-2 text-muted">{gathering.description}</p>
 
         <div className="mt-auto -mx-4 flex items-center justify-start gap-4 border-t border-border px-4 pt-3">
-          <UserInfo name={gathering.creatorName} />
+          <UserInfo name={gathering.creatorName} image={gathering.creatorImage} />
         </div>
       </div>
     </Card>
