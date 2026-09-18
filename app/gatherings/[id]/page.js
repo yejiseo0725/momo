@@ -32,7 +32,7 @@ export default async function GatheringHomePage({ params, searchParams }) {
   return (
     <>
       <section className="flex flex-col gap-4">
-        <div className="relative isolate aspect-[4/3] min-h-48 w-full max-w-3xl mx-auto overflow-hidden rounded-[28px] border border-border bg-surface">
+        <div className="relative isolate aspect-[4/3] min-h-48 w-full max-w-[400px] mx-auto overflow-hidden rounded-[28px] border border-border bg-surface">
           <Image
             className="z-0 object-cover object-top"
             src={gathering.imageUrl || '/placeholder-image.png'}
