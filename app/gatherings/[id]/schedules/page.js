@@ -29,12 +29,16 @@ export default async function SchedulesPage({ params, searchParams }) {
 
   return (
     <>
-      <section className="flex flex-col gap-4">
+      <section className="flex flex-col gap-4 rounded-[28px] border border-border bg-surface p-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <Typography type="h1">일정</Typography>
+          <div>
+            <Typography type="h1">일정</Typography>
+            <p className="text-sm text-foreground/70">
+              모임 일정을 달력에서 확인하고 참여 여부를 남기세요.
+            </p>
+          </div>
           <ScheduleCreateModal gatheringId={id} />
         </div>
-        <p>모임 일정을 달력에서 확인하고 참여 여부를 남기세요.</p>
         <HeroToast
           error={getSingleSearchParam(query.error)}
           message={getSingleSearchParam(query.message)}

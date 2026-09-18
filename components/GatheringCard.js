@@ -43,7 +43,9 @@ export default function GatheringCard({ gathering, loading = 'eager' }) {
                 : 'bg-white/90 text-foreground'
             }`}
           >
-            {gathering.memberCount} / {gathering.maxMemCount}명
+            {isFull
+              ? '정원 마감'
+              : `${gathering.memberCount} / ${gathering.maxMemCount}명`}
           </Chip>
         </div>
 

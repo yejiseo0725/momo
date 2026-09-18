@@ -38,9 +38,14 @@ export default async function CashBooksPage({ params, searchParams }) {
         error={getSingleSearchParam(query.error)}
         message={getSingleSearchParam(query.message)}
       />
-      <section className="flex flex-col gap-4">
+      <section className="flex flex-col gap-4 rounded-[28px] border border-border bg-surface p-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <Typography type="h1">가계부</Typography>
+          <div>
+            <Typography type="h1">가계부</Typography>
+            <p className="text-sm text-foreground/70">
+              모임의 수입과 지출을 함께 기록합니다.
+            </p>
+          </div>
           <CashBookEntryModal
             gatheringId={id}
             initialValues={{
@@ -52,7 +57,6 @@ export default async function CashBooksPage({ params, searchParams }) {
             }}
           />
         </div>
-        <p>모임의 수입과 지출을 함께 기록합니다.</p>
       </section>
 
       <section className="flex flex-col gap-4">

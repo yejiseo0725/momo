@@ -85,7 +85,9 @@
 
 ## 5. 컬러 시스템 (Point Colors)
 
-- **`primary` (`#2997FF`)**: 주요 액션 버튼, 링크, 공개 칩 텍스트
+- **`primary` (`#2997FF`)**: 주요 액션 버튼, 링크, 이미지 인증 칩 배경
+- **`secondary` (`#FFF0E8` / `#C94F2C`)**: 따뜻한 살구/코랄 보조 컬러
+- **`tertiary` (`#EAFAF1` / `#1E874B`)**: 텍스트 인증 등 차분하고 산뜻한 그린 컬러
 - **`accent.sky` (`#E8F4FD`)**: 칩·태그 배경 (가볍고 부드러운 정보 뱃지)
 - **`accent.pink` (`#FF5C93`)**: 모임장 배지, 핫핑크 포인트
 - **`warning` (`#FF6F3C`)**: 마감 칩, 개설자 왕관 아이콘, 경고 알림
@@ -100,6 +102,8 @@
 - **폰트**: `text-sm`(14px), `font-medium` 또는 `font-semibold`
 - **색상 조합**:
   - 공개/카테고리: `bg-accent-sky text-primary`
+  - 이미지 인증: `bg-primary text-white font-semibold`
+  - 텍스트 인증: `bg-tertiary text-tertiary-foreground font-semibold`
   - 마감: `bg-warning text-warning-foreground`
   - 모임장: `bg-accent-pink text-white font-semibold`
 
@@ -146,8 +150,7 @@
 - **크기**: `0.8rem` (약 12.8px)
 - **굵기**: `font-semibold` (600)
 - **색상**: 차분하게 살짝 눌러준 톤 (`color-mix(in srgb, var(--foreground) 60%, transparent)`)
-- **비활성화 필드 예외 방지**: `isDisabled` 필드(예: 이메일) 내 라벨도 다른 라벨과 일관된 색상/불투명도(`opacity: 1`)를 유지합니다.
-- **비활성화 필드 배경**: `isDisabled` 입력 필드 자체는 흐릿한 반투명(`opacity: 0.5`) 대신 `var(--default)` 회색 배경으로 눌린(sunken) 느낌을 줍니다(`globals.css`의 `.input:disabled` 오버라이드).
+- **비활성화 필드(`isDisabled`)**: 이메일 등 수정 불가 필드는 라벨 색상을 더 차분하게 톤 다운(`color-mix(in srgb, var(--foreground) 40%, transparent)`)하고, 입력창은 `var(--default)` 회색 배경으로 눌린(sunken) 느낌을 주어 비활성화 상태임을 명확히 구분합니다.
 - **적용 방식**:
   - `globals.css`의 전역 스타일 오버라이드(`label, .label, [data-slot='label']`)로 자동 적용됩니다.
 

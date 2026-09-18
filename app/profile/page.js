@@ -60,15 +60,15 @@ export default async function ProfilePage({ searchParams }) {
           </Card.Header>
           <Card.Content>
             <dl className="grid gap-3 sm:grid-cols-[10rem_1fr]">
-              <dt className="font-medium">이름</dt>
+              <dt className="text-sm font-medium text-muted">이름</dt>
               <dd>{session.user.name}</dd>
-              <dt className="font-medium">성별</dt>
+              <dt className="text-sm font-medium text-muted">성별</dt>
               <dd>{session.user.gender}</dd>
-              <dt className="font-medium">닉네임</dt>
+              <dt className="text-sm font-medium text-muted">닉네임</dt>
               <dd>{session.user.nickname}</dd>
-              <dt className="font-medium">이메일</dt>
+              <dt className="text-sm font-medium text-muted">이메일</dt>
               <dd>{session.user.email}</dd>
-              <dt className="font-medium">관심 카테고리</dt>
+              <dt className="text-sm font-medium text-muted">관심 카테고리</dt>
               <dd className="flex flex-wrap gap-2">
                 {selectedCategories.length > 0
                   ? selectedCategories.map((category) => (
@@ -76,9 +76,9 @@ export default async function ProfilePage({ searchParams }) {
                     ))
                   : '없음'}
               </dd>
-              <dt className="font-medium">지역</dt>
+              <dt className="text-sm font-medium text-muted">지역</dt>
               <dd>{getRegionName(userRegionCode)}</dd>
-              <dt className="font-medium">새 일정·챌린지 알림</dt>
+              <dt className="text-sm font-medium text-muted">새 일정·챌린지 알림</dt>
               <dd>
                 {session.user.notificationEnabled !== false
                   ? '받음'

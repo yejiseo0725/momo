@@ -1,4 +1,4 @@
-import { Card, Chip, Typography } from '@heroui/react';
+import { Chip, Typography } from '@heroui/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -39,7 +39,7 @@ export default async function ChallengeDetailsPage({ params, searchParams }) {
         message={getSingleSearchParam(query.message)}
       />
 
-      <section className="flex flex-col gap-4">
+      <section className="flex flex-col gap-4 rounded-[28px] border border-border bg-surface p-6">
         <p>
           <Link className="link" href={`/gatherings/${id}/challenges`}>
             ← 챌린지 목록
@@ -62,30 +62,35 @@ export default async function ChallengeDetailsPage({ params, searchParams }) {
           </div>
         </div>
 
-        <p>{challenge.description}</p>
+        <p className="text-foreground/80">{challenge.description}</p>
 
-        <Card>
-          <Card.Content>
-            <dl className="grid gap-3 sm:grid-cols-[6rem_1fr]">
-              <dt className="font-medium">기간</dt>
-              <dd>
-                {challenge.startDate} – {challenge.endDate}
-              </dd>
-              <dt className="font-medium">인증 방식</dt>
-              <dd>
-                <Chip size="md">
-                  {challenge.useImage ? '이미지 인증 필수' : '텍스트/이미지 인증'}
-                </Chip>
-              </dd>
-              <dt className="font-medium">작성자</dt>
-              <dd>
-                <UserInfo name={challenge.authorName} image={challenge.authorImage} />
-              </dd>
-              <dt className="font-medium">인증 현황</dt>
-              <dd>총 {feeds.length}회 인증됨</dd>
-            </dl>
-          </Card.Content>
-        </Card>
+        <div className="border-t border-border pt-4">
+          <dl className="grid gap-3 sm:grid-cols-[6rem_1fr]">
+            <dt className="text-sm font-medium text-muted">기간</dt>
+            <dd>
+              {challenge.startDate} – {challenge.endDate}
+            </dd>
+            <dt className="text-sm font-medium text-muted">인증 방식</dt>
+            <dd>
+              <Chip
+                size="md"
+                className={
+                  challenge.useImage
+                    ? 'bg-primary text-white font-semibold'
+                    : 'bg-tertiary text-tertiary-foreground font-semibold'
+                }
+              >
+                {challenge.useImage ? '이미지 인증' : '텍스트 인증'}
+              </Chip>
+            </dd>
+            <dt className="text-sm font-medium text-muted">작성자</dt>
+            <dd>
+              <UserInfo name={challenge.authorName} image={challenge.authorImage} />
+            </dd>
+            <dt className="text-sm font-medium text-muted">인증 현황</dt>
+            <dd>총 {feeds.length}회 인증됨</dd>
+          </dl>
+        </div>
       </section>
 
       <section className="flex flex-col gap-4">

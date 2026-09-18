@@ -22,6 +22,8 @@
   --color-primary-foreground: #ffffff;
   --color-secondary: #fff0e8;
   --color-secondary-foreground: #c94f2c;
+  --color-tertiary: #eafaf1;
+  --color-tertiary-foreground: #1e874b;
   --color-warning: #ff6f3c;
   --color-warning-foreground: #ffffff;
   --color-accent-pink: #ff5c93;
@@ -39,6 +41,8 @@
   --primary-foreground: #ffffff;
   --secondary: #fff0e8;
   --secondary-foreground: #c94f2c;
+  --tertiary: #eafaf1;
+  --tertiary-foreground: #1e874b;
   --accent: #2997ff;
   --accent-foreground: #ffffff;
   --accent-hover: #1b85ed;
@@ -102,12 +106,13 @@ label,
   color: color-mix(in srgb, var(--foreground) 60%, transparent);
 }
 
-/* disabled 상태의 폼 필드 내부 라벨도 다른 라벨과 동일한 색상/불투명도 유지 */
+/* disabled 상태의 폼 필드(예: 이메일): 수정 불가 상태가 명확히 느껴지도록 라벨과 입력창을 더 차분하게 톤 다운 */
 [data-disabled='true'] label,
 [data-disabled='true'] .label,
 [data-disabled='true'] [data-slot='label'],
 .label--disabled {
-  opacity: 1;
+  color: color-mix(in srgb, var(--foreground) 40%, transparent);
+  cursor: not-allowed;
 }
 
 /* disabled 상태의 입력 필드(예: 이메일): 흐릿한 반투명 대신 눌린(sunken) 회색 배경으로 명확히 표시 */

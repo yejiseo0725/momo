@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, CloseButton, Modal, Typography } from '@heroui/react';
+import { Button, CloseButton, Modal } from '@heroui/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -30,12 +30,14 @@ export default function ScheduleDetailModal({
     router.refresh();
   }
 
-  function handleClose() {
-    setIsEditing(false);
-    if (isControlled) {
-      controlledOnOpenChange?.(false);
-    } else {
-      setInternalIsOpen(false);
+  function handleClose(open) {
+    if (open === false || typeof open === 'undefined') {
+      setIsEditing(false);
+      if (isControlled) {
+        controlledOnOpenChange?.(false);
+      } else {
+        setInternalIsOpen(false);
+      }
     }
   }
 

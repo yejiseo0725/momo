@@ -43,13 +43,13 @@ export default async function ScheduleDetailsPage({ params, searchParams }) {
         <Card>
           <Card.Content>
             <dl className="grid gap-3 sm:grid-cols-[6rem_1fr]">
-              <dt className="font-medium">기간</dt>
+              <dt className="text-sm font-medium text-muted">기간</dt>
               <dd>
                 {schedule.startDate} – {schedule.endDate}
               </dd>
-              <dt className="font-medium">장소</dt>
+              <dt className="text-sm font-medium text-muted">장소</dt>
               <dd>{schedule.location}</dd>
-              <dt className="font-medium">작성자</dt>
+              <dt className="text-sm font-medium text-muted">작성자</dt>
               <dd>
                 <UserInfo name={schedule.authorName} image={schedule.authorImage} />
               </dd>

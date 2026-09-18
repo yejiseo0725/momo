@@ -52,8 +52,14 @@ export default async function GatheringHomePage({ params, searchParams }) {
         </div>
         <p>{gathering.description}</p>
         <div className="flex flex-wrap gap-2">
-          <Chip>
-            {gathering.memberCount} / {gathering.maxMemCount}명
+          <Chip
+            className={
+              isFull ? 'bg-warning text-warning-foreground font-semibold' : ''
+            }
+          >
+            {isFull
+              ? '정원 마감'
+              : `${gathering.memberCount} / ${gathering.maxMemCount}명`}
           </Chip>
           <Chip>{gathering.isPublic ? '공개 모임' : '비공개 모임'}</Chip>
           <Chip>{formatDate(gathering.createdAt)} 개설</Chip>

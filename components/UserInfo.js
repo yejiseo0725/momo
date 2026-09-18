@@ -16,7 +16,7 @@ export default function UserInfo({
   return (
     <div className={`inline-flex items-center gap-2 min-w-0 ${className}`}>
       {label ? (
-        <span className="text-muted text-sm shrink-0">{label}</span>
+        <span className="text-muted text-sm font-medium shrink-0">{label}</span>
       ) : null}
       <UserAvatar image={image} name={name} size={avatarSize} />
       <span className={`font-medium ${textSize} truncate`}>

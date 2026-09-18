@@ -123,35 +123,49 @@ function CalendarEvent({
     "--event-title-anchor": titleAnchor,
     "--event-title-span": titleSpan,
   };
-  let content = null;
 
-  if (showTitle && onEventClick) {
+  const titleContent = showTitle ? (
+    <span className={styles.eventTitle} style={titleStyle} title={event.title}>
+      {event.title}
+    </span>
+  ) : null;
+
+  let content = titleContent;
+
+  if (onEventClick) {
     content = (
       <button
         type="button"
-        className={styles.eventTitle}
-        style={titleStyle}
+        className={styles.eventButton}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          onEventClick(event);
+        }}
         title={event.title}
-        onClick={() => onEventClick(event)}
+        aria-label={event.title}
       >
-        {event.title}
+        {titleContent}
       </button>
     );
-  } else if (showTitle && showEventLink && event.url) {
+  } else if (showEventLink && event.url) {
     content = (
-      <Link className={styles.eventTitle} href={event.url} style={titleStyle} title={event.title}>
-        {event.title}
+      <Link
+        className={styles.eventButton}
+        href={event.url}
+        title={event.title}
+        aria-label={event.title}
+      >
+        {titleContent}
       </Link>
-    );
-  } else if (showTitle) {
-    content = (
-      <span className={styles.eventTitle} style={titleStyle} title={event.title}>
-        {event.title}
-      </span>
     );
   }
 
-  return <li aria-hidden={!showTitle} className={eventClassName}>{content}</li>;
+  return (
+    <li aria-hidden={!showTitle} className={eventClassName}>
+      {content}
+    </li>
+  );
 }
 
 export default function Calendar({
