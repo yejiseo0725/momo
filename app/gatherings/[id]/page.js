@@ -35,7 +35,7 @@ export default async function GatheringHomePage({ params, searchParams }) {
         <div className="relative isolate aspect-[3/1] min-h-48 w-full overflow-hidden border border-border bg-surface">
           <Image
             className="z-0 object-cover"
-            src={gathering.imageUrl || '/gathering-default.svg'}
+            src={gathering.imageUrl || '/placeholder-image.png'}
             alt={
               gathering.imageUrl
                 ? `${gathering.name} 모임 이미지`

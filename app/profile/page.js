@@ -1,5 +1,6 @@
-import { Card, Chip, Typography } from '@heroui/react';
+import { Button, Card, Chip, Typography } from '@heroui/react';
 
+import { logoutAction } from '@/app/auth-actions';
 import EmptyState from '@/components/EmptyState';
 import GatheringCard from '@/components/GatheringCard';
 import HeroToast from '@/components/HeroToast';
@@ -44,9 +45,16 @@ export default async function ProfilePage({ searchParams }) {
               <p>{displayName}</p>
             </div>
           </header>
-          <Link href="/profile/edit" className="button button--primary">
-            내 정보 수정
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <Link href="/profile/edit" className="button button--primary">
+              내 정보 수정
+            </Link>
+            <form action={logoutAction}>
+              <Button type="submit" variant="outline">
+                로그아웃
+              </Button>
+            </form>
+          </div>
         </div>
 
         <Card>

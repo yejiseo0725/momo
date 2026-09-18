@@ -16,7 +16,7 @@ export default function GatheringCard({ gathering, loading = 'eager' }) {
       >
         <Image
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-          src={gathering.imageUrl || '/gathering-default.svg'}
+          src={gathering.imageUrl || '/placeholder-image.png'}
           alt={
             gathering.imageUrl
               ? `${gathering.name} 모임 이미지`
@@ -83,7 +83,7 @@ export default function GatheringCard({ gathering, loading = 'eager' }) {
 
         <p className="line-clamp-2 text-muted">{gathering.description}</p>
 
-        <div className="mt-auto flex items-end justify-end gap-4 pt-1">
+        <div className="mt-auto -mx-4 flex items-center justify-start gap-4 border-t border-border px-4 pt-3">
           <div className="flex min-w-0 items-center gap-2">
             <UserAvatar name={gathering.creatorName} />
             <span className="line-clamp-1 font-medium text-foreground/80">

@@ -290,26 +290,27 @@ export default function ChatRoom({
           {messages.length === 0 ? (
             <EmptyState>첫 메시지를 남겨 보세요.</EmptyState>
           ) : (
-            messages.map((message) => (
-              <Card
-                key={message.id}
-                variant={
-                  message.userId === currentUserId ? 'secondary' : 'default'
-                }
-              >
-                <Card.Header>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <strong>{message.authorName}</strong>
-                    <small>
-                      {dateTimeFormatter.format(new Date(message.createdAt))}
-                    </small>
-                  </div>
-                </Card.Header>
-                <Card.Content>
-                  <p>{message.content}</p>
-                </Card.Content>
-              </Card>
-            ))
+            messages.map((message) => {
+              const isMine = message.userId === currentUserId;
+              return (
+                <Card
+                  key={message.id}
+                  className={isMine ? 'bg-primary text-white' : 'bg-white'}
+                >
+                  <Card.Header>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <strong>{message.authorName}</strong>
+                      <small className={isMine ? 'text-white/70' : ''}>
+                        {dateTimeFormatter.format(new Date(message.createdAt))}
+                      </small>
+                    </div>
+                  </Card.Header>
+                  <Card.Content>
+                    <p>{message.content}</p>
+                  </Card.Content>
+                </Card>
+              );
+            })
           )}
         </div>
 
@@ -344,7 +345,7 @@ export default function ChatRoom({
         className="sticky bottom-0 z-20 -mb-8"
         action={submitMessage}
       >
-        <div className="flex w-full items-end gap-2 border-t border-border bg-background px-4 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+        <div className="flex w-full items-start gap-2 border-t border-border bg-background px-4 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
           <input type="hidden" name="gatheringId" value={gatheringId} />
           <TextField fullWidth isRequired name="content">
             <Label>메시지</Label>
