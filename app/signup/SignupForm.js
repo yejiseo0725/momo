@@ -8,9 +8,9 @@ import {
   Form,
   Input,
   Label,
-  Radio,
-  RadioGroup,
   TextField,
+  ToggleButton,
+  ToggleButtonGroup,
 } from '@heroui/react';
 import { useActionState, useState } from 'react';
 
@@ -82,19 +82,36 @@ export default function SignupForm({ categories }) {
         />
       </TextField>
 
-      <RadioGroup isRequired name="gender" value={gender} onChange={setGender}>
+      <div className="flex flex-col gap-1.5">
         <Label>성별</Label>
-        {['남성', '여성'].map((genderOption) => (
-          <Radio key={genderOption} value={genderOption}>
-            <Radio.Content>
-              <Radio.Control>
-                <Radio.Indicator />
-              </Radio.Control>
+        <ToggleButtonGroup
+          className="w-full flex"
+          disallowEmptySelection
+          fullWidth
+          selectedKeys={gender ? new Set([gender]) : new Set()}
+          selectionMode="single"
+          onSelectionChange={(keys) => {
+            const nextKey = Array.from(keys)[0];
+            if (nextKey) {
+              setGender(nextKey);
+            }
+          }}
+        >
+          {['남성', '여성'].map((genderOption, index) => [
+            index > 0 ? (
+              <ToggleButtonGroup.Separator key={`sep-${genderOption}`} />
+            ) : null,
+            <ToggleButton
+              key={genderOption}
+              className="flex-1"
+              id={genderOption}
+            >
               {genderOption}
-            </Radio.Content>
-          </Radio>
-        ))}
-      </RadioGroup>
+            </ToggleButton>,
+          ])}
+        </ToggleButtonGroup>
+        <input type="hidden" name="gender" value={gender} />
+      </div>
 
       <RegionAutocomplete
         helpText="읍면동 또는 온라인을 입력하고 자동완성 목록에서 선택해 주세요."

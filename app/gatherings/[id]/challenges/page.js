@@ -22,14 +22,16 @@ export default async function ChallengesPage({ params, searchParams }) {
         error={getSingleSearchParam(query.error)}
         message={getSingleSearchParam(query.message)}
       />
-      <section className="flex flex-col gap-2 rounded-[28px] border border-border bg-surface p-6">
+      <section className="flex flex-col gap-4 rounded-[28px] border border-border bg-surface p-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <Typography type="h1">챌린지</Typography>
+          <div>
+            <Typography type="h1">챌린지</Typography>
+            <p className="text-sm text-foreground/70">
+              모임 멤버와 함께할 목표를 만들고 실천을 인증하세요.
+            </p>
+          </div>
           <ChallengeCreateModal gatheringId={id} />
         </div>
-        <p className="text-sm text-foreground/70">
-          모임 멤버와 함께할 목표를 만들고 실천을 인증하세요.
-        </p>
       </section>
 
       <section className="grid gap-4">

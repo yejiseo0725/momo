@@ -1,4 +1,4 @@
-import { Typography } from "@heroui/react";
+import { Separator, Typography } from "@heroui/react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
@@ -23,6 +23,8 @@ export default async function LoginPage({ searchParams }) {
       <Typography type="h1">로그인</Typography>
       <p>momo에서 내 모임으로 돌아가세요.</p>
       <LoginForm nextPath={nextPath} />
+
+      <Separator />
 
       <p>처음 오셨나요? <Link className="link" href="/signup">회원가입</Link></p>
     </section>

@@ -71,14 +71,6 @@ export default function GatheringCard({ gathering, loading = 'eager' }) {
           >
             {gathering.name}
           </Link>
-          {gathering.role === 'LEADER' ? (
-            <Chip
-              size="md"
-              className="bg-accent-pink text-white font-semibold shadow-xs"
-            >
-              모임장
-            </Chip>
-          ) : null}
         </div>
 
         <span className="text-muted">{gathering.region}</span>
@@ -86,7 +78,16 @@ export default function GatheringCard({ gathering, loading = 'eager' }) {
         <p className="line-clamp-2 text-muted">{gathering.description}</p>
 
         <div className="mt-auto -mx-4 flex items-center justify-start gap-4 border-t border-border px-4 pt-3">
-          <UserInfo name={gathering.creatorName} image={gathering.creatorImage} />
+          <UserInfo name={gathering.creatorName} image={gathering.creatorImage}>
+            {gathering.role === 'LEADER' ? (
+              <Chip
+                size="md"
+                className="bg-accent-pink text-white font-semibold shadow-xs"
+              >
+                모임장
+              </Chip>
+            ) : null}
+          </UserInfo>
         </div>
       </div>
     </Card>

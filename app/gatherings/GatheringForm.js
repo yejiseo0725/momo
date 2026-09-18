@@ -10,10 +10,10 @@ import {
   Input,
   Label,
   NumberField,
-  Radio,
-  RadioGroup,
   TextArea,
   TextField,
+  ToggleButton,
+  ToggleButtonGroup,
 } from '@heroui/react';
 import { useActionState, useState } from 'react';
 
@@ -112,25 +112,31 @@ export default function GatheringForm({
         initialCategory={initialValues.category}
       />
 
-      <RadioGroup name="visibility" value={visibility} onChange={setVisibility}>
+      <div className="flex flex-col gap-1.5">
         <Label>공개 여부</Label>
-        <Radio value="public">
-          <Radio.Content>
-            <Radio.Control>
-              <Radio.Indicator />
-            </Radio.Control>
+        <ToggleButtonGroup
+          className="w-full flex"
+          disallowEmptySelection
+          fullWidth
+          selectedKeys={visibility ? new Set([visibility]) : new Set()}
+          selectionMode="single"
+          onSelectionChange={(keys) => {
+            const nextKey = Array.from(keys)[0];
+            if (nextKey) {
+              setVisibility(nextKey);
+            }
+          }}
+        >
+          <ToggleButton className="flex-1" id="public">
             공개 모임
-          </Radio.Content>
-        </Radio>
-        <Radio value="private">
-          <Radio.Content>
-            <Radio.Control>
-              <Radio.Indicator />
-            </Radio.Control>
+          </ToggleButton>
+          <ToggleButtonGroup.Separator />
+          <ToggleButton className="flex-1" id="private">
             비공개 모임
-          </Radio.Content>
-        </Radio>
-      </RadioGroup>
+          </ToggleButton>
+        </ToggleButtonGroup>
+        <input type="hidden" name="visibility" value={visibility} />
+      </div>
 
       <Button type="submit" isDisabled={pending} isPending={pending}>
         {mode === 'create' ? <PlusIcon /> : null}

@@ -17,7 +17,7 @@ export default async function NewGatheringPage({ searchParams }) {
         error={getSingleSearchParam(query.error)}
         message={getSingleSearchParam(query.message)}
       />
-      <Typography type="h1">새 모임 만들기</Typography>
+      <Typography type="h1">모임 만들기</Typography>
       <GatheringForm
         categories={CATEGORIES}
         initialValues={{

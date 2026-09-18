@@ -87,7 +87,7 @@ export default async function GatheringsPage({ searchParams }) {
             </p>
           </div>
           <Link href="/gatherings/new" className="button button--primary">
-            <PlusIcon />새 모임 만들기
+            <PlusIcon />모임 만들기
           </Link>
         </div>
 

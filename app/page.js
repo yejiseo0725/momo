@@ -61,7 +61,7 @@ export default async function HomePage({ searchParams }) {
                 <Card.Title>놓치지 않는 일정</Card.Title>
               </Card.Header>
               <Card.Content>
-                <p>모임 일정을 달력에서 확인하고 참여 여부를 남깁니다.</p>
+                <p>모임 일정을 달력에서 확인하고 공유합니다.</p>
               </Card.Content>
             </Card>
             <Card>

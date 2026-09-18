@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, CloseButton, Modal } from '@heroui/react';
+import { Button, Modal } from '@heroui/react';
 
 import ChallengeForm from '@/app/gatherings/[id]/challenges/ChallengeForm';
 import { deleteChallengeAction } from '@/app/gatherings/[id]/challenges/actions';
@@ -27,10 +27,10 @@ export default function ChallengeEditModal({ challenge, gatheringId }) {
             <Modal.Dialog>
               <Modal.Header>
                 <Modal.Heading>챌린지 수정</Modal.Heading>
-                <CloseButton
+                <Modal.CloseTrigger
                   aria-label="챌린지 수정 닫기"
-                  className="absolute top-4 right-4"
                   onPress={() => setIsOpen(false)}
+                  onClick={() => setIsOpen(false)}
                 />
               </Modal.Header>
               <Modal.Body>

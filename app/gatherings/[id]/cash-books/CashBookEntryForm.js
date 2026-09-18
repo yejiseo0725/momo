@@ -9,10 +9,10 @@ import {
   Form,
   Input,
   Label,
-  ListBox,
-  Select,
   TextArea,
   TextField,
+  ToggleButton,
+  ToggleButtonGroup,
 } from '@heroui/react';
 import { useActionState, useEffect, useState } from 'react';
 
@@ -55,29 +55,37 @@ export default function CashBookEntryForm({
       <input type="hidden" name="gatheringId" value={gatheringId} />
       {entryId ? <input type="hidden" name="entryId" value={entryId} /> : null}
 
-      <Select
-        fullWidth
-        isRequired
-        name="type"
-        selectedKey={type}
-        onSelectionChange={(key) => setType(String(key))}
-      >
+      <div className="flex flex-col gap-1.5">
         <Label>타입</Label>
-        <Select.Trigger>
-          <Select.Value />
-          <Select.Indicator />
-        </Select.Trigger>
-        <Select.Popover>
-          <ListBox>
-            <ListBox.Item id="INCOME" textValue="수입">
-              수입
-            </ListBox.Item>
-            <ListBox.Item id="SPENDING" textValue="지출">
-              지출
-            </ListBox.Item>
-          </ListBox>
-        </Select.Popover>
-      </Select>
+        <ToggleButtonGroup
+          className="w-full flex"
+          disallowEmptySelection
+          fullWidth
+          selectedKeys={type ? new Set([type]) : new Set()}
+          selectionMode="single"
+          onSelectionChange={(keys) => {
+            const nextKey = Array.from(keys)[0];
+            if (nextKey) {
+              setType(nextKey);
+            }
+          }}
+        >
+          <ToggleButton
+            className="flex-1 data-[selected=true]:bg-tertiary data-[selected=true]:text-tertiary-foreground data-[selected=true]:font-semibold"
+            id="INCOME"
+          >
+            수입
+          </ToggleButton>
+          <ToggleButtonGroup.Separator />
+          <ToggleButton
+            className="flex-1 data-[selected=true]:bg-secondary data-[selected=true]:text-secondary-foreground data-[selected=true]:font-semibold"
+            id="SPENDING"
+          >
+            지출
+          </ToggleButton>
+        </ToggleButtonGroup>
+        <input type="hidden" name="type" value={type} />
+      </div>
 
       <TextField fullWidth isRequired name="title">
         <Label>내역</Label>

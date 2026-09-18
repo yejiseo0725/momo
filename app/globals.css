@@ -167,8 +167,10 @@ body:has([data-chat-page]) footer {
 body:has([data-chat-page]) main {
   flex: 1 1 0%;
   min-height: 0;
+  height: 100%;
+  max-height: 100%;
   overflow: hidden;
-  padding-top: 1rem;
+  padding-top: 2rem;
   padding-bottom: 0;
   gap: 0;
 }
@@ -190,6 +192,8 @@ body:has([data-chat-page]) .gathering-layout-container {
 
 body:has([data-chat-page]) .gathering-layout-aside {
   flex-shrink: 0;
+  position: static;
+  align-self: start;
 }
 
 body:has([data-chat-page]) .gathering-layout-content {

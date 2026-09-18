@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, CloseButton, Modal } from '@heroui/react';
+import { Button, Modal } from '@heroui/react';
 
 import ChallengeFeedForm from '@/app/gatherings/[id]/challenges/ChallengeFeedForm';
 import { useRouter } from 'next/navigation';
@@ -33,10 +33,10 @@ export default function ChallengeFeedModal({
             <Modal.Dialog>
               <Modal.Header>
                 <Modal.Heading>실천 인증하기</Modal.Heading>
-                <CloseButton
+                <Modal.CloseTrigger
                   aria-label="실천 인증하기 닫기"
-                  className="absolute top-4 right-4"
                   onPress={() => setIsOpen(false)}
+                  onClick={() => setIsOpen(false)}
                 />
               </Modal.Header>
               <Modal.Body>

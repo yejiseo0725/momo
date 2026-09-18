@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, CloseButton, Modal } from '@heroui/react';
+import { Button, Modal } from '@heroui/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -30,14 +30,12 @@ export default function ScheduleDetailModal({
     router.refresh();
   }
 
-  function handleClose(open) {
-    if (open === false || typeof open === 'undefined') {
-      setIsEditing(false);
-      if (isControlled) {
-        controlledOnOpenChange?.(false);
-      } else {
-        setInternalIsOpen(false);
-      }
+  function handleClose() {
+    setIsEditing(false);
+    if (isControlled) {
+      controlledOnOpenChange?.(false);
+    } else {
+      setInternalIsOpen(false);
     }
   }
 
@@ -77,10 +75,10 @@ export default function ScheduleDetailModal({
                 <Modal.Heading>
                   {isEditing ? '일정 수정' : schedule.title}
                 </Modal.Heading>
-                <CloseButton
+                <Modal.CloseTrigger
                   aria-label="닫기"
-                  className="absolute top-4 right-4"
                   onPress={handleClose}
+                  onClick={handleClose}
                 />
               </Modal.Header>
               <Modal.Body>

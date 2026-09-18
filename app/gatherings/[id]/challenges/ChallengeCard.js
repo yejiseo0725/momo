@@ -61,7 +61,7 @@ export default function ChallengeCard({ challenge, gatheringId }) {
         <Disclosure.Content>
           <Disclosure.Body className="border-t border-border px-4 py-3 bg-surface-secondary/40 flex flex-col gap-3">
             <div>
-              <UserInfo label="개설자" name={challenge.authorName} image={challenge.authorImage} />
+              <UserInfo name={challenge.authorName} image={challenge.authorImage} />
             </div>
             {challenge.description ? (
               <p className="text-sm whitespace-pre-wrap text-foreground/90">

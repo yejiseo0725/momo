@@ -5,6 +5,7 @@ import {
   Card,
   Description,
   Form,
+  Kbd,
   Label,
   TextArea,
   TextField,
@@ -370,8 +371,19 @@ export default function ChatRoom({
               {isSending ? '보내는 중...' : '보내기'}
             </Button>
           </div>
-          <Description>
-            Enter로 보내고 Shift+Enter로 줄바꿈합니다.
+          <Description className="hidden sm:flex flex-wrap items-center gap-3 pt-1">
+            <span className="inline-flex items-center gap-1.5">
+              <Kbd>Enter</Kbd>
+              <span>보내기</span>
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="inline-flex items-center gap-1">
+                <Kbd>Shift</Kbd>
+                <span className="text-muted">+</span>
+                <Kbd>Enter</Kbd>
+              </span>
+              <span>줄바꿈</span>
+            </span>
           </Description>
         </TextField>
       </Form>
