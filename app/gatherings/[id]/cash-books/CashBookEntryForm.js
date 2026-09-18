@@ -6,6 +6,9 @@ import {
 } from '@/app/gatherings/[id]/cash-books/actions';
 import {
   Button,
+  Calendar,
+  DateField,
+  DatePicker,
   Form,
   Input,
   Label,
@@ -14,10 +17,27 @@ import {
   ToggleButton,
   ToggleButtonGroup,
 } from '@heroui/react';
+import { parseDate } from '@internationalized/date';
 import { useActionState, useEffect, useState } from 'react';
 
 import CashBookAmountInput from '@/app/gatherings/[id]/cash-books/CashBookAmountInput';
 import HeroToast from '@/components/HeroToast';
+
+function toCalendarDate(value) {
+  if (!value) {
+    return null;
+  }
+
+  try {
+    return parseDate(value);
+  } catch {
+    return null;
+  }
+}
+
+function toDateString(value) {
+  return value ? value.toString() : '';
+}
 
 const initialActionState = {
   error: '',
@@ -107,14 +127,40 @@ export default function CashBookEntryForm({
         />
       </TextField>
 
-      <TextField fullWidth isRequired name="date" type="date">
+      <DatePicker
+        fullWidth
+        isRequired
+        value={toCalendarDate(date)}
+        onChange={(nextDate) => setDate(toDateString(nextDate))}
+      >
         <Label>날짜</Label>
-        <Input
-          id={`${idPrefix}-date`}
-          value={date}
-          onChange={(event) => setDate(event.target.value)}
-        />
-      </TextField>
+        <DatePicker.Trigger className="flex w-full items-center gap-2">
+          <DateField.Group className="flex min-w-0 flex-1 items-center gap-2">
+            <DateField.Input aria-label="날짜">
+              {(segment) => <DateField.Segment segment={segment} />}
+            </DateField.Input>
+          </DateField.Group>
+          <DatePicker.TriggerIndicator />
+        </DatePicker.Trigger>
+        <DatePicker.Popover>
+          <Calendar>
+            <Calendar.Header>
+              <Calendar.NavButton slot="previous" />
+              <Calendar.Heading />
+              <Calendar.NavButton slot="next" />
+            </Calendar.Header>
+            <Calendar.Grid>
+              <Calendar.GridHeader>
+                {(day) => <Calendar.HeaderCell>{day}</Calendar.HeaderCell>}
+              </Calendar.GridHeader>
+              <Calendar.GridBody>
+                {(d) => <Calendar.Cell date={d} />}
+              </Calendar.GridBody>
+            </Calendar.Grid>
+          </Calendar>
+        </DatePicker.Popover>
+        <input type="hidden" name="date" value={date} />
+      </DatePicker>
 
       <TextField fullWidth name="memo">
         <Label>메모</Label>

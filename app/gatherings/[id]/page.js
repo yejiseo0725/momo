@@ -46,58 +46,65 @@ export default async function GatheringHomePage({ params, searchParams }) {
             unoptimized
           />
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Chip className="bg-accent-sky text-primary font-medium">
-            {gathering.category}
-          </Chip>
-        </div>
-        <Typography type="h1">{gathering.name}</Typography>
-        <div className="flex flex-wrap gap-2">
-          <Chip>{gathering.isPublic ? '공개 모임' : '비공개 모임'}</Chip>
-          <Chip
-            className={
-              isFull ? 'bg-warning text-warning-foreground font-semibold' : ''
-            }
-          >
-            {isFull
-              ? '정원 마감'
-              : `${gathering.memberCount} / ${gathering.maxMemCount}명`}
-          </Chip>
-        </div>
-        <p className="text-sm text-foreground/60">{gathering.region}</p>
-        <p className="text-sm text-foreground/60">
-          {formatDate(gathering.createdAt)} 개설
-        </p>
-        <p>{gathering.description}</p>
-        <HeroToast
-          error={getSingleSearchParam(query.error)}
-          message={getSingleSearchParam(query.message)}
-        />
 
-        <div className="flex flex-wrap items-center gap-2">
-          {!membership ? (
-            <ActionButtonForm
-              action={joinGatheringAction}
-              disabled={isFull}
-              fields={{ gatheringId: id }}
-              label={isFull ? '가입 마감' : '가입하기'}
-              pendingLabel="가입하는 중..."
-            />
-          ) : null}
-
-          {membership?.role === 'LEADER' ? (
-            <Link
-              href={`/gatherings/${id}/edit`}
-              className="button button--primary"
+        {/* 카테고리부터 모임에 초대까지 하나의 Surface */}
+        <div className="flex flex-col gap-4 rounded-[28px] border border-border bg-surface p-6">
+          <div className="flex flex-wrap gap-2">
+            <Chip className="bg-accent-sky text-primary font-medium">
+              {gathering.category}
+            </Chip>
+          </div>
+          <Typography type="h1">{gathering.name}</Typography>
+          <div className="flex flex-wrap gap-2">
+            <Chip>{gathering.isPublic ? '공개 모임' : '비공개 모임'}</Chip>
+            <Chip
+              className={
+                isFull ? 'bg-warning text-warning-foreground font-semibold' : ''
+              }
             >
-              모임 수정
-            </Link>
-          ) : null}
-        </div>
+              {isFull
+                ? '정원 마감'
+                : `${gathering.memberCount} / ${gathering.maxMemCount}명`}
+            </Chip>
+          </div>
+          <p className="text-sm text-foreground/60">{gathering.region}</p>
+          <p className="text-sm text-foreground/60">
+            {formatDate(gathering.createdAt)} 개설
+          </p>
+          <p>{gathering.description}</p>
+          <HeroToast
+            error={getSingleSearchParam(query.error)}
+            message={getSingleSearchParam(query.message)}
+          />
 
-        {!gathering.isPublic && membership && gathering.inviteToken ? (
-          <InviteButton inviteToken={gathering.inviteToken} />
-        ) : null}
+          {/* 버튼 행: 초대(왼쪽) / 가입하기+수정(오른쪽) */}
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              {!gathering.isPublic && membership && gathering.inviteToken ? (
+                <InviteButton inviteToken={gathering.inviteToken} />
+              ) : null}
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              {!membership ? (
+                <ActionButtonForm
+                  action={joinGatheringAction}
+                  disabled={isFull}
+                  fields={{ gatheringId: id }}
+                  label={isFull ? '가입 마감' : '가입하기'}
+                  pendingLabel="가입하는 중..."
+                />
+              ) : null}
+              {membership?.role === 'LEADER' ? (
+                <Link
+                  href={`/gatherings/${id}/edit`}
+                  className="button button--primary"
+                >
+                  모임 수정
+                </Link>
+              ) : null}
+            </div>
+          </div>
+        </div>
       </section>
 
       <section className="flex flex-col gap-4">

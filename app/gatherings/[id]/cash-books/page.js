@@ -57,6 +57,29 @@ export default async function CashBooksPage({ params, searchParams }) {
             }}
           />
         </div>
+        <div
+          className="grid grid-cols-1 gap-4 sm:grid-cols-3"
+          aria-label={`${selectedMonth} 가계부 합계`}
+        >
+          <Surface className="rounded-medium border-none bg-default/40 p-4 text-success shadow-none">
+            <p className="text-sm font-medium">수입</p>
+            <strong className="text-lg">
+              {wonFormatter.format(totals.income)}
+            </strong>
+          </Surface>
+          <Surface className="rounded-medium border-none bg-default/40 p-4 text-danger shadow-none">
+            <p className="text-sm font-medium">지출</p>
+            <strong className="text-lg">
+              {wonFormatter.format(totals.spending)}
+            </strong>
+          </Surface>
+          <Surface className="rounded-medium border-none bg-default/40 p-4 text-primary shadow-none">
+            <p className="text-sm font-medium">합계</p>
+            <strong className="text-lg">
+              {wonFormatter.format(totals.balance)}
+            </strong>
+          </Surface>
+        </div>
       </section>
 
       <section className="flex flex-col gap-4">
@@ -67,29 +90,6 @@ export default async function CashBooksPage({ params, searchParams }) {
           selectedMonth={selectedMonth}
           selectedDate={selectedDate}
         />
-        <div
-          className="grid grid-cols-1 gap-4 sm:grid-cols-3"
-          aria-label={`${selectedMonth} 가계부 합계`}
-        >
-          <Surface className="border-none bg-white/80 p-4 text-success shadow-[0_12px_32px_-8px_rgba(0,0,0,0.06)] backdrop-blur-md">
-            <p className="text-sm font-medium">수입</p>
-            <strong className="text-lg">
-              {wonFormatter.format(totals.income)}
-            </strong>
-          </Surface>
-          <Surface className="border-none bg-white/80 p-4 text-danger shadow-[0_12px_32px_-8px_rgba(0,0,0,0.06)] backdrop-blur-md">
-            <p className="text-sm font-medium">지출</p>
-            <strong className="text-lg">
-              {wonFormatter.format(totals.spending)}
-            </strong>
-          </Surface>
-          <Surface className="border-none bg-white/80 p-4 text-primary shadow-[0_12px_32px_-8px_rgba(0,0,0,0.06)] backdrop-blur-md">
-            <p className="text-sm font-medium">합계</p>
-            <strong className="text-lg">
-              {wonFormatter.format(totals.balance)}
-            </strong>
-          </Surface>
-        </div>
       </section>
 
       {selectedDateEntries.length > 0 ? (

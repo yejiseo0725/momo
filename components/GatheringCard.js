@@ -31,7 +31,11 @@ export default function GatheringCard({ gathering, loading = 'eager' }) {
         <div className="absolute top-4 right-4 z-10 flex flex-wrap justify-end gap-2">
           <Chip
             size="md"
-            className="rounded-full bg-white/90 text-primary shadow-sm backdrop-blur-sm"
+            className={`rounded-full shadow-sm backdrop-blur-sm font-medium ${
+              gathering.isPublic
+                ? 'bg-primary text-white'
+                : 'bg-secondary text-secondary-foreground'
+            }`}
           >
             {gathering.isPublic ? '공개 모임' : '비공개 모임'}
           </Chip>

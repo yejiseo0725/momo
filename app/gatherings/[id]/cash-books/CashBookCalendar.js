@@ -22,18 +22,18 @@ export default function CashBookCalendar({ gatheringId, entries, selectedMonth, 
     if (totals.spending > 0) {
       events.push({
         id: `${date}-spending`,
-        title: `지출 -${amountFormatter.format(totals.spending)}원`,
-        start: date,
+        title: `-${amountFormatter.format(totals.spending)}원`,
         variant: "spending",
+        start: date,
       });
     }
 
     if (totals.income > 0) {
       events.push({
         id: `${date}-income`,
-        title: `수입 +${amountFormatter.format(totals.income)}원`,
-        start: date,
+        title: `+${amountFormatter.format(totals.income)}원`,
         variant: "income",
+        start: date,
       });
     }
   }
