@@ -32,9 +32,9 @@ export default async function GatheringHomePage({ params, searchParams }) {
   return (
     <>
       <section className="flex flex-col gap-4">
-        <div className="relative isolate aspect-[3/1] min-h-48 w-full overflow-hidden border border-border bg-surface">
+        <div className="relative isolate aspect-[4/3] min-h-48 w-full overflow-hidden rounded-[28px] border border-border bg-surface">
           <Image
-            className="z-0 object-cover"
+            className="z-0 object-cover object-top"
             src={gathering.imageUrl || '/placeholder-image.png'}
             alt={
               gathering.imageUrl
@@ -44,10 +44,6 @@ export default async function GatheringHomePage({ params, searchParams }) {
             fill
             loading="eager"
             unoptimized
-          />
-          <div
-            className="absolute inset-0 z-10 bg-gradient-to-t from-black/65 via-black/10 to-transparent"
-            aria-hidden="true"
           />
         </div>
         <div className="flex flex-wrap gap-2">
