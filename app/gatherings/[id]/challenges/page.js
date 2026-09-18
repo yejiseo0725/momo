@@ -50,11 +50,11 @@ export default async function ChallengesPage({ params, searchParams }) {
                 </Link>
               </Card.Title>
               <div className="flex flex-wrap items-center gap-2">
-                <UserInfo label="작성자" name={challenge.authorName} image={challenge.authorImage} />
-                <Chip size="md">
+                <UserInfo name={challenge.authorName} image={challenge.authorImage} />
+                <Chip size="md" color={challenge.useImage ? 'danger' : 'default'}>
                   이미지 {challenge.useImage ? '필수' : '선택'}
                 </Chip>
-                <Chip size="md">
+                <Chip size="md" className="ml-auto">
                   인증 {challenge.feedCount ?? challenge.feeds?.length ?? 0}개
                 </Chip>
               </div>
