@@ -50,8 +50,8 @@ export default async function ChallengesPage({ params, searchParams }) {
               </Card.Description>
               <Card.Title>{challenge.title}</Card.Title>
               <div className="flex flex-wrap gap-2">
-                <Chip size="sm">작성자 {challenge.authorName}</Chip>
-                <Chip size="sm">
+                <Chip size="md">작성자 {challenge.authorName}</Chip>
+                <Chip size="md">
                   이미지 {challenge.useImage ? '필수' : '선택'}
                 </Chip>
               </div>

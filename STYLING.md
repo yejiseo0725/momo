@@ -92,8 +92,8 @@
 ## 6. 칩(Chip) 규격
 
 - **형태**: 완전 Pill (`border-radius: 9999px`) — `rounded-full`에 해당
-- **패딩 (기본)**: `padding-inline: 0.75rem`, `padding-block: 0.3125rem`
-- **패딩 (sm)**: `padding-inline: 0.625rem`, `padding-block: 0.25rem`
+- **크기**: 무조건 `size="md"` 이상 사용 (`size="sm"` 사용 금지)
+- **패딩 (기본/md)**: `padding-inline: 0.75rem`, `padding-block: 0.3125rem`
 - **폰트**: `text-sm`(14px), `font-medium` 또는 `font-semibold`
 - **색상 조합**:
   - 공개/카테고리: `bg-accent-sky text-primary`

@@ -7,6 +7,11 @@ import { auth } from "@/lib/auth";
 import { redirectWithSuccess } from "@/lib/redirects";
 import { requireSession } from "@/lib/session";
 import {
+  UserImageError,
+  deleteUserImage,
+  storeUserImage,
+} from "@/lib/user-images";
+import {
   GENDERS,
   ValidationError,
   isSafeInternalPath,
@@ -86,8 +91,9 @@ export async function logoutAction() {
 }
 
 export async function updateProfileAction(_previousState, formData) {
-  await requireSession();
+  const session = await requireSession();
   let profile;
+  const imageFile = formData.get("image");
 
   try {
     profile = {
@@ -105,18 +111,41 @@ export async function updateProfileAction(_previousState, formData) {
     throw error;
   }
 
+  let newImageUrl = null;
+  try {
+    newImageUrl = await storeUserImage(imageFile, {
+      userId: session.user.id,
+    });
+  } catch (error) {
+    if (error instanceof UserImageError) {
+      return { error: error.message, message: "" };
+    }
+    throw error;
+  }
+
+  if (newImageUrl) {
+    profile.image = newImageUrl;
+  }
+
   try {
     await auth.api.updateUser({
       headers: await headers(),
       body: profile,
     });
-  } catch {
+  } catch (error) {
+    if (newImageUrl) {
+      await deleteUserImage(newImageUrl);
+    }
     return {
       error: "프로필을 수정하지 못했습니다. 잠시 후 다시 시도해 주세요.",
       message: "",
     };
   }
 
-  revalidatePath("/profile");
-  return { error: "", message: "프로필을 수정했습니다." };
+  if (newImageUrl && session.user.image) {
+    await deleteUserImage(session.user.image);
+  }
+
+  revalidatePath("/", "layout");
+  redirectWithSuccess("/profile", "프로필 정보를 수정했습니다.");
 }

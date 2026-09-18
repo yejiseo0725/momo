@@ -82,3 +82,50 @@ body {
 [data-slot='chip'] {
   border-radius: 9999px;
 }
+
+/* ───── 채팅 페이지 레이아웃 (전체 스크롤 방지 및 내부 스크롤) ───── */
+html:has([data-chat-page]),
+body:has([data-chat-page]) {
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+}
+
+body:has([data-chat-page]) footer {
+  display: none;
+}
+
+body:has([data-chat-page]) main {
+  flex: 1 1 0%;
+  min-height: 0;
+  overflow: hidden;
+  padding-top: 1rem;
+  padding-bottom: 0;
+  gap: 0;
+}
+
+body:has([data-chat-page]) .gathering-layout-container {
+  height: 100%;
+  min-height: 0;
+  grid-template-rows: auto 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  body:has([data-chat-page]) .gathering-layout-container {
+    grid-template-rows: 1fr;
+    align-items: stretch;
+    gap: 2rem;
+  }
+}
+
+body:has([data-chat-page]) .gathering-layout-aside {
+  flex-shrink: 0;
+}
+
+body:has([data-chat-page]) .gathering-layout-content {
+  height: 100%;
+  min-height: 0;
+  gap: 0;
+}
+

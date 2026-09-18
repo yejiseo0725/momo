@@ -17,9 +17,9 @@ export default async function GatheringLayout({ children, params }) {
   }
 
   return (
-    <div className="grid gap-8 md:grid-cols-[12rem_minmax(0,1fr)] md:items-start">
+    <div className="gathering-layout-container grid gap-8 md:grid-cols-[12rem_minmax(0,1fr)] md:items-start">
       <aside
-        className="md:sticky md:top-4 md:self-start"
+        className="gathering-layout-aside md:sticky md:top-4 md:self-start"
         aria-label={`${details.gathering.name} 메뉴`}
       >
         <div className="flex flex-col gap-4">
@@ -29,7 +29,7 @@ export default async function GatheringLayout({ children, params }) {
           {details.membership ? <GatheringNavigation gatheringId={id} /> : null}
         </div>
       </aside>
-      <div className="min-w-0 flex flex-col gap-8">{children}</div>
+      <div className="gathering-layout-content min-w-0 flex flex-col gap-8">{children}</div>
     </div>
   );
 }

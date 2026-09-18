@@ -30,13 +30,13 @@ export default function GatheringCard({ gathering, loading = 'eager' }) {
 
         <div className="absolute top-4 right-4 z-10 flex flex-wrap justify-end gap-2">
           <Chip
-            size="sm"
+            size="md"
             className="rounded-full bg-white/90 text-primary shadow-sm backdrop-blur-sm"
           >
             {gathering.isPublic ? '공개 모임' : '비공개 모임'}
           </Chip>
           <Chip
-            size="sm"
+            size="md"
             className={`rounded-full shadow-sm backdrop-blur-sm ${
               isFull
                 ? 'bg-warning text-warning-foreground'
@@ -58,7 +58,7 @@ export default function GatheringCard({ gathering, loading = 'eager' }) {
       <div className="relative -mt-8 z-10 flex flex-1 flex-col gap-3 px-4 pb-4">
         <div className="flex flex-wrap items-center gap-2">
           <Chip
-            size="sm"
+            size="md"
             className="rounded-full bg-accent-sky text-primary font-medium"
           >
             {gathering.category}
@@ -71,7 +71,7 @@ export default function GatheringCard({ gathering, loading = 'eager' }) {
           </Link>
           {gathering.role === 'LEADER' ? (
             <Chip
-              size="sm"
+              size="md"
               className="bg-accent-pink text-white font-semibold shadow-xs"
             >
               모임장

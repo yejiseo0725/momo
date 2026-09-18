@@ -273,17 +273,17 @@ export default function ChatRoom({
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-16rem)] flex-col">
+    <div className="flex flex-1 min-h-0 flex-col">
       <HeroToast
         error={feedback.error}
         message={feedback.message}
         trigger={feedback}
       />
 
-      <div className="relative flex-1">
+      <div className="relative flex-1 min-h-0">
         <div
           ref={chatListRef}
-          className="grid max-h-[calc(100vh-16rem)] gap-3 overflow-y-auto pb-24"
+          className="flex h-full flex-col gap-3 overflow-y-auto pr-1 pb-4"
           aria-live="polite"
           onScroll={handleScroll}
         >
@@ -317,7 +317,7 @@ export default function ChatRoom({
         {unreadCount > 0 && (
           <Button
             type="button"
-            className="absolute bottom-4 left-1/2 -translate-x-1/2"
+            className="absolute bottom-4 left-1/2 -translate-x-1/2 shadow-md"
             onPress={handleScrollToBottom}
             aria-label={`새 메시지 ${unreadCount}개 확인`}
           >
@@ -342,10 +342,10 @@ export default function ChatRoom({
 
       <Form
         ref={formRef}
-        className="sticky bottom-0 z-20 -mb-8"
+        className="shrink-0 border-t border-border bg-background pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]"
         action={submitMessage}
       >
-        <div className="flex w-full items-start gap-2 border-t border-border bg-background px-4 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+        <div className="flex w-full items-start gap-2">
           <input type="hidden" name="gatheringId" value={gatheringId} />
           <TextField fullWidth isRequired name="content">
             <Label>메시지</Label>

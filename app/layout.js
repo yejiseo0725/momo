@@ -45,6 +45,7 @@ async function SiteNavigation() {
           >
             내 모임
           </Link>
+          <NotificationLink hasUnreadNotifications={unreadCount > 0} />
           <Link className="button button--ghost button--sm" href="/profile">
             <span className="flex items-center gap-2">
               <UserAvatar
@@ -54,7 +55,6 @@ async function SiteNavigation() {
               <span>{session.user.nickname || session.user.name}</span>
             </span>
           </Link>
-          <NotificationLink hasUnreadNotifications={unreadCount > 0} />
         </div>
       ) : (
         <div className="flex items-center gap-1">
@@ -88,7 +88,7 @@ export default function RootLayout({ children }) {
       </head>
       <body className="flex min-h-screen flex-col bg-background text-foreground font-sans">
         <Toast.Provider placement="top end" />
-        <header className="border-b border-border bg-surface">
+        <header className="sticky top-0 z-50 border-b border-border/60 bg-surface/90 backdrop-blur-md backdrop-saturate-150">
           <div className="mx-auto w-full max-w-5xl px-4 py-3">
             <SiteNavigation />
           </div>

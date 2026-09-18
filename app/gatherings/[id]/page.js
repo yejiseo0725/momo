@@ -1,4 +1,4 @@
-import { Card, Chip, Typography } from '@heroui/react';
+import { Chip, Typography } from '@heroui/react';
 
 import InviteButton from '@/app/gatherings/[id]/InviteButton';
 import LeaveGatheringButton from '@/app/gatherings/[id]/LeaveGatheringButton';
@@ -91,24 +91,25 @@ export default async function GatheringHomePage({ params, searchParams }) {
 
       <section className="flex flex-col gap-4">
         <Typography type="h2">멤버 {members.length}명</Typography>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="flex flex-col gap-2">
           {members.map((member) => (
-            <Card key={member.id}>
-              <Card.Content>
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex min-w-0 items-center gap-2">
-                    <UserAvatar
-                      image={member.image}
-                      name={member.displayName}
-                    />
-                    <span className="truncate">{member.displayName}</span>
-                  </div>
-                  <Chip size="sm">
-                    {member.role === 'LEADER' ? '모임장' : '멤버'}
-                  </Chip>
-                </div>
-              </Card.Content>
-            </Card>
+            <div key={member.id} className="flex items-center gap-2">
+              <UserAvatar
+                image={member.image}
+                name={member.displayName}
+              />
+              <span className="font-medium text-foreground">{member.displayName}</span>
+              <Chip
+                size="md"
+                className={
+                  member.role === 'LEADER'
+                    ? 'bg-accent-pink text-white font-semibold'
+                    : 'bg-accent-sky text-primary font-medium'
+                }
+              >
+                {member.role === 'LEADER' ? '모임장' : '멤버'}
+              </Chip>
+            </div>
           ))}
         </div>
       </section>
