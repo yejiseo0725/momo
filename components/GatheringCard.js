@@ -1,6 +1,6 @@
 import { Card, Chip } from '@heroui/react';
 
-import UserAvatar from '@/components/UserAvatar';
+import UserInfo from '@/components/UserInfo';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -39,11 +39,13 @@ export default function GatheringCard({ gathering, loading = 'eager' }) {
             size="md"
             className={`rounded-full shadow-sm backdrop-blur-sm ${
               isFull
-                ? 'bg-warning text-warning-foreground'
+                ? 'bg-warning text-warning-foreground font-semibold'
                 : 'bg-white/90 text-foreground'
             }`}
           >
-            최대 {gathering.maxMemCount}명
+            {isFull
+              ? '정원 마감'
+              : `${gathering.memberCount} / ${gathering.maxMemCount}명`}
           </Chip>
         </div>
 
@@ -84,12 +86,7 @@ export default function GatheringCard({ gathering, loading = 'eager' }) {
         <p className="line-clamp-2 text-muted">{gathering.description}</p>
 
         <div className="mt-auto -mx-4 flex items-center justify-start gap-4 border-t border-border px-4 pt-3">
-          <div className="flex min-w-0 items-center gap-2">
-            <UserAvatar name={gathering.creatorName} />
-            <span className="line-clamp-1 font-medium text-foreground/80">
-              {gathering.creatorName}
-            </span>
-          </div>
+          <UserInfo name={gathering.creatorName} image={gathering.creatorImage} />
         </div>
       </div>
     </Card>

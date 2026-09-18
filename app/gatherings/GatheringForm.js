@@ -49,7 +49,7 @@ export default function GatheringForm({
   const [visibility, setVisibility] = useState(initialValues.visibility);
 
   return (
-    <Form className="flex w-full max-w-xl flex-col gap-4" action={formAction}>
+    <Form className="flex w-full max-w-md flex-col gap-4" action={formAction}>
       {gatheringId ? (
         <input type="hidden" name="gatheringId" value={gatheringId} />
       ) : null}

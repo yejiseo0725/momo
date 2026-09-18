@@ -22,6 +22,8 @@
   --color-primary-foreground: #ffffff;
   --color-secondary: #fff0e8;
   --color-secondary-foreground: #c94f2c;
+  --color-tertiary: #eafaf1;
+  --color-tertiary-foreground: #1e874b;
   --color-warning: #ff6f3c;
   --color-warning-foreground: #ffffff;
   --color-accent-pink: #ff5c93;
@@ -39,6 +41,8 @@
   --primary-foreground: #ffffff;
   --secondary: #fff0e8;
   --secondary-foreground: #c94f2c;
+  --tertiary: #eafaf1;
+  --tertiary-foreground: #1e874b;
   --accent: #2997ff;
   --accent-foreground: #ffffff;
   --accent-hover: #1b85ed;
@@ -70,17 +74,82 @@ body {
   letter-spacing: -0.01em;
 }
 
-.typography--body,
-.typography--body-sm,
-.typography--body-xs {
+.typography--body {
   font-size: 1rem; /* base: 16px */
   font-weight: 400;
   line-height: 1.6;
 }
 
+.typography--body-sm {
+  font-size: var(--text-sm, 0.875rem); /* sm: 14px */
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.typography--body-xs {
+  font-size: 0.75rem; /* xs: 12px */
+  font-weight: 400;
+  line-height: 1.4;
+}
+
 /* HeroUI Chip은 프로젝트 규칙에 따라 항상 pill 형태로 표시합니다. */
 [data-slot='chip'] {
   border-radius: 9999px;
+}
+
+/* ───── 폼 라벨(Label) 규격: 모든 label은 0.8rem font-semibold(600), 차분한 톤으로 통일 ───── */
+label,
+.label,
+[data-slot='label'] {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: color-mix(in srgb, var(--foreground) 60%, transparent);
+}
+
+/* disabled 상태의 폼 필드(예: 이메일): 수정 불가 상태가 명확히 느껴지도록 라벨과 입력창을 더 차분하게 톤 다운 */
+[data-disabled='true'] label,
+[data-disabled='true'] .label,
+[data-disabled='true'] [data-slot='label'],
+.label--disabled {
+  color: color-mix(in srgb, var(--foreground) 40%, transparent);
+  cursor: not-allowed;
+}
+
+/* disabled 상태의 입력 필드(예: 이메일): 흐릿한 반투명 대신 눌린(sunken) 회색 배경으로 명확히 표시 */
+.input:disabled,
+.input[data-disabled='true'],
+.input[aria-disabled='true'] {
+  opacity: 1;
+  background-color: var(--default);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+/* ───── 캡션/설명(Description / Caption) 규격: 0.8rem font-normal(400) 일반 글자 ───── */
+.description,
+[data-slot='description'],
+caption {
+  font-size: 0.8rem;
+  font-weight: 400;
+  line-height: 1.4;
+  color: color-mix(in srgb, var(--foreground) 60%, transparent);
+}
+
+/* ───── 버튼(Button) 규격 단일 표준화 (20px radius, 20px padding) ───── */
+.button,
+[data-slot='button'] {
+  border-radius: var(--radius-medium, 20px);
+  padding-left: 1.25rem; /* 20px */
+  padding-right: 1.25rem; /* 20px */
+  height: 2.5rem; /* 40px */
+  font-size: var(--text-sm, 0.875rem);
+  font-weight: 500;
+}
+
+.button--icon-only,
+[data-slot='button'].button--icon-only {
+  padding-left: 0;
+  padding-right: 0;
 }
 
 /* ───── 채팅 페이지 레이아웃 (전체 스크롤 방지 및 내부 스크롤) ───── */

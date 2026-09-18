@@ -3,6 +3,7 @@ import { Card, Chip, Surface, Typography } from '@heroui/react';
 import CashBookCalendar from '@/app/gatherings/[id]/cash-books/CashBookCalendar';
 import CashBookEntryModal from '@/app/gatherings/[id]/cash-books/CashBookEntryModal';
 import HeroToast from '@/components/HeroToast';
+import UserInfo from '@/components/UserInfo';
 import { getCashBookEntries } from '@/lib/cash-books';
 import { requireSession } from '@/lib/session';
 import { normalizeMonth } from '@/lib/utils/calendar';
@@ -37,9 +38,14 @@ export default async function CashBooksPage({ params, searchParams }) {
         error={getSingleSearchParam(query.error)}
         message={getSingleSearchParam(query.message)}
       />
-      <section className="flex flex-col gap-4">
+      <section className="flex flex-col gap-4 rounded-[28px] border border-border bg-surface p-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <Typography type="h1">가계부</Typography>
+          <div>
+            <Typography type="h1">가계부</Typography>
+            <p className="text-sm text-foreground/70">
+              모임의 수입과 지출을 함께 기록합니다.
+            </p>
+          </div>
           <CashBookEntryModal
             gatheringId={id}
             initialValues={{
@@ -51,7 +57,6 @@ export default async function CashBooksPage({ params, searchParams }) {
             }}
           />
         </div>
-        <p>모임의 수입과 지출을 함께 기록합니다.</p>
       </section>
 
       <section className="flex flex-col gap-4">
@@ -99,7 +104,9 @@ export default async function CashBooksPage({ params, searchParams }) {
               <Card key={entry.id}>
                 <Card.Header>
                   <Card.Title>{entry.title}</Card.Title>
-                  <Card.Description>작성자 {entry.authorName}</Card.Description>
+                  <div className="pt-1">
+                    <UserInfo label="작성자" name={entry.authorName} image={entry.authorImage} />
+                  </div>
                 </Card.Header>
                 <Card.Content className="flex flex-col gap-3">
                   <Chip color={entry.type === 'INCOME' ? 'success' : 'danger'}>

@@ -89,6 +89,7 @@
 
 .event {
   position: relative;
+  z-index: 2;
   min-width: 0;
   margin: 0;
   padding: 0.15rem 0.3rem;
@@ -106,8 +107,26 @@
 }
 
 .eventHasTitle {
-  z-index: 2;
-  pointer-events: none;
+  z-index: 3;
+}
+
+.eventButton {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  border-radius: inherit;
+  text-align: inherit;
+  text-decoration: none;
 }
 
 .spendingEvent,
@@ -156,10 +175,6 @@
   text-overflow: ellipsis;
   transform: translateX(-50%);
   white-space: nowrap;
-}
-
-a.eventTitle {
-  pointer-events: auto;
 }
 
 @media (max-width: 720px) {

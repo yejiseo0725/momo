@@ -14,6 +14,7 @@ import { useEffect, useRef, useState } from 'react';
 import { sendChatMessageAction } from '@/app/gatherings/[id]/chat/actions';
 import EmptyState from '@/components/EmptyState';
 import HeroToast from '@/components/HeroToast';
+import UserInfo from '@/components/UserInfo';
 import { io } from 'socket.io-client';
 
 const dateTimeFormatter = new Intl.DateTimeFormat('ko-KR', {
@@ -298,9 +299,13 @@ export default function ChatRoom({
                   className={isMine ? 'bg-primary text-white' : 'bg-white'}
                 >
                   <Card.Header>
-                    <div className="flex flex-wrap items-center gap-3">
-                      <strong>{message.authorName}</strong>
-                      <small className={isMine ? 'text-white/70' : ''}>
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <UserInfo
+                        name={message.authorName}
+                        image={message.authorImage}
+                        className={isMine ? 'text-white' : ''}
+                      />
+                      <small className={isMine ? 'text-white/70' : 'text-muted'}>
                         {dateTimeFormatter.format(new Date(message.createdAt))}
                       </small>
                     </div>
@@ -345,24 +350,30 @@ export default function ChatRoom({
         className="shrink-0 border-t border-border bg-background pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]"
         action={submitMessage}
       >
-        <div className="flex w-full items-start gap-2">
-          <input type="hidden" name="gatheringId" value={gatheringId} />
-          <TextField fullWidth isRequired name="content">
-            <Label>메시지</Label>
+        <input type="hidden" name="gatheringId" value={gatheringId} />
+        <TextField fullWidth isRequired name="content">
+          <Label>메시지</Label>
+          <div className="flex w-full items-stretch gap-2">
             <TextArea
               id="chat-content"
               rows="3"
               maxLength="1000"
               onKeyDown={handleMessageKeyDown}
+              className="flex-1"
             />
-            <Description>
-              Enter로 보내고 Shift+Enter로 줄바꿈합니다.
-            </Description>
-          </TextField>
-          <Button type="submit" isDisabled={isSending} isPending={isSending}>
-            {isSending ? '보내는 중...' : '보내기'}
-          </Button>
-        </div>
+            <Button
+              type="submit"
+              className="!h-auto self-stretch"
+              isDisabled={isSending}
+              isPending={isSending}
+            >
+              {isSending ? '보내는 중...' : '보내기'}
+            </Button>
+          </div>
+          <Description>
+            Enter로 보내고 Shift+Enter로 줄바꿈합니다.
+          </Description>
+        </TextField>
       </Form>
     </div>
   );

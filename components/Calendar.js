@@ -101,6 +101,7 @@ function CalendarEvent({
   week,
   weekdayIndex,
   showEventLink,
+  onEventClick,
 }) {
   const endDate = event.end || event.start;
   const continuesFromPreviousDay = event.start < dateValue && weekdayIndex > 0;
@@ -122,23 +123,49 @@ function CalendarEvent({
     "--event-title-anchor": titleAnchor,
     "--event-title-span": titleSpan,
   };
-  let content = null;
 
-  if (showTitle && showEventLink && event.url) {
+  const titleContent = showTitle ? (
+    <span className={styles.eventTitle} style={titleStyle} title={event.title}>
+      {event.title}
+    </span>
+  ) : null;
+
+  let content = titleContent;
+
+  if (onEventClick) {
     content = (
-      <Link className={styles.eventTitle} href={event.url} style={titleStyle} title={event.title}>
-        {event.title}
-      </Link>
+      <button
+        type="button"
+        className={styles.eventButton}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          onEventClick(event);
+        }}
+        title={event.title}
+        aria-label={event.title}
+      >
+        {titleContent}
+      </button>
     );
-  } else if (showTitle) {
+  } else if (showEventLink && event.url) {
     content = (
-      <span className={styles.eventTitle} style={titleStyle} title={event.title}>
-        {event.title}
-      </span>
+      <Link
+        className={styles.eventButton}
+        href={event.url}
+        title={event.title}
+        aria-label={event.title}
+      >
+        {titleContent}
+      </Link>
     );
   }
 
-  return <li aria-hidden={!showTitle} className={eventClassName}>{content}</li>;
+  return (
+    <li aria-hidden={!showTitle} className={eventClassName}>
+      {content}
+    </li>
+  );
 }
 
 export default function Calendar({
@@ -148,6 +175,7 @@ export default function Calendar({
   monthNavigationPath,
   dateNavigationPath,
   selectedDate,
+  onEventClick,
 }) {
   const monthValue = normalizeMonth(selectedMonth);
   const [year, month] = monthValue.split("-").map(Number);
@@ -242,6 +270,7 @@ export default function Calendar({
                                   weekdayIndex={weekdayIndex}
                                   key={event.id}
                                   showEventLink={!dateNavigationPath}
+                                  onEventClick={onEventClick}
                                 />
                               ))}
                             </ol>

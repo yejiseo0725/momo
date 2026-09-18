@@ -9,6 +9,8 @@ import {
   deleteChallenge,
   updateChallenge,
 } from "@/lib/challenges";
+import { GatheringError } from "@/lib/gatherings";
+import { redirectWithError, redirectWithSuccess } from "@/lib/redirects";
 import { requireSession } from "@/lib/session";
 import {
   ValidationError,
@@ -59,8 +61,12 @@ export async function createChallengeAction(previousState, formData) {
   try {
     await createChallenge(gatheringId, session.user.id, input);
   } catch (error) {
+    console.error("[createChallengeAction] 실패:", error);
+    const message = error instanceof ChallengeError || error instanceof GatheringError
+      ? error.message
+      : "챌린지를 만들지 못했습니다.";
     return {
-      error: error instanceof ChallengeError ? error.message : "챌린지를 만들지 못했습니다.",
+      error: message,
       message: "",
       resetKey,
     };
@@ -87,29 +93,41 @@ export async function updateChallengeAction(_previousState, formData) {
   try {
     await updateChallenge(ids.challengeId, ids.gatheringId, session.user.id, input);
   } catch (error) {
+    console.error("[updateChallengeAction] 실패:", error);
+    const message = error instanceof ChallengeError || error instanceof GatheringError
+      ? error.message
+      : "챌린지를 수정하지 못했습니다.";
     return {
-      error: error instanceof ChallengeError ? error.message : "챌린지를 수정하지 못했습니다.",
+      error: message,
       message: "",
     };
   }
   revalidatePath(`/gatherings/${ids.gatheringId}/challenges`);
+  revalidatePath(`/gatherings/${ids.gatheringId}/challenges/${ids.challengeId}`);
   return { error: "", message: "챌린지를 수정했습니다." };
 }
 
-export async function deleteChallengeAction(_previousState, formData) {
+export async function deleteChallengeAction(formData) {
   const session = await requireSession();
   const ids = getIds(formData);
 
   try {
     await deleteChallenge(ids.challengeId, ids.gatheringId, session.user.id);
   } catch (error) {
-    return {
-      error: error instanceof ChallengeError ? error.message : "챌린지를 삭제하지 못했습니다.",
-      message: "",
-    };
+    console.error("[deleteChallengeAction] 실패:", error);
+    const message = error instanceof ChallengeError || error instanceof GatheringError
+      ? error.message
+      : "챌린지를 삭제하지 못했습니다.";
+    redirectWithError(
+      `/gatherings/${ids.gatheringId}/challenges/${ids.challengeId}`,
+      message,
+    );
   }
   revalidatePath(`/gatherings/${ids.gatheringId}/challenges`);
-  return { error: "", message: "챌린지를 삭제했습니다." };
+  redirectWithSuccess(
+    `/gatherings/${ids.gatheringId}/challenges`,
+    "챌린지를 삭제했습니다.",
+  );
 }
 
 export async function createChallengeFeedAction(previousState, formData) {
@@ -135,12 +153,17 @@ export async function createChallengeFeedAction(previousState, formData) {
   try {
     await createChallengeFeed(ids.challengeId, ids.gatheringId, session.user.id, input);
   } catch (error) {
+    console.error("[createChallengeFeedAction] 실패:", error);
+    const message = error instanceof ChallengeError || error instanceof GatheringError
+      ? error.message
+      : "챌린지를 인증하지 못했습니다.";
     return {
-      error: error instanceof ChallengeError ? error.message : "챌린지를 인증하지 못했습니다.",
+      error: message,
       message: "",
       resetKey,
     };
   }
   revalidatePath(`/gatherings/${ids.gatheringId}/challenges`);
+  revalidatePath(`/gatherings/${ids.gatheringId}/challenges/${ids.challengeId}`);
   return { error: "", message: "챌린지를 인증했습니다.", resetKey: resetKey + 1 };
 }

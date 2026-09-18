@@ -11,7 +11,12 @@ function getUserInitial(name) {
 export default function UserAvatar({ image, name, size = "small" }) {
   const imageUrl = typeof image === "string" ? image.trim() : "";
   const accessibleName = name ? `${name} 프로필 이미지` : "사용자 프로필 이미지";
-  const avatarSize = size === "large" ? "lg" : "sm";
+  const avatarSize =
+    size === 'large' || size === 'lg'
+      ? 'lg'
+      : size === 'medium' || size === 'md'
+        ? 'md'
+        : 'sm';
 
   return (
     <Avatar size={avatarSize}>

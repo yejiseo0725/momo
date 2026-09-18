@@ -5,7 +5,7 @@ import EmptyState from '@/components/EmptyState';
 import GatheringCard from '@/components/GatheringCard';
 import HeroToast from '@/components/HeroToast';
 import PlusIcon from '@/components/PlusIcon';
-import UserAvatar from '@/components/UserAvatar';
+import UserInfo from '@/components/UserInfo';
 import { getJoinedGatherings } from '@/lib/gatherings';
 import { getRegionName } from '@/lib/regions';
 import { requireSession } from '@/lib/session';
@@ -34,16 +34,13 @@ export default async function ProfilePage({ searchParams }) {
 
       <section className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <header className="flex items-center gap-3">
-            <UserAvatar
+          <header className="flex flex-col gap-1">
+            <Typography type="h1">마이페이지</Typography>
+            <UserInfo
               image={session.user.image}
               name={displayName}
-              size="large"
+              size="lg"
             />
-            <div>
-              <Typography type="h1">마이페이지</Typography>
-              <p>{displayName}</p>
-            </div>
           </header>
           <div className="flex flex-wrap gap-2">
             <Link href="/profile/edit" className="button button--primary">
@@ -63,15 +60,15 @@ export default async function ProfilePage({ searchParams }) {
           </Card.Header>
           <Card.Content>
             <dl className="grid gap-3 sm:grid-cols-[10rem_1fr]">
-              <dt className="font-medium">이름</dt>
+              <dt className="text-sm font-medium text-muted">이름</dt>
               <dd>{session.user.name}</dd>
-              <dt className="font-medium">성별</dt>
+              <dt className="text-sm font-medium text-muted">성별</dt>
               <dd>{session.user.gender}</dd>
-              <dt className="font-medium">닉네임</dt>
+              <dt className="text-sm font-medium text-muted">닉네임</dt>
               <dd>{session.user.nickname}</dd>
-              <dt className="font-medium">이메일</dt>
+              <dt className="text-sm font-medium text-muted">이메일</dt>
               <dd>{session.user.email}</dd>
-              <dt className="font-medium">관심 카테고리</dt>
+              <dt className="text-sm font-medium text-muted">관심 카테고리</dt>
               <dd className="flex flex-wrap gap-2">
                 {selectedCategories.length > 0
                   ? selectedCategories.map((category) => (
@@ -79,9 +76,9 @@ export default async function ProfilePage({ searchParams }) {
                     ))
                   : '없음'}
               </dd>
-              <dt className="font-medium">지역</dt>
+              <dt className="text-sm font-medium text-muted">지역</dt>
               <dd>{getRegionName(userRegionCode)}</dd>
-              <dt className="font-medium">새 일정·챌린지 알림</dt>
+              <dt className="text-sm font-medium text-muted">새 일정·챌린지 알림</dt>
               <dd>
                 {session.user.notificationEnabled !== false
                   ? '받음'

@@ -40,8 +40,14 @@ export default async function GatheringInvitationPage({
       <div className="flex flex-wrap gap-2">
         <Chip>{gathering.category}</Chip>
         <Chip>{gathering.region}</Chip>
-        <Chip>
-          {gathering.memberCount} / {gathering.maxMemCount}명
+        <Chip
+          className={
+            isFull ? 'bg-warning text-warning-foreground font-semibold' : ''
+          }
+        >
+          {isFull
+            ? '정원 마감'
+            : `${gathering.memberCount} / ${gathering.maxMemCount}명`}
         </Chip>
       </div>
       <HeroToast error={getSingleSearchParam(query.error)} />

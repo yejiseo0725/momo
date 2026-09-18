@@ -2,6 +2,7 @@ import { CATEGORIES, getSingleSearchParam } from '@/lib/utils/validation';
 import {
   Alert,
   Button,
+  Disclosure,
   Input,
   Label,
   TextField,
@@ -21,14 +22,14 @@ import Form from 'next/form';
 import Link from 'next/link';
 import { connection } from 'next/server';
 
-function createGatheringsPath({ category, keyword, nearby }) {
+function createGatheringsPath({ categories = [], keyword, nearby }) {
   const query = new URLSearchParams();
 
   if (keyword) {
     query.set('keyword', keyword);
   }
-  if (category) {
-    query.set('category', category);
+  for (const cat of categories) {
+    query.append('category', cat);
   }
   if (nearby) {
     query.set('nearby', 'true');
@@ -43,25 +44,31 @@ export default async function GatheringsPage({ searchParams }) {
   const session = await requireSession();
   const query = await searchParams;
   const keyword = getSingleSearchParam(query.keyword).trim();
-  const category = getSingleSearchParam(query.category);
-  const selectedCategory = CATEGORIES.includes(category) ? category : '';
+  const rawCategories = Array.isArray(query.category)
+    ? query.category
+    : query.category
+      ? [query.category]
+      : [];
+  const selectedCategories = rawCategories.filter((cat) =>
+    CATEGORIES.includes(cat),
+  );
   const nearbyOnly = getSingleSearchParam(query.nearby) === 'true';
   const userRegionCode = nearbyOnly ? await getUserRegion(session.user.id) : '';
   const sigunguName = getSigunguName(userRegionCode);
   const gatherings = await getPublicGatherings({
     keyword,
-    category: selectedCategory,
+    category: selectedCategories,
     excludeUserId: session.user.id,
     nearbyRegionCode: userRegionCode,
   });
   const allGatheringsPath = createGatheringsPath({
     keyword,
-    category: selectedCategory,
+    categories: selectedCategories,
     nearby: false,
   });
   const nearbyGatheringsPath = createGatheringsPath({
     keyword,
-    category: selectedCategory,
+    categories: selectedCategories,
     nearby: true,
   });
 
@@ -71,11 +78,13 @@ export default async function GatheringsPage({ searchParams }) {
         error={getSingleSearchParam(query.error)}
         message={getSingleSearchParam(query.message)}
       />
-      <section className="flex flex-col gap-4">
+      <section className="flex flex-col gap-4 rounded-[28px] border border-border bg-surface p-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <Typography type="h1">모임 찾기</Typography>
-            <p>공개된 모임을 최신순으로 둘러보세요.</p>
+            <p className="text-sm text-foreground/70">
+              공개된 모임을 최신순으로 둘러보세요.
+            </p>
           </div>
           <Link href="/gatherings/new" className="button button--primary">
             <PlusIcon />새 모임 만들기
@@ -86,36 +95,6 @@ export default async function GatheringsPage({ searchParams }) {
           action="/gatherings"
           className="flex w-full max-w-xl flex-col gap-4"
         >
-          <Typography weight="semibold">조회 범위</Typography>
-          <div className="flex flex-wrap gap-2" aria-label="모임 조회 범위">
-            <Link
-              href={allGatheringsPath}
-              className={`button ${nearbyOnly ? 'button--outline' : 'button--primary'}`}
-              aria-current={nearbyOnly ? undefined : 'page'}
-            >
-              전체 모임
-            </Link>
-            <Link
-              href={nearbyGatheringsPath}
-              className={`button ${nearbyOnly ? 'button--primary' : 'button--outline'}`}
-              aria-current={nearbyOnly ? 'page' : undefined}
-            >
-              내 주변 모임
-            </Link>
-          </div>
-          {nearbyOnly ? (
-            <Alert status="accent">
-              <Alert.Indicator />
-              <Alert.Content>
-                <Alert.Description>
-                  {sigunguName
-                    ? `${sigunguName}의 모임과 온라인 모임을 보고 있습니다.`
-                    : '프로필 지역을 확인할 수 없어 온라인 모임만 보고 있습니다.'}
-                </Alert.Description>
-              </Alert.Content>
-            </Alert>
-          ) : null}
-
           <TextField
             fullWidth
             name="keyword"
@@ -126,17 +105,71 @@ export default async function GatheringsPage({ searchParams }) {
             <Input placeholder="모임명, 소개, 지역" maxLength="100" />
           </TextField>
 
-          <CategoryTagGroup
-            categories={CATEGORIES}
-            includeAll
-            initialCategory={selectedCategory}
-          />
+          <Disclosure
+            defaultExpanded={Boolean(
+              selectedCategories.length > 0 || nearbyOnly,
+            )}
+          >
+            <Disclosure.Heading>
+              <Disclosure.Trigger className="flex w-full items-center justify-between rounded-lg py-1 text-sm font-medium text-foreground/80 hover:text-foreground">
+                <span>상세 검색 필터</span>
+                <Disclosure.Indicator />
+              </Disclosure.Trigger>
+            </Disclosure.Heading>
+            <Disclosure.Content>
+              <Disclosure.Body className="flex flex-col gap-4 pt-2">
+                <Typography weight="semibold">조회 범위</Typography>
+                <div className="flex flex-wrap gap-2" aria-label="모임 조회 범위">
+                  <Link
+                    href={allGatheringsPath}
+                    className={`button ${nearbyOnly ? 'button--outline' : 'button--primary'}`}
+                    aria-current={nearbyOnly ? undefined : 'page'}
+                  >
+                    전체 모임
+                  </Link>
+                  <Link
+                    href={nearbyGatheringsPath}
+                    className={`button ${nearbyOnly ? 'button--primary' : 'button--outline'}`}
+                    aria-current={nearbyOnly ? 'page' : undefined}
+                  >
+                    내 주변 모임
+                  </Link>
+                </div>
+                {nearbyOnly ? (
+                  <Alert status="accent">
+                    <Alert.Indicator />
+                    <Alert.Content>
+                      <Alert.Description>
+                        {sigunguName
+                          ? `${sigunguName}의 모임과 온라인 모임을 보고 있습니다.`
+                          : '프로필 지역을 확인할 수 없어 온라인 모임만 보고 있습니다.'}
+                      </Alert.Description>
+                    </Alert.Content>
+                  </Alert>
+                ) : null}
+
+                <CategoryTagGroup
+                  categories={CATEGORIES}
+                  includeAll
+                  initialCategory={selectedCategories}
+                />
+              </Disclosure.Body>
+            </Disclosure.Content>
+          </Disclosure>
 
           {nearbyOnly ? (
             <input type="hidden" name="nearby" value="true" />
           ) : null}
 
-          <Button type="submit">검색</Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button type="submit">검색</Button>
+            <Link
+              href="/gatherings"
+              className="button border border-border bg-white text-foreground"
+            >
+              필터 지우기
+            </Link>
+          </div>
         </Form>
       </section>
 

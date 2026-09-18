@@ -11,6 +11,7 @@ import {
 import ScheduleForm from '@/app/gatherings/[id]/schedules/ScheduleForm';
 import ActionButtonForm from '@/components/ActionButtonForm';
 import HeroToast from '@/components/HeroToast';
+import UserInfo from '@/components/UserInfo';
 import { getScheduleDetails } from '@/lib/schedules';
 import { requireSession } from '@/lib/session';
 import { getSingleSearchParam } from '@/lib/utils/validation';
@@ -42,14 +43,16 @@ export default async function ScheduleDetailsPage({ params, searchParams }) {
         <Card>
           <Card.Content>
             <dl className="grid gap-3 sm:grid-cols-[6rem_1fr]">
-              <dt className="font-medium">기간</dt>
+              <dt className="text-sm font-medium text-muted">기간</dt>
               <dd>
                 {schedule.startDate} – {schedule.endDate}
               </dd>
-              <dt className="font-medium">장소</dt>
+              <dt className="text-sm font-medium text-muted">장소</dt>
               <dd>{schedule.location}</dd>
-              <dt className="font-medium">작성자</dt>
-              <dd>{schedule.authorName}</dd>
+              <dt className="text-sm font-medium text-muted">작성자</dt>
+              <dd>
+                <UserInfo name={schedule.authorName} image={schedule.authorImage} />
+              </dd>
             </dl>
           </Card.Content>
         </Card>
@@ -80,9 +83,11 @@ export default async function ScheduleDetailsPage({ params, searchParams }) {
 
       <section className="flex flex-col gap-4">
         <Typography type="h2">참여 멤버 {participants.length}명</Typography>
-        <ul>
+        <ul className="flex flex-col gap-2">
           {participants.map((participant) => (
-            <li key={participant.id}>{participant.displayName}</li>
+            <li key={participant.id}>
+              <UserInfo name={participant.displayName} image={participant.image} />
+            </li>
           ))}
         </ul>
       </section>

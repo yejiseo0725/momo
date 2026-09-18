@@ -2,12 +2,13 @@ import { Card, Typography } from '@heroui/react';
 
 import ScheduleCalendar from '@/app/gatherings/[id]/schedules/ScheduleCalendar';
 import ScheduleCreateModal from '@/app/gatherings/[id]/schedules/ScheduleCreateModal';
+import ScheduleDetailModal from '@/app/gatherings/[id]/schedules/ScheduleDetailModal';
 import HeroToast from '@/components/HeroToast';
+import UserInfo from '@/components/UserInfo';
 import { getSchedules } from '@/lib/schedules';
 import { requireSession } from '@/lib/session';
 import { normalizeMonth } from '@/lib/utils/calendar';
 import { getSingleSearchParam } from '@/lib/utils/validation';
-import Link from 'next/link';
 import { connection } from 'next/server';
 
 export default async function SchedulesPage({ params, searchParams }) {
@@ -28,12 +29,16 @@ export default async function SchedulesPage({ params, searchParams }) {
 
   return (
     <>
-      <section className="flex flex-col gap-4">
+      <section className="flex flex-col gap-4 rounded-[28px] border border-border bg-surface p-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <Typography type="h1">일정</Typography>
+          <div>
+            <Typography type="h1">일정</Typography>
+            <p className="text-sm text-foreground/70">
+              모임 일정을 달력에서 확인하고 참여 여부를 남기세요.
+            </p>
+          </div>
           <ScheduleCreateModal gatheringId={id} />
         </div>
-        <p>모임 일정을 달력에서 확인하고 참여 여부를 남기세요.</p>
         <HeroToast
           error={getSingleSearchParam(query.error)}
           message={getSingleSearchParam(query.message)}
@@ -43,6 +48,7 @@ export default async function SchedulesPage({ params, searchParams }) {
       <section>
         <h2 className="sr-only">일정 달력</h2>
         <ScheduleCalendar
+          currentUserId={session.user.id}
           gatheringId={id}
           schedules={schedules}
           selectedMonth={selectedMonth}
@@ -58,16 +64,15 @@ export default async function SchedulesPage({ params, searchParams }) {
               <Card key={schedule.id}>
                 <Card.Header>
                   <Card.Title>
-                    <Link
-                      className="link"
-                      href={`/gatherings/${id}/schedules/${schedule.id}`}
-                    >
-                      {schedule.title}
-                    </Link>
+                    <ScheduleDetailModal
+                      currentUserId={session.user.id}
+                      gatheringId={id}
+                      schedule={schedule}
+                    />
                   </Card.Title>
-                  <Card.Description>
-                    작성자 {schedule.authorName}
-                  </Card.Description>
+                  <div className="pt-1">
+                    <UserInfo label="작성자" name={schedule.authorName} image={schedule.authorImage} />
+                  </div>
                 </Card.Header>
                 <Card.Content>
                   <p>
