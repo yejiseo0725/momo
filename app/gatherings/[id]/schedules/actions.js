@@ -62,6 +62,9 @@ export async function createScheduleAction(_previousState, formData) {
     scheduleId = await createSchedule(gatheringId, session.user.id, input);
   } catch (error) {
     console.error("[createScheduleAction] 일정 생성 실패:", error);
+    if (error?.errInfo) {
+      console.error("[createScheduleAction] Schema Validation Details:", JSON.stringify(error.errInfo, null, 2));
+    }
     const message = error instanceof ScheduleError || error instanceof GatheringError
       ? error.message
       : "일정을 만들지 못했습니다. 잠시 후 다시 시도해 주세요.";
