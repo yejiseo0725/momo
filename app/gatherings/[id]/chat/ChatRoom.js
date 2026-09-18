@@ -345,24 +345,30 @@ export default function ChatRoom({
         className="shrink-0 border-t border-border bg-background pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]"
         action={submitMessage}
       >
-        <div className="flex w-full items-start gap-2">
-          <input type="hidden" name="gatheringId" value={gatheringId} />
-          <TextField fullWidth isRequired name="content">
-            <Label>메시지</Label>
+        <input type="hidden" name="gatheringId" value={gatheringId} />
+        <TextField fullWidth isRequired name="content">
+          <Label>메시지</Label>
+          <div className="flex w-full items-stretch gap-2">
             <TextArea
               id="chat-content"
               rows="3"
               maxLength="1000"
               onKeyDown={handleMessageKeyDown}
+              className="flex-1"
             />
-            <Description>
-              Enter로 보내고 Shift+Enter로 줄바꿈합니다.
-            </Description>
-          </TextField>
-          <Button type="submit" isDisabled={isSending} isPending={isSending}>
-            {isSending ? '보내는 중...' : '보내기'}
-          </Button>
-        </div>
+            <Button
+              type="submit"
+              className="!h-auto self-stretch"
+              isDisabled={isSending}
+              isPending={isSending}
+            >
+              {isSending ? '보내는 중...' : '보내기'}
+            </Button>
+          </div>
+          <Description>
+            Enter로 보내고 Shift+Enter로 줄바꿈합니다.
+          </Description>
+        </TextField>
       </Form>
     </div>
   );

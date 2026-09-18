@@ -2,12 +2,12 @@ import { Card, Typography } from '@heroui/react';
 
 import ScheduleCalendar from '@/app/gatherings/[id]/schedules/ScheduleCalendar';
 import ScheduleCreateModal from '@/app/gatherings/[id]/schedules/ScheduleCreateModal';
+import ScheduleDetailModal from '@/app/gatherings/[id]/schedules/ScheduleDetailModal';
 import HeroToast from '@/components/HeroToast';
 import { getSchedules } from '@/lib/schedules';
 import { requireSession } from '@/lib/session';
 import { normalizeMonth } from '@/lib/utils/calendar';
 import { getSingleSearchParam } from '@/lib/utils/validation';
-import Link from 'next/link';
 import { connection } from 'next/server';
 
 export default async function SchedulesPage({ params, searchParams }) {
@@ -58,12 +58,11 @@ export default async function SchedulesPage({ params, searchParams }) {
               <Card key={schedule.id}>
                 <Card.Header>
                   <Card.Title>
-                    <Link
-                      className="link"
-                      href={`/gatherings/${id}/schedules/${schedule.id}`}
-                    >
-                      {schedule.title}
-                    </Link>
+                    <ScheduleDetailModal
+                      currentUserId={session.user.id}
+                      gatheringId={id}
+                      schedule={schedule}
+                    />
                   </Card.Title>
                   <Card.Description>
                     작성자 {schedule.authorName}
